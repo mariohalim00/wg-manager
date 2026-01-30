@@ -1,50 +1,73 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+Version change: none → 0.1.0
+Modified principles:
+  - Clean Code
+  - Don't Repeat Yourself (DRY)
+  - Frontend UI/UX Design Adherence
+  - Frontend Technology Stack
+  - Backend Technology Stack & Practices
+  - Adherence to Language & Framework Best Practices
+Added sections:
+  - Core Principles
+  - Project Conventions
+  - Development Workflow
+  - Governance
+Removed sections: None
+Templates requiring updates:
+  - .specify/templates/plan-template.md (✅ reviewed, no changes needed)
+  - .specify/templates/spec-template.md (✅ reviewed, no changes needed)
+  - .specify/templates/tasks-template.md (✅ reviewed, no changes needed)
+Follow-up TODOs: None
+-->
+# wg-manager Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Clean Code
+Code must be clear, readable, maintainable, and understandable by others. It should be self-documenting where possible.
+Rationale: Reduces technical debt, improves collaboration, and simplifies debugging and and feature development.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+### II. Don't Repeat Yourself (DRY)
+Avoid duplication of knowledge or logic across the codebase. Implement logic in one, authoritative place.
+Rationale: Ensures consistency, reduces bugs, and simplifies maintenance by requiring changes in only one location.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### III. Frontend UI/UX Design Adherence
+The user interface and user experience must strictly follow the provided design specifications or existing design language established for the project.
+Rationale: Ensures a consistent and high-quality user experience, aligns with brand guidelines, and reduces rework.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### IV. Frontend Technology Stack
+The frontend application is built using SvelteKit as the framework and Tailwind CSS for all styling.
+Rationale: Standardizes development, leverages efficient tooling, and ensures consistency in component architecture and styling.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### V. Backend Technology Stack & Practices
+The backend application is developed using the latest stable version of Go. It must use the `net/http` package for web services and `slog` for JSON-formatted logging. Development must strictly adhere to Test-Driven Development (TDD).
+Rationale: Ensures robustness, performance, maintainability, and early bug detection, while standardizing backend development.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+### VI. Adherence to Language & Framework Best Practices
+All code (frontend and backend) must follow the established best practices, idiomatic patterns, and style guides for their respective languages (TypeScript, Go), frameworks (SvelteKit), and libraries (Tailwind CSS, `net/http`, `slog`).
+Rationale: Promotes high-quality, maintainable, and performant code, facilitating collaboration and onboarding.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+## Project Conventions
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+*   **Version Control:** Git is used for version control. All changes must be made via pull requests (PRs).
+*   **Dependency Management:** Frontend dependencies are managed with `npm`. Backend dependencies are managed with Go Modules.
+*   **Environment Management:** `mise` is used to manage Node.js and Go versions.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+## Development Workflow
+
+*   **Feature Branches:** All new features or bug fixes must be developed on dedicated feature branches.
+*   **Code Review:** All pull requests require at least one approving review before merging.
+*   **Testing:** New features and bug fixes must include corresponding tests (unit, integration, end-to-end where applicable).
+*   **Continuous Integration:** PRs must pass all CI checks (linting, testing, building) before merging.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+*   **Amendment Procedure:** Any proposed changes to this Constitution must be submitted as a pull request, discussed, and approved by the core development team.
+*   **Versioning Policy:** The `CONSTITUTION_VERSION` follows Semantic Versioning (MAJOR.MINOR.PATCH).
+    *   `MAJOR`: Backward incompatible governance/principle removals or redefinitions.
+    *   `MINOR`: New principle/section added or materially expanded guidance.
+    *   `PATCH`: Clarifications, wording, typo fixes, non-semantic refinements.
+*   **Compliance Review:** Code reviews and CI checks will enforce adherence to the principles outlined in this Constitution.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 0.1.0 | **Ratified**: 2026-01-31 | **Last Amended**: 2026-01-31
