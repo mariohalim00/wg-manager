@@ -18,11 +18,14 @@ Thumbs.db
 !.env.example
 !.env.test
 
+# .vscode (personal)
+.vscode/settings.json
+
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 #### backend ####
 
-# go binary
+# go binary (output)
 backend/main 
