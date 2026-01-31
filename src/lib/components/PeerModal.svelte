@@ -83,20 +83,37 @@
 			onClose();
 		}
 	}
+
+	// Handle keyboard events for accessibility
+	function handleOverlayKeydown(event: KeyboardEvent) {
+		if (event.key === 'Escape') {
+			onClose();
+		}
+	}
+
+	function handleContentKeydown(event: KeyboardEvent) {
+		// Prevent propagation to avoid closing on Escape within content
+		event.stopPropagation();
+	}
 </script>
 
 <!-- Modal overlay -->
 <div
 	class="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
 	onclick={handleOverlayClick}
+	onkeydown={handleOverlayKeydown}
 	role="dialog"
 	aria-modal="true"
 	aria-labelledby="modal-title"
+	tabindex="-1"
 >
+	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 	<!-- Modal content -->
 	<div
 		class="glass-card animate-slide-up w-full max-w-md overflow-hidden"
 		onclick={(e) => e.stopPropagation()}
+		onkeydown={handleContentKeydown}
+		role="document"
 	>
 		<!-- Header -->
 		<div

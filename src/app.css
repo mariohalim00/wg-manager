@@ -1,27 +1,49 @@
 @import 'tailwindcss/preflight';
 @tailwind utilities;
 
-/* Glassmorphism base styles matching design */
+/* Design system colors from mockup */
 @layer base {
+	:root {
+		--primary: #137fec;
+		--background-dark: #101922;
+		--background-darker: #0a0f14;
+	}
+
 	body {
 		background: radial-gradient(circle at top left, #1a2a3a 0%, #101922 100%);
 		background-attachment: fixed;
 		color: white;
 		min-height: 100vh;
 		font-family: 'Inter', sans-serif;
+		-webkit-font-smoothing: antialiased;
 	}
 }
 
-/* Glassmorphism utility components */
+/* Glassmorphism components matching design mockup */
 @layer components {
-	/* Glass card effect (FR-020) - Enhanced for design match */
+	/* Main glass panel effect */
+	.glass {
+		background: rgba(255, 255, 255, 0.03);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	/* Glass card effect */
 	.glass-card {
 		background: rgba(255, 255, 255, 0.03);
 		backdrop-filter: blur(12px);
 		-webkit-backdrop-filter: blur(12px);
 		border-radius: 1rem;
 		border: 1px solid rgba(255, 255, 255, 0.08);
-		box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+	}
+
+	/* Glass panel for modals/dialogs */
+	.glass-panel {
+		background: rgba(13, 20, 28, 0.85);
+		backdrop-filter: blur(24px);
+		-webkit-backdrop-filter: blur(24px);
+		border: 1px solid rgba(255, 255, 255, 0.08);
 	}
 
 	/* Sidebar glass effect */
@@ -32,22 +54,6 @@
 		border-right: 1px solid rgba(255, 255, 255, 0.05);
 	}
 
-	/* Glass card with hover effect */
-	.glass-card-hover {
-		background: rgba(255, 255, 255, 0.03);
-		backdrop-filter: blur(12px);
-		-webkit-backdrop-filter: blur(12px);
-		border-radius: 1rem;
-		border: 1px solid rgba(255, 255, 255, 0.08);
-		box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-		transition: all 0.3s;
-	}
-
-	.glass-card-hover:hover {
-		background: rgba(255, 255, 255, 0.05);
-		box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
-	}
-
 	/* Glass input field */
 	.glass-input {
 		background: rgba(255, 255, 255, 0.05);
@@ -56,58 +62,66 @@
 		border-radius: 0.75rem;
 		padding: 0.5rem 1rem;
 		color: white;
-		transition: all 0.3s;
+		transition: all 0.2s;
 	}
 
 	.glass-input::placeholder {
-		color: rgb(148, 163, 184);
+		color: rgba(255, 255, 255, 0.3);
 	}
 
 	.glass-input:focus {
 		outline: none;
-		border-color: rgba(19, 127, 236, 0.5);
-		box-shadow: 0 0 0 3px rgba(19, 127, 236, 0.1);
+		border-color: #137fec;
+		box-shadow: 0 0 0 3px rgba(19, 127, 236, 0.15);
 	}
 
-	/* Glass button primary - matches primary color */
+	/* Primary button - matches #137fec from design */
 	.glass-btn-primary {
 		background: #137fec;
-		backdrop-filter: blur(16px);
 		border-radius: 0.75rem;
 		border: none;
 		box-shadow: 0 4px 16px 0 rgba(19, 127, 236, 0.3);
 		padding: 0.75rem 1.5rem;
-		font-weight: 600;
+		font-weight: 700;
+		font-size: 0.875rem;
 		color: white;
-		transition: all 0.3s;
+		transition: all 0.2s;
 	}
 
 	.glass-btn-primary:hover {
 		background: #0f6bc4;
 		box-shadow: 0 6px 20px 0 rgba(19, 127, 236, 0.4);
-		transform: translateY(-1px);
 	}
 
-	/* Glass button secondary */
+	.glass-btn-primary:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	/* Secondary button */
 	.glass-btn-secondary {
 		background: rgba(255, 255, 255, 0.05);
 		backdrop-filter: blur(16px);
 		border-radius: 0.75rem;
 		border: 1px solid rgba(255, 255, 255, 0.1);
-		box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.1);
 		padding: 0.75rem 1.5rem;
 		font-weight: 500;
+		font-size: 0.875rem;
 		color: rgb(226, 232, 240);
-		transition: all 0.3s;
+		transition: all 0.2s;
 	}
 
 	.glass-btn-secondary:hover {
 		color: white;
 		background: rgba(255, 255, 255, 0.1);
-		transform: translateY(-1px);
 	}
 
-	/* Pulse animation for online status */
+	.glass-btn-secondary:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	/* Pulse animation for online status indicator */
 	.pulse-online {
 		box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
 		animation: pulse 2s infinite;
@@ -126,6 +140,17 @@
 			transform: scale(0.95);
 			box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
 		}
+	}
+
+	/* QR gradient container from design */
+	.qr-gradient-container {
+		background: linear-gradient(135deg, #1e3a3a 0%, #102a2a 100%);
+		box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5);
+	}
+
+	/* Input focus glow */
+	.glow-input:focus {
+		box-shadow: 0 0 10px rgba(19, 127, 236, 0.15);
 	}
 }
 

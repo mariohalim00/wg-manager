@@ -39,7 +39,7 @@
 	role="alert"
 >
 	<!-- Icon -->
-	<div class="flex-shrink-0 mt-0.5">
+	<div class="shrink-0 mt-0.5">
 		<Icon size={20} />
 	</div>
 
@@ -49,7 +49,7 @@
 	<!-- Close button -->
 	<button
 		onclick={handleClose}
-		class="flex-shrink-0 text-white/50 transition-colors hover:text-white"
+		class="shrink-0 text-white/50 transition-colors hover:text-white"
 		aria-label="Close notification"
 	>
 		<X size={18} />

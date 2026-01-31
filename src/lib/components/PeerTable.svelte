@@ -1,101 +1,155 @@
 <script lang="ts">
 	import type { Peer } from '$lib/types';
-	import StatusBadge from './StatusBadge.svelte';
 	import { formatBytes, formatLastHandshake } from '$lib/utils/formatting';
-	import { Download, Upload, Trash2, Copy, Search, Filter } from 'lucide-svelte';
+	import {
+		Download,
+		Trash2,
+		QrCode,
+		ArrowUp,
+		ArrowDown,
+		Laptop,
+		Smartphone,
+		Router,
+		Monitor,
+		Search
+	} from 'lucide-svelte';
 
 	type Props = {
 		peers: Peer[];
 		onDownloadConfig: (peer: Peer) => void;
 		onRemove: (peer: Peer) => void;
+		onShowQR?: (peer: Peer) => void;
 	};
 
-	let { peers, onDownloadConfig, onRemove }: Props = $props();
+	let { peers, onDownloadConfig, onRemove, onShowQR }: Props = $props();
+
+	// Get device icon based on peer name (simple heuristic)
+	function getDeviceIcon(name: string) {
+		const lowerName = name.toLowerCase();
+		if (lowerName.includes('iphone') || lowerName.includes('android') || lowerName.includes('pixel') || lowerName.includes('phone')) {
+			return Smartphone;
+		}
+		if (lowerName.includes('mac') || lowerName.includes('laptop') || lowerName.includes('book')) {
+			return Laptop;
+		}
+		if (lowerName.includes('router') || lowerName.includes('gateway') || lowerName.includes('openwrt')) {
+			return Router;
+		}
+		return Monitor;
+	}
 </script>
 
 <div class="glass mb-12 overflow-hidden rounded-2xl">
-	<!-- Header with Filter -->
+	<!-- Header -->
 	<div class="flex items-center justify-between border-b border-white/5 p-6">
 		<h3 class="text-lg font-bold">Active Peers ({peers.length})</h3>
 		<div class="flex gap-2">
-			<button
-				class="gap-2 rounded-xl bg-white/5 px-4 py-2 text-sm font-medium transition-all hover:bg-white/10 flex items-center"
-			>
-				<Filter size={16} />
+			<button class="rounded-xl bg-white/5 px-4 py-2 text-sm font-medium transition-all hover:bg-white/10">
 				Filter
+			</button>
+			<button class="rounded-xl bg-white/5 px-4 py-2 text-sm font-medium transition-all hover:bg-white/10">
+				Export
 			</button>
 		</div>
 	</div>
 
 	<!-- Table -->
 	<div class="overflow-x-auto">
-		<table class="w-full">
+		<table class="w-full text-left">
 			<thead>
-				<tr class="border-b border-white/5 text-left text-xs font-semibold text-slate-400 uppercase">
-					<th class="px-6 py-4">Peer Name / Public Key</th>
+				<tr class="text-[11px] font-bold uppercase tracking-widest text-slate-500">
 					<th class="px-6 py-4">Status</th>
-					<th class="px-6 py-4">Allowed IPs</th>
-					<th class="px-6 py-4">Transfer</th>
+					<th class="px-6 py-4">Peer Name</th>
+					<th class="px-6 py-4">Internal IP</th>
+					<th class="px-6 py-4">Transfer (U/D)</th>
 					<th class="px-6 py-4">Last Handshake</th>
 					<th class="px-6 py-4 text-right">Actions</th>
 				</tr>
 			</thead>
 			<tbody class="divide-y divide-white/5">
 				{#each peers as peer (peer.id)}
-					<tr class="group hover:bg-white/5 transition-colors">
-						<td class="px-6 py-4">
-							<div class="flex flex-col">
-								<span class="font-bold text-white max-w-[200px] truncate" title={peer.name}
-									>{peer.name || 'Unnamed Peer'}</span
-								>
-								<div class="flex items-center gap-1 text-slate-400 text-xs">
-									<span class="font-mono max-w-[120px] truncate">{peer.publicKey}</span>
-									<button class="hover:text-white" title="Copy Public Key">
-										<Copy size={12} />
-									</button>
+					{@const DeviceIcon = getDeviceIcon(peer.name)}
+					{@const isOnline = peer.status === 'online'}
+					<tr class="group transition-colors hover:bg-white/[0.02]">
+						<!-- Status -->
+						<td class="px-6 py-5">
+							<div class="flex items-center gap-2">
+								{#if isOnline}
+									<div class="pulse-online h-2 w-2 rounded-full bg-green-500"></div>
+									<span class="text-xs font-bold uppercase tracking-tighter text-green-500">Online</span>
+								{:else}
+									<div class="h-2 w-2 rounded-full bg-slate-600"></div>
+									<span class="text-xs font-bold uppercase tracking-tighter text-slate-500">Offline</span>
+								{/if}
+							</div>
+						</td>
+
+						<!-- Peer Name with Icon -->
+						<td class="px-6 py-5">
+							<div class="flex items-center gap-3">
+								<div class="flex h-8 w-8 items-center justify-center rounded-lg {isOnline ? 'bg-[#137fec]/20 text-[#137fec]' : 'bg-white/10 text-slate-400'}">
+									<DeviceIcon size={18} />
+								</div>
+								<div>
+									<p class="text-sm font-bold">{peer.name || 'Unnamed Peer'}</p>
+									<p class="text-xs text-slate-500">{peer.publicKey.slice(0, 8)}...</p>
 								</div>
 							</div>
 						</td>
-						<td class="px-6 py-4">
-							<StatusBadge status={peer.status} />
+
+						<!-- Internal IP -->
+						<td class="px-6 py-5">
+							{#if peer.allowedIPs.length > 0}
+								<span class="rounded bg-white/5 px-2 py-1 font-mono text-xs text-slate-300">
+									{peer.allowedIPs[0].replace('/32', '')}
+								</span>
+							{:else}
+								<span class="text-slate-500">—</span>
+							{/if}
 						</td>
-						<td class="px-6 py-4">
-							<div class="flex flex-wrap gap-1">
-								{#each peer.allowedIPs as ip (ip)}
-									<span class="rounded bg-white/5 px-1.5 py-0.5 text-xs font-mono text-slate-300"
-										>{ip}</span
-									>
-								{/each}
+
+						<!-- Transfer -->
+						<td class="px-6 py-5">
+							<div class="flex flex-col gap-1">
+								<div class="flex items-center gap-1.5 text-xs {isOnline ? 'font-medium text-green-500' : 'text-slate-500'}">
+									<ArrowUp size={14} />
+									<span>{formatBytes(peer.transmitBytes)}</span>
+								</div>
+								<div class="flex items-center gap-1.5 text-xs {isOnline ? 'font-medium text-[#137fec]' : 'text-slate-500'}">
+									<ArrowDown size={14} />
+									<span>{formatBytes(peer.receiveBytes)}</span>
+								</div>
 							</div>
 						</td>
-						<td class="px-6 py-4">
-							<div class="flex flex-col text-xs font-medium">
-								<span class="text-green-400 flex items-center gap-1">
-									<Download size={12} /> {formatBytes(peer.receiveBytes)}
-								</span>
-								<span class="text-blue-400 flex items-center gap-1">
-									<Upload size={12} /> {formatBytes(peer.transmitBytes)}
-								</span>
-							</div>
+
+						<!-- Last Handshake -->
+						<td class="px-6 py-5">
+							<span class="text-xs text-slate-400">{formatLastHandshake(peer.lastHandshake)}</span>
 						</td>
-						<td class="px-6 py-4">
-							<span class="text-sm text-slate-400 font-mono"
-								>{formatLastHandshake(peer.lastHandshake)}</span
-							>
-						</td>
-						<td class="px-6 py-4 text-right">
-							<div class="flex justify-end gap-2 text-slate-400 opacity-60 group-hover:opacity-100 transition-opacity">
+
+						<!-- Actions -->
+						<td class="px-6 py-5">
+							<div class="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
 								<button
 									onclick={() => onDownloadConfig(peer)}
-									class="rounded-lg p-2 hover:bg-white/10 hover:text-white transition-colors"
-									title="Download Configuration"
+									class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+									title="Download Config"
 								>
 									<Download size={18} />
 								</button>
+								{#if onShowQR}
+									<button
+										onclick={() => onShowQR(peer)}
+										class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+										title="View QR Code"
+									>
+										<QrCode size={18} />
+									</button>
+								{/if}
 								<button
 									onclick={() => onRemove(peer)}
-									class="rounded-lg p-2 hover:bg-red-500/20 hover:text-red-400 transition-colors"
-									title="Remove Peer"
+									class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-400/5 hover:text-red-400"
+									title="Delete Peer"
 								>
 									<Trash2 size={18} />
 								</button>
@@ -106,12 +160,12 @@
 					<tr>
 						<td colspan="6" class="px-6 py-12 text-center text-slate-400">
 							<div class="flex flex-col items-center gap-4">
-								<div class="p-4 rounded-full bg-white/5">
+								<div class="rounded-full bg-white/5 p-4">
 									<Search size={32} />
 								</div>
 								<div>
 									<p class="font-medium text-white">No peers found</p>
-									<p class="text-sm mt-1">Add a new peer to get started</p>
+									<p class="mt-1 text-sm">Add a new peer to get started</p>
 								</div>
 							</div>
 						</td>
@@ -120,4 +174,13 @@
 			</tbody>
 		</table>
 	</div>
+
+	<!-- Footer -->
+	{#if peers.length > 0}
+		<div class="flex items-center justify-center border-t border-white/5 p-4">
+			<a href="/peers" class="px-6 py-2 text-sm font-bold text-slate-400 transition-colors hover:text-white">
+				View All Peers
+			</a>
+		</div>
+	{/if}
 </div>
