@@ -106,22 +106,3 @@
 		</div>
 	{/if}
 </div>
-
-                <h2 class="card-title">Online Peers</h2>
-                <p class="text-4xl font-bold">{$stats.onlinePeers}</p>
-            </div>
-        </div>
-        <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-                <h2 class="card-title">Data Sent</h2>
-                <p class="text-4xl font-bold">{$stats.totalDataUsage.sent} KB</p>
-            </div>
-        </div>
-        <div class="card bg-base-100 shadow-xl">
-            <div class="card-body">
-                <h2 class="card-title">Data Received</h2>
-                <p class="text-4xl font-bold">{$stats.totalDataUsage.received} KB</p>
-            </div>
-        </div>
-    </div>
-</div>

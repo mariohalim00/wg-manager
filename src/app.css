@@ -3,14 +3,10 @@
 
 /* Glassmorphism base styles */
 @layer base {
-	:root {
-		/* Background gradient for app (FR-019) */
-		--gradient-from: #1a2a3a;
-		--gradient-to: #101922;
-	}
-
 	body {
-		@apply bg-gradient-radial from-[var(--gradient-from)] to-[var(--gradient-to)] text-white min-h-screen;
+		background: linear-gradient(to bottom right, #1a2a3a, #101922);
+		color: white;
+		min-height: 100vh;
 	}
 }
 
@@ -18,27 +14,82 @@
 @layer components {
 	/* Glass card effect (FR-020) */
 	.glass-card {
-		@apply bg-glass-bg backdrop-blur-lg rounded-xl border border-glass-border shadow-glass;
+		background-color: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(16px);
+		border-radius: 0.75rem;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 	}
 
 	/* Glass card with hover effect */
 	.glass-card-hover {
-		@apply glass-card transition-all duration-300 hover:bg-glass-hover hover:shadow-glass-hover;
+		background-color: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(16px);
+		border-radius: 0.75rem;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+		transition: all 0.3s;
+	}
+
+	.glass-card-hover:hover {
+		background-color: rgba(255, 255, 255, 0.15);
+		box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
 	}
 
 	/* Glass input field */
 	.glass-input {
-		@apply bg-glass-bg backdrop-blur-lg border border-glass-border rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent;
+		background-color: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(16px);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 0.5rem;
+		padding: 0.5rem 1rem;
+		color: white;
+	}
+
+	.glass-input::placeholder {
+		color: rgb(156, 163, 175);
+	}
+
+	.glass-input:focus {
+		outline: none;
+		ring: 2px solid rgb(96, 165, 250);
+		border-color: transparent;
 	}
 
 	/* Glass button primary */
 	.glass-btn-primary {
-		@apply glass-card-hover px-4 py-2 font-medium text-white hover:scale-105;
+		background-color: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(16px);
+		border-radius: 0.75rem;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+		padding: 0.5rem 1rem;
+		font-weight: 500;
+		color: white;
+		transition: all 0.3s;
+	}
+
+	.glass-btn-primary:hover {
+		background-color: rgba(255, 255, 255, 0.15);
+		transform: scale(1.05);
 	}
 
 	/* Glass button secondary */
 	.glass-btn-secondary {
-		@apply glass-card-hover px-4 py-2 font-medium text-gray-300 hover:text-white;
+		background-color: rgba(255, 255, 255, 0.1);
+		backdrop-filter: blur(16px);
+		border-radius: 0.75rem;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+		padding: 0.5rem 1rem;
+		font-weight: 500;
+		color: rgb(209, 213, 219);
+		transition: all 0.3s;
+	}
+
+	.glass-btn-secondary:hover {
+		color: white;
+		background-color: rgba(255, 255, 255, 0.15);
 	}
 }
 
@@ -72,4 +123,3 @@
 		}
 	}
 }
-

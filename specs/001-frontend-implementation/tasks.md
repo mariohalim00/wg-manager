@@ -203,24 +203,24 @@
 
 **Purpose**: Improvements that affect multiple user stories, performance optimization, documentation
 
-- [ ] T066 [P] Add Material Symbols Outlined icons via CDN in `src/app.html` (or install npm package if offline support needed)
-- [ ] T067 [P] Add favicon to `static/favicon.ico`
-- [ ] T068 [P] Update `static/robots.txt` for production deployment
-- [ ] T069 Optimize Tailwind config for production (purge unused styles, minimize bundle size)
-- [ ] T070 [P] Add loading states to all API calls (show LoadingSpinner in pages during fetch)
-- [ ] T071 [P] Add error boundaries to catch React-like errors in Svelte (use `+error.svelte` global error page)
-- [ ] T072 Create global error page in `src/routes/+error.svelte` (glassmorphism error display with back button)
+- [X] T066 [P] Add Material Symbols Outlined icons via CDN in `src/app.html` (or install npm package if offline support needed)
+- [X] T067 [P] Add favicon to `static/favicon.ico`
+- [X] T068 [P] Update `static/robots.txt` for production deployment
+- [X] T069 Optimize Tailwind config for production (purge unused styles, minimize bundle size)
+- [X] T070 [P] Add loading states to all API calls (show LoadingSpinner in pages during fetch)
+- [X] T071 [P] Add error boundaries to catch React-like errors in Svelte (use `+error.svelte` global error page)
+- [X] T072 Create global error page in `src/routes/+error.svelte` (glassmorphism error display with back button)
 - [ ] T073 Test responsive layouts at breakpoints: 320px (mobile), 768px (tablet), 1024px (desktop), 1920px (large desktop)
 - [ ] T074 Test sidebar navigation on all pages (verify active link highlighting)
 - [ ] T075 Test bottom navigation on mobile (<1024px) (verify icon-only nav, active state)
 - [ ] T076 Test hover-reveal actions on desktop (≥1024px) (verify group-hover pattern works)
 - [ ] T077 Test always-visible actions on mobile (<1024px) (verify buttons always visible)
-- [ ] T078 Run Lighthouse performance audit (target: ≥90 score, <200KB bundle, TTI <3s, FCP <1.5s)
-- [ ] T079 Optimize bundle size if needed (lazy-load heavy components, tree-shake unused code)
-- [ ] T080 [P] Verify TypeScript strict mode compliance (no `any` types, all parameters/returns typed)
-- [ ] T081 [P] Run ESLint and fix any warnings/errors across all files
-- [ ] T082 [P] Run Prettier to format all source files
-- [ ] T083 Create/update quickstart.md with developer setup instructions (prerequisites, install, dev server, build, manual testing checklist)
+- [X] T078 Run Lighthouse performance audit (target: ≥90 score, <200KB bundle, TTI <3s, FCP <1.5s)
+- [X] T079 Optimize bundle size if needed (lazy-load heavy components, tree-shake unused code)
+- [X] T080 [P] Verify TypeScript strict mode compliance (no `any` types, all parameters/returns typed)
+- [X] T081 [P] Run ESLint and fix any warnings/errors across all files
+- [X] T082 [P] Run Prettier to format all source files
+- [X] T083 Create/update quickstart.md with developer setup instructions (prerequisites, install, dev server, build, manual testing checklist)
 - [ ] T084 Test all user stories end-to-end against live backend API (verify API integration works)
 - [ ] T085 Verify all FR requirements from spec.md are implemented (FR-001 through FR-021)
 - [ ] T086 Verify all acceptance scenarios from user stories pass manual testing
