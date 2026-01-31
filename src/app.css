@@ -1,3 +1,76 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Glassmorphism base styles */
+@layer base {
+	:root {
+		/* Background gradient for app (FR-019) */
+		--gradient-from: #1a2a3a;
+		--gradient-to: #101922;
+	}
+
+	body {
+		@apply bg-gradient-radial from-[var(--gradient-from)] to-[var(--gradient-to)] text-white min-h-screen;
+	}
+}
+
+/* Glassmorphism utility components */
+@layer components {
+	/* Glass card effect (FR-020) */
+	.glass-card {
+		@apply bg-glass-bg backdrop-blur-lg rounded-xl border border-glass-border shadow-glass;
+	}
+
+	/* Glass card with hover effect */
+	.glass-card-hover {
+		@apply glass-card transition-all duration-300 hover:bg-glass-hover hover:shadow-glass-hover;
+	}
+
+	/* Glass input field */
+	.glass-input {
+		@apply bg-glass-bg backdrop-blur-lg border border-glass-border rounded-lg px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent;
+	}
+
+	/* Glass button primary */
+	.glass-btn-primary {
+		@apply glass-card-hover px-4 py-2 font-medium text-white hover:scale-105;
+	}
+
+	/* Glass button secondary */
+	.glass-btn-secondary {
+		@apply glass-card-hover px-4 py-2 font-medium text-gray-300 hover:text-white;
+	}
+}
+
+/* Animation utilities */
+@layer utilities {
+	.animate-fade-in {
+		animation: fadeIn 0.3s ease-in-out;
+	}
+
+	.animate-slide-up {
+		animation: slideUp 0.3s ease-out;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes slideUp {
+		from {
+			transform: translateY(20px);
+			opacity: 0;
+		}
+		to {
+			transform: translateY(0);
+			opacity: 1;
+		}
+	}
+}
+

@@ -21,13 +21,13 @@
 
 **Purpose**: Project initialization and basic structure for SvelteKit + TypeScript + TailwindCSS
 
-- [ ] T001 Install approved dependencies: `svelte-qrcode@^1.0.0`, `@tailwindcss/forms@^0.5.0`
-- [ ] T002 Configure TypeScript strict mode in `tsconfig.json` (no `any` types allowed, `strict: true`)
-- [ ] T003 [P] Update `tailwind.config.js` with glassmorphism theme (backdrop-blur utilities, custom colors, opacity scales)
-- [ ] T004 [P] Configure ESLint with TypeScript and Svelte rules in `eslint.config.js`
-- [ ] T005 [P] Configure Prettier with Svelte and Tailwind plugins in `.prettierrc`
-- [ ] T006 Create `.env.example` with `VITE_API_BASE_URL=http://localhost:8080` template
-- [ ] T007 Copy `.env.example` to `.env` for local development
+- [X] T001 Install approved dependencies: `svelte-qrcode@^1.0.0`, `@tailwindcss/forms@^0.5.0`
+- [X] T002 Configure TypeScript strict mode in `tsconfig.json` (no `any` types allowed, `strict: true`)
+- [X] T003 [P] Update `tailwind.config.js` with glassmorphism theme (backdrop-blur utilities, custom colors, opacity scales)
+- [X] T004 [P] Configure ESLint with TypeScript and Svelte rules in `eslint.config.js`
+- [X] T005 [P] Configure Prettier with Svelte and Tailwind plugins in `.prettierrc`
+- [X] T006 Create `.env.example` with `VITE_API_BASE_URL=http://localhost:8080` template
+- [X] T007 Copy `.env.example` to `.env` for local development
 
 ---
 
@@ -37,25 +37,25 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T008 Create TypeScript interfaces in `src/lib/types/peer.ts` (Peer, PeerFormData, PeerCreateResponse)
-- [ ] T009 [P] Create TypeScript interfaces in `src/lib/types/stats.ts` (InterfaceStats)
-- [ ] T010 [P] Create TypeScript interfaces in `src/lib/types/api.ts` (APIError, APIResponse)
-- [ ] T011 [P] Create TypeScript interfaces in `src/lib/types/notification.ts` (Notification)
-- [ ] T012 Implement base HTTP client in `src/lib/api/client.ts` (fetch wrapper with error handling, base URL from env)
-- [ ] T013 [P] Implement peer API client in `src/lib/api/peers.ts` (listPeers, addPeer, removePeer functions)
-- [ ] T014 [P] Implement stats API client in `src/lib/api/stats.ts` (getStats function)
-- [ ] T015 Create peers Svelte store in `src/lib/stores/peers.ts` (writable store with load, add, remove methods)
-- [ ] T016 [P] Create stats Svelte store in `src/lib/stores/stats.ts` (writable store with load method)
-- [ ] T017 [P] Create notifications Svelte store in `src/lib/stores/notifications.ts` (writable store with add, remove, auto-dismiss logic)
-- [ ] T018 Implement CIDR validation utility in `src/lib/utils/validation.ts` (validateCIDR function with regex)
-- [ ] T019 [P] Implement byte formatting utility in `src/lib/utils/formatting.ts` (formatBytes function: B, KB, MB, GB, TB)
-- [ ] T020 [P] Implement date formatting utility in `src/lib/utils/formatting.ts` (formatLastHandshake: relative time or "Never")
-- [ ] T021 [P] Define app constants in `src/lib/utils/constants.ts` (API base URL, handshake timeout threshold)
-- [ ] T022 Create global glassmorphism styles in `src/app.css` (backdrop-filter utilities, panel base styles, gradient backgrounds)
-- [ ] T023 Create root layout in `src/routes/+layout.svelte` (glassmorphism wrapper, gradient background, notification stack)
-- [ ] T024 Create Sidebar component in `src/lib/components/Sidebar.svelte` (navigation links for Dashboard, Peers, Stats, Settings with active state highlighting; usage widget placeholder at bottom; glassmorphism styling with backdrop-blur; responsive: full sidebar ≥1024px, simplified <1024px)
-- [ ] T025 Create LoadingSpinner component in `src/lib/components/LoadingSpinner.svelte` (centered spinner with glassmorphism)
-- [ ] T026 [P] Create Notification component in `src/lib/components/Notification.svelte` (toast notification with auto-dismiss, type-based styling)
+- [X] T008 Create TypeScript interfaces in `src/lib/types/peer.ts` (Peer, PeerFormData, PeerCreateResponse)
+- [X] T009 [P] Create TypeScript interfaces in `src/lib/types/stats.ts` (InterfaceStats)
+- [X] T010 [P] Create TypeScript interfaces in `src/lib/types/api.ts` (APIError, APIResponse)
+- [X] T011 [P] Create TypeScript interfaces in `src/lib/types/notification.ts` (Notification)
+- [X] T012 Implement base HTTP client in `src/lib/api/client.ts` (fetch wrapper with error handling, base URL from env)
+- [X] T013 [P] Implement peer API client in `src/lib/api/peers.ts` (listPeers, addPeer, removePeer functions)
+- [X] T014 [P] Implement stats API client in `src/lib/api/stats.ts` (getStats function)
+- [X] T015 Create peers Svelte store in `src/lib/stores/peers.ts` (writable store with load, add, remove methods)
+- [X] T016 [P] Create stats Svelte store in `src/lib/stores/stats.ts` (writable store with load method)
+- [X] T017 [P] Create notifications Svelte store in `src/lib/stores/notifications.ts` (writable store with add, remove, auto-dismiss logic)
+- [X] T018 Implement CIDR validation utility in `src/lib/utils/validation.ts` (validateCIDR function with regex)
+- [X] T019 [P] Implement byte formatting utility in `src/lib/utils/formatting.ts` (formatBytes function: B, KB, MB, GB, TB)
+- [X] T020 [P] Implement date formatting utility in `src/lib/utils/formatting.ts` (formatLastHandshake: relative time or "Never")
+- [X] T021 [P] Define app constants in `src/lib/utils/constants.ts` (API base URL, handshake timeout threshold)
+- [X] T022 Create global glassmorphism styles in `src/app.css` (backdrop-filter utilities, panel base styles, gradient backgrounds)
+- [X] T023 Create root layout in `src/routes/+layout.svelte` (glassmorphism wrapper, gradient background, notification stack)
+- [X] T024 Create Sidebar component in `src/lib/components/Sidebar.svelte` (navigation links for Dashboard, Peers, Stats, Settings with active state highlighting; usage widget placeholder at bottom; glassmorphism styling with backdrop-blur; responsive: full sidebar ≥1024px, simplified <1024px)
+- [X] T025 Create LoadingSpinner component in `src/lib/components/LoadingSpinner.svelte` (centered spinner with glassmorphism)
+- [X] T026 [P] Create Notification component in `src/lib/components/Notification.svelte` (toast notification with auto-dismiss, type-based styling)
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 

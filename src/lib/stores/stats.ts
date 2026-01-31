@@ -1,20 +1,39 @@
+// Stats store for interface statistics
 import { writable } from 'svelte/store';
+import type { InterfaceStats } from '../types/stats';
+import * as statsAPI from '../api/stats';
+import { addNotification } from './notifications';
 
-// Define a type for your stats for better type safety
-export interface Stats {
-  totalPeers: number;
-  onlinePeers: number;
-  totalDataUsage: {
-    sent: number;
-    received: number;
-  };
+/**
+ * Stats writable store
+ */
+function createStatsStore() {
+	const { subscribe, set } = writable<InterfaceStats | null>(null);
+
+	return {
+		subscribe,
+		set,
+
+		/**
+		 * Load interface statistics from API
+		 */
+		async load(): Promise<void> {
+			const response = await statsAPI.getStats();
+
+			if (response.error) {
+				addNotification({
+					type: 'error',
+					message: `Failed to load stats: ${response.error.error}`,
+					duration: 5000
+				});
+				return;
+			}
+
+			if (response.data) {
+				set(response.data);
+			}
+		}
+	};
 }
 
-export const stats = writable<Stats>({
-  totalPeers: 0,
-  onlinePeers: 0,
-  totalDataUsage: {
-    sent: 0,
-    received: 0,
-  }
-});
+export const stats = createStatsStore();
