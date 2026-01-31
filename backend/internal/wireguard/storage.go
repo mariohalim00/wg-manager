@@ -47,8 +47,8 @@ func (s *Storage) load() error {
 }
 
 func (s *Storage) save() error {
-	s.mu.RLock()
-	defer s.mu.RUnlock()
+	s.mu.Lock()
+	defer s.mu.Unlock()
 
 	file, err := os.Create(s.path)
 	if err != nil {
