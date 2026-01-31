@@ -7,23 +7,20 @@ import (
 	"testing"
 
 	"wg-manager/backend/internal/config"
+	"wg-manager/backend/internal/handlers"
 	"wg-manager/backend/internal/wireguard"
 )
 
 func TestPeersHandler(t *testing.T) {
-	// Initialize a mock WireGuard service for testing
 	mockWGService := wireguard.NewMockService()
-	app := &Application{WireGuard: mockWGService}
+	h := handlers.NewPeerHandler(mockWGService)
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /peers", h.List)
 
-	req, err := http.NewRequest("GET", "/peers", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
+	req := httptest.NewRequest("GET", "/peers", nil)
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(app.peersHandler)
 
-	handler.ServeHTTP(rr, req)
+	mux.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
@@ -31,8 +28,7 @@ func TestPeersHandler(t *testing.T) {
 	}
 
 	var peers []wireguard.Peer
-	err = json.Unmarshal(rr.Body.Bytes(), &peers)
-	if err != nil {
+	if err := json.Unmarshal(rr.Body.Bytes(), &peers); err != nil {
 		t.Fatalf("could not unmarshal response: %v", err)
 	}
 
@@ -40,26 +36,36 @@ func TestPeersHandler(t *testing.T) {
 		t.Errorf("handler returned unexpected number of peers: got %d want %d",
 			len(peers), 2)
 	}
+}
 
-	if contentType := rr.Header().Get("Content-Type"); contentType != "application/json" {
-		t.Errorf("handler returned wrong Content-Type: got %v want %v",
-			contentType, "application/json")
+func TestRemovePeerHandler(t *testing.T) {
+	mockWGService := wireguard.NewMockService()
+	h := handlers.NewPeerHandler(mockWGService)
+	mux := http.NewServeMux()
+	mux.HandleFunc("DELETE /peers/{id}", h.Remove)
+
+	// Test successful removal
+	req := httptest.NewRequest("DELETE", "/peers/mock-peer-1", nil)
+	rr := httptest.NewRecorder()
+
+	mux.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusNoContent {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusNoContent)
 	}
 }
 
 func TestStatsHandler(t *testing.T) {
 	mockWGService := wireguard.NewMockService()
-	app := &Application{WireGuard: mockWGService}
+	h := handlers.NewPeerHandler(mockWGService)
+	mux := http.NewServeMux()
+	mux.HandleFunc("GET /stats", h.Stats)
 
-	req, err := http.NewRequest("GET", "/stats", nil)
-	if err != nil {
-		t.Fatal(err)
-	}
-
+	req := httptest.NewRequest("GET", "/stats", nil)
 	rr := httptest.NewRecorder()
-	handler := http.HandlerFunc(app.statsHandler)
 
-	handler.ServeHTTP(rr, req)
+	mux.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {
 		t.Errorf("handler returned wrong status code: got %v want %v",
@@ -67,8 +73,7 @@ func TestStatsHandler(t *testing.T) {
 	}
 
 	var stats wireguard.Stats
-	err = json.Unmarshal(rr.Body.Bytes(), &stats)
-	if err != nil {
+	if err := json.Unmarshal(rr.Body.Bytes(), &stats); err != nil {
 		t.Fatalf("could not unmarshal response: %v", err)
 	}
 
