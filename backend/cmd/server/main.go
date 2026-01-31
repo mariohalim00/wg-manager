@@ -13,6 +13,8 @@ import (
 	"wg-manager/backend/internal/handlers"
 	"wg-manager/backend/internal/middleware"
 	"wg-manager/backend/internal/wireguard"
+
+	"github.com/joho/godotenv"
 )
 
 // Application holds application-wide dependencies.
@@ -22,6 +24,9 @@ type Application struct {
 }
 
 func main() {
+	// Load .env file from project root
+	_ = godotenv.Load("../.env")
+
 	// Set default logger to JSON mode
 	logger := slog.New(slog.NewJSONHandler(os.Stdout, nil))
 	slog.SetDefault(logger)
