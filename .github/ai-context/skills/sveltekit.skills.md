@@ -7,9 +7,9 @@ author: Claude MPM Team
 license: MIT
 progressive_disclosure:
   entry_point:
-    summary: "Full-stack Svelte framework: file-based routing, SSR/SSG/SPA, form actions, type-safe load functions, universal adapters"
-    when_to_use: "Building full-stack web apps, SPAs with SSR, forms with progressive enhancement, API routes, SEO-critical sites"
-    quick_start: "1. npm create svelte@latest 2. Define routes in src/routes/ 3. Use +page.svelte for pages 4. Deploy with adapters"
+    summary: 'Full-stack Svelte framework: file-based routing, SSR/SSG/SPA, form actions, type-safe load functions, universal adapters'
+    when_to_use: 'Building full-stack web apps, SPAs with SSR, forms with progressive enhancement, API routes, SEO-critical sites'
+    quick_start: '1. npm create svelte@latest 2. Define routes in src/routes/ 3. Use +page.svelte for pages 4. Deploy with adapters'
   token_estimate:
     entry: 80
     full: 5000
@@ -34,6 +34,7 @@ requires_tools: []
 SvelteKit is the official **full-stack framework** for Svelte, providing file-based routing, server-side rendering (SSR), static site generation (SSG), form handling with progressive enhancement, and deployment adapters for any platform.
 
 **Key Features**:
+
 - **File-based routing**: Automatic routes from `src/routes/` directory structure
 - **Load functions**: Type-safe data fetching (`+page.ts`, `+page.server.ts`)
 - **Form actions**: Native form handling with progressive enhancement
@@ -44,6 +45,7 @@ SvelteKit is the official **full-stack framework** for Svelte, providing file-ba
 - **API routes**: `+server.ts` files for REST endpoints
 
 **Installation**:
+
 ```bash
 # Create new SvelteKit project
 npm create svelte@latest my-app
@@ -103,16 +105,16 @@ my-sveltekit-app/
 
 **File naming determines routing**:
 
-| File | Route | Purpose |
-|------|-------|---------|
-| `+page.svelte` | `/` | Page component |
-| `+page.ts` | - | Universal load (client + server) |
-| `+page.server.ts` | - | Server-only load |
-| `+layout.svelte` | - | Shared layout |
-| `+layout.ts` | - | Layout load |
-| `+layout.server.ts` | - | Server layout load |
-| `+server.ts` | `/api/...` | API endpoint (GET/POST/etc) |
-| `+error.svelte` | - | Error boundary |
+| File                | Route      | Purpose                          |
+| ------------------- | ---------- | -------------------------------- |
+| `+page.svelte`      | `/`        | Page component                   |
+| `+page.ts`          | -          | Universal load (client + server) |
+| `+page.server.ts`   | -          | Server-only load                 |
+| `+layout.svelte`    | -          | Shared layout                    |
+| `+layout.ts`        | -          | Layout load                      |
+| `+layout.server.ts` | -          | Server layout load               |
+| `+server.ts`        | `/api/...` | API endpoint (GET/POST/etc)      |
+| `+error.svelte`     | -          | Error boundary                   |
 
 ### Basic Routes
 
@@ -141,17 +143,18 @@ src/routes/
 ```
 
 **Access route params**:
+
 ```svelte
 <!-- src/routes/blog/[slug]/+page.svelte -->
 <script lang="ts">
-  import type { PageData } from './$types';
+	import type { PageData } from './$types';
 
-  let { data } = $props<{ data: PageData }>();
+	let { data } = $props<{ data: PageData }>();
 </script>
 
 <article>
-  <h1>{data.post.title}</h1>
-  <p>{data.post.content}</p>
+	<h1>{data.post.title}</h1>
+	<p>{data.post.content}</p>
 </article>
 ```
 
@@ -170,14 +173,14 @@ src/routes/
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ params }) => {
-  const year = params.year || new Date().getFullYear();
-  const month = params.month || null;
+	const year = params.year || new Date().getFullYear();
+	const month = params.month || null;
 
-  return {
-    year,
-    month,
-    posts: await fetchPosts({ year, month })
-  };
+	return {
+		year,
+		month,
+		posts: await fetchPosts({ year, month })
+	};
 };
 ```
 
@@ -193,12 +196,12 @@ src/routes/
 ```typescript
 // src/routes/docs/[...path]/+page.ts
 export const load: PageLoad = async ({ params }) => {
-  const path = params.path; // "guide/intro"
-  const segments = path.split('/'); // ["guide", "intro"]
+	const path = params.path; // "guide/intro"
+	const segments = path.split('/'); // ["guide", "intro"]
 
-  return {
-    doc: await fetchDoc(path)
-  };
+	return {
+		doc: await fetchDoc(path)
+	};
 };
 ```
 
@@ -213,19 +216,19 @@ Runs on both server and client. Must use `fetch` for data fetching.
 import type { PageLoad } from './$types';
 
 export const load: PageLoad = async ({ fetch, params, url }) => {
-  const response = await fetch('/api/products');
-  const products = await response.json();
+	const response = await fetch('/api/products');
+	const products = await response.json();
 
-  return {
-    products,
-    searchQuery: url.searchParams.get('q') || ''
-  };
+	return {
+		products,
+		searchQuery: url.searchParams.get('q') || ''
+	};
 };
 
 // Prerendering options
 export const prerender = true; // Static generation
-export const ssr = false;      // Disable SSR (SPA mode)
-export const csr = true;       // Enable client-side rendering
+export const ssr = false; // Disable SSR (SPA mode)
+export const csr = true; // Enable client-side rendering
 ```
 
 ### Server-Only Load (+page.server.ts)
@@ -239,24 +242,24 @@ import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/database';
 
 export const load: PageServerLoad = async ({ locals, cookies }) => {
-  // Check authentication
-  if (!locals.user) {
-    throw redirect(303, '/login');
-  }
+	// Check authentication
+	if (!locals.user) {
+		throw redirect(303, '/login');
+	}
 
-  // Direct database query (server-only)
-  const stats = await db.query.stats.findFirst({
-    where: eq(stats.userId, locals.user.id)
-  });
+	// Direct database query (server-only)
+	const stats = await db.query.stats.findFirst({
+		where: eq(stats.userId, locals.user.id)
+	});
 
-  // Sensitive data stays on server
-  const apiKey = process.env.SECRET_API_KEY;
-  const data = await fetchPrivateData(apiKey);
+	// Sensitive data stays on server
+	const apiKey = process.env.SECRET_API_KEY;
+	const data = await fetchPrivateData(apiKey);
 
-  return {
-    stats,
-    userData: data
-  };
+	return {
+		stats,
+		userData: data
+	};
 };
 ```
 
@@ -267,46 +270,46 @@ export const load: PageServerLoad = async ({ locals, cookies }) => {
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-  return {
-    // Immediate data
-    featured: await db.posts.findMany({ where: { featured: true } }),
+	return {
+		// Immediate data
+		featured: await db.posts.findMany({ where: { featured: true } }),
 
-    // Streamed data (loads async)
-    recent: db.posts.findMany({ orderBy: { createdAt: 'desc' } }),
-    popular: db.posts.findMany({ orderBy: { views: 'desc' } })
-  };
+		// Streamed data (loads async)
+		recent: db.posts.findMany({ orderBy: { createdAt: 'desc' } }),
+		popular: db.posts.findMany({ orderBy: { views: 'desc' } })
+	};
 };
 ```
 
 ```svelte
 <!-- src/routes/posts/+page.svelte -->
 <script lang="ts">
-  import type { PageData } from './$types';
+	import type { PageData } from './$types';
 
-  let { data } = $props<{ data: PageData }>();
+	let { data } = $props<{ data: PageData }>();
 </script>
 
 <h2>Featured</h2>
 {#each data.featured as post}
-  <article>{post.title}</article>
+	<article>{post.title}</article>
 {/each}
 
 <h2>Recent</h2>
 {#await data.recent}
-  <p>Loading recent posts...</p>
+	<p>Loading recent posts...</p>
 {:then posts}
-  {#each posts as post}
-    <article>{post.title}</article>
-  {/each}
+	{#each posts as post}
+		<article>{post.title}</article>
+	{/each}
 {/await}
 
 <h2>Popular</h2>
 {#await data.popular}
-  <p>Loading popular posts...</p>
+	<p>Loading popular posts...</p>
 {:then posts}
-  {#each posts as post}
-    <article>{post.title}</article>
-  {/each}
+	{#each posts as post}
+		<article>{post.title}</article>
+	{/each}
 {/await}
 ```
 
@@ -317,33 +320,33 @@ export const load: PageServerLoad = async () => {
 ```svelte
 <!-- src/routes/+layout.svelte -->
 <script lang="ts">
-  import Header from '$lib/components/Header.svelte';
-  import Footer from '$lib/components/Footer.svelte';
-  import type { LayoutData } from './$types';
+	import Header from '$lib/components/Header.svelte';
+	import Footer from '$lib/components/Footer.svelte';
+	import type { LayoutData } from './$types';
 
-  let { data, children } = $props<{ data: LayoutData, children: any }>();
+	let { data, children } = $props<{ data: LayoutData; children: any }>();
 </script>
 
 <div class="app">
-  <Header user={data.user} />
+	<Header user={data.user} />
 
-  <main>
-    {@render children()}
-  </main>
+	<main>
+		{@render children()}
+	</main>
 
-  <Footer />
+	<Footer />
 </div>
 
 <style>
-  .app {
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-  }
+	.app {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+	}
 
-  main {
-    flex: 1;
-  }
+	main {
+		flex: 1;
+	}
 </style>
 ```
 
@@ -354,9 +357,9 @@ export const load: PageServerLoad = async () => {
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
-  return {
-    user: locals.user || null
-  };
+	return {
+		user: locals.user || null
+	};
 };
 ```
 
@@ -380,6 +383,7 @@ src/routes/
 ```
 
 **Layout groups with `(name)` don't affect URL structure**:
+
 - `/dashboard` not `/(app)/dashboard`
 
 ### Breaking Out of Layouts
@@ -387,11 +391,11 @@ src/routes/
 ```svelte
 <!-- src/routes/admin/+layout.svelte -->
 <script>
-  let { children } = $props();
+	let { children } = $props();
 </script>
 
 <div class="admin">
-  {@render children()}
+	{@render children()}
 </div>
 ```
 
@@ -399,9 +403,9 @@ src/routes/
 <!-- src/routes/admin/login/+page@.svelte -->
 <!-- @ breaks out to root layout, skipping admin layout -->
 <form method="POST">
-  <input name="email" type="email" />
-  <input name="password" type="password" />
-  <button type="submit">Login</button>
+	<input name="email" type="email" />
+	<input name="password" type="password" />
+	<button type="submit">Login</button>
 </form>
 ```
 
@@ -415,61 +419,56 @@ import { fail, redirect } from '@sveltejs/kit';
 import type { Actions } from './$types';
 
 export const actions = {
-  // Default action (form without action attribute)
-  default: async ({ request, cookies }) => {
-    const data = await request.formData();
-    const email = data.get('email');
-    const password = data.get('password');
+	// Default action (form without action attribute)
+	default: async ({ request, cookies }) => {
+		const data = await request.formData();
+		const email = data.get('email');
+		const password = data.get('password');
 
-    if (!email || !password) {
-      return fail(400, { email, missing: true });
-    }
+		if (!email || !password) {
+			return fail(400, { email, missing: true });
+		}
 
-    const user = await authenticateUser(email, password);
-    if (!user) {
-      return fail(401, { email, incorrect: true });
-    }
+		const user = await authenticateUser(email, password);
+		if (!user) {
+			return fail(401, { email, incorrect: true });
+		}
 
-    cookies.set('session', user.sessionToken, {
-      path: '/',
-      httpOnly: true,
-      sameSite: 'strict',
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 60 * 60 * 24 * 7 // 1 week
-    });
+		cookies.set('session', user.sessionToken, {
+			path: '/',
+			httpOnly: true,
+			sameSite: 'strict',
+			secure: process.env.NODE_ENV === 'production',
+			maxAge: 60 * 60 * 24 * 7 // 1 week
+		});
 
-    throw redirect(303, '/dashboard');
-  }
+		throw redirect(303, '/dashboard');
+	}
 } satisfies Actions;
 ```
 
 ```svelte
 <!-- src/routes/login/+page.svelte -->
 <script lang="ts">
-  import type { ActionData } from './$types';
+	import type { ActionData } from './$types';
 
-  let { form } = $props<{ form?: ActionData }>();
+	let { form } = $props<{ form?: ActionData }>();
 </script>
 
 <form method="POST">
-  <input
-    name="email"
-    type="email"
-    value={form?.email ?? ''}
-    required
-  />
+	<input name="email" type="email" value={form?.email ?? ''} required />
 
-  <input name="password" type="password" required />
+	<input name="password" type="password" required />
 
-  {#if form?.missing}
-    <p class="error">Please fill in all fields</p>
-  {/if}
+	{#if form?.missing}
+		<p class="error">Please fill in all fields</p>
+	{/if}
 
-  {#if form?.incorrect}
-    <p class="error">Invalid email or password</p>
-  {/if}
+	{#if form?.incorrect}
+		<p class="error">Invalid email or password</p>
+	{/if}
 
-  <button type="submit">Log in</button>
+	<button type="submit">Log in</button>
 </form>
 ```
 
@@ -481,90 +480,90 @@ import { fail } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-  return {
-    todos: await db.todos.findMany()
-  };
+	return {
+		todos: await db.todos.findMany()
+	};
 };
 
 export const actions = {
-  create: async ({ request }) => {
-    const data = await request.formData();
-    const text = data.get('text');
+	create: async ({ request }) => {
+		const data = await request.formData();
+		const text = data.get('text');
 
-    if (!text) {
-      return fail(400, { text, missing: true });
-    }
+		if (!text) {
+			return fail(400, { text, missing: true });
+		}
 
-    await db.todos.create({ data: { text, done: false } });
-    return { success: true };
-  },
+		await db.todos.create({ data: { text, done: false } });
+		return { success: true };
+	},
 
-  toggle: async ({ request }) => {
-    const data = await request.formData();
-    const id = data.get('id');
+	toggle: async ({ request }) => {
+		const data = await request.formData();
+		const id = data.get('id');
 
-    const todo = await db.todos.findUnique({ where: { id } });
-    await db.todos.update({
-      where: { id },
-      data: { done: !todo.done }
-    });
+		const todo = await db.todos.findUnique({ where: { id } });
+		await db.todos.update({
+			where: { id },
+			data: { done: !todo.done }
+		});
 
-    return { toggled: true };
-  },
+		return { toggled: true };
+	},
 
-  delete: async ({ request }) => {
-    const data = await request.formData();
-    const id = data.get('id');
+	delete: async ({ request }) => {
+		const data = await request.formData();
+		const id = data.get('id');
 
-    await db.todos.delete({ where: { id } });
-    return { deleted: true };
-  }
+		await db.todos.delete({ where: { id } });
+		return { deleted: true };
+	}
 } satisfies Actions;
 ```
 
 ```svelte
 <!-- src/routes/todos/+page.svelte -->
 <script lang="ts">
-  import type { PageData, ActionData } from './$types';
+	import type { PageData, ActionData } from './$types';
 
-  let { data, form } = $props<{ data: PageData, form?: ActionData }>();
+	let { data, form } = $props<{ data: PageData; form?: ActionData }>();
 </script>
 
 <h1>Todos</h1>
 
 {#if form?.success}
-  <p class="success">Todo created!</p>
+	<p class="success">Todo created!</p>
 {/if}
 
 <form method="POST" action="?/create">
-  <input name="text" placeholder="What needs to be done?" required />
-  <button type="submit">Add</button>
+	<input name="text" placeholder="What needs to be done?" required />
+	<button type="submit">Add</button>
 </form>
 
 {#each data.todos as todo}
-  <div>
-    <form method="POST" action="?/toggle">
-      <input type="hidden" name="id" value={todo.id} />
-      <input
-        type="checkbox"
-        checked={todo.done}
-        onchange={(e) => e.currentTarget.form?.requestSubmit()}
-      />
-      <span class:done={todo.done}>{todo.text}</span>
-    </form>
+	<div>
+		<form method="POST" action="?/toggle">
+			<input type="hidden" name="id" value={todo.id} />
+			<input
+				type="checkbox"
+				checked={todo.done}
+				onchange={(e) => e.currentTarget.form?.requestSubmit()}
+			/>
+			<span class:done={todo.done}>{todo.text}</span>
+		</form>
 
-    <form method="POST" action="?/delete">
-      <input type="hidden" name="id" value={todo.id} />
-      <button type="submit">Delete</button>
-    </form>
-  </div>
+		<form method="POST" action="?/delete">
+			<input type="hidden" name="id" value={todo.id} />
+			<button type="submit">Delete</button>
+		</form>
+	</div>
 {/each}
 
 <style>
-  .done {
-    text-decoration: line-through;
-    opacity: 0.6;
-  }
+	.done {
+		text-decoration: line-through;
+		opacity: 0.6;
+	}
 </style>
 ```
 
@@ -573,36 +572,36 @@ export const actions = {
 ```svelte
 <!-- src/routes/search/+page.svelte -->
 <script lang="ts">
-  import { enhance } from '$app/forms';
-  import type { PageData, ActionData } from './$types';
+	import { enhance } from '$app/forms';
+	import type { PageData, ActionData } from './$types';
 
-  let { data, form } = $props<{ data: PageData, form?: ActionData }>();
-  let isLoading = $state(false);
+	let { data, form } = $props<{ data: PageData; form?: ActionData }>();
+	let isLoading = $state(false);
 </script>
 
 <form
-  method="POST"
-  use:enhance={() => {
-    isLoading = true;
+	method="POST"
+	use:enhance={() => {
+		isLoading = true;
 
-    return async ({ update }) => {
-      await update();
-      isLoading = false;
-    };
-  }}
+		return async ({ update }) => {
+			await update();
+			isLoading = false;
+		};
+	}}
 >
-  <input name="query" placeholder="Search..." />
-  <button type="submit" disabled={isLoading}>
-    {isLoading ? 'Searching...' : 'Search'}
-  </button>
+	<input name="query" placeholder="Search..." />
+	<button type="submit" disabled={isLoading}>
+		{isLoading ? 'Searching...' : 'Search'}
+	</button>
 </form>
 
 {#if form?.results}
-  <ul>
-    {#each form.results as result}
-      <li>{result.title}</li>
-    {/each}
-  </ul>
+	<ul>
+		{#each form.results as result}
+			<li>{result.title}</li>
+		{/each}
+	</ul>
 {/if}
 ```
 
@@ -616,34 +615,34 @@ import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ url }) => {
-  const limit = Number(url.searchParams.get('limit')) || 10;
-  const offset = Number(url.searchParams.get('offset')) || 0;
+	const limit = Number(url.searchParams.get('limit')) || 10;
+	const offset = Number(url.searchParams.get('offset')) || 0;
 
-  const posts = await db.posts.findMany({
-    take: limit,
-    skip: offset,
-    orderBy: { createdAt: 'desc' }
-  });
+	const posts = await db.posts.findMany({
+		take: limit,
+		skip: offset,
+		orderBy: { createdAt: 'desc' }
+	});
 
-  return json(posts);
+	return json(posts);
 };
 
 export const POST: RequestHandler = async ({ request, locals }) => {
-  if (!locals.user) {
-    return json({ error: 'Unauthorized' }, { status: 401 });
-  }
+	if (!locals.user) {
+		return json({ error: 'Unauthorized' }, { status: 401 });
+	}
 
-  const data = await request.json();
+	const data = await request.json();
 
-  const post = await db.posts.create({
-    data: {
-      title: data.title,
-      content: data.content,
-      authorId: locals.user.id
-    }
-  });
+	const post = await db.posts.create({
+		data: {
+			title: data.title,
+			content: data.content,
+			authorId: locals.user.id
+		}
+	});
 
-  return json(post, { status: 201 });
+	return json(post, { status: 201 });
 };
 ```
 
@@ -655,51 +654,51 @@ import { error, json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ params }) => {
-  const post = await db.posts.findUnique({
-    where: { id: params.id }
-  });
+	const post = await db.posts.findUnique({
+		where: { id: params.id }
+	});
 
-  if (!post) {
-    throw error(404, 'Post not found');
-  }
+	if (!post) {
+		throw error(404, 'Post not found');
+	}
 
-  return json(post);
+	return json(post);
 };
 
 export const PATCH: RequestHandler = async ({ params, request, locals }) => {
-  if (!locals.user) {
-    throw error(401, 'Unauthorized');
-  }
+	if (!locals.user) {
+		throw error(401, 'Unauthorized');
+	}
 
-  const post = await db.posts.findUnique({ where: { id: params.id } });
+	const post = await db.posts.findUnique({ where: { id: params.id } });
 
-  if (post.authorId !== locals.user.id) {
-    throw error(403, 'Forbidden');
-  }
+	if (post.authorId !== locals.user.id) {
+		throw error(403, 'Forbidden');
+	}
 
-  const data = await request.json();
-  const updated = await db.posts.update({
-    where: { id: params.id },
-    data: { title: data.title, content: data.content }
-  });
+	const data = await request.json();
+	const updated = await db.posts.update({
+		where: { id: params.id },
+		data: { title: data.title, content: data.content }
+	});
 
-  return json(updated);
+	return json(updated);
 };
 
 export const DELETE: RequestHandler = async ({ params, locals }) => {
-  if (!locals.user) {
-    throw error(401, 'Unauthorized');
-  }
+	if (!locals.user) {
+		throw error(401, 'Unauthorized');
+	}
 
-  const post = await db.posts.findUnique({ where: { id: params.id } });
+	const post = await db.posts.findUnique({ where: { id: params.id } });
 
-  if (post.authorId !== locals.user.id) {
-    throw error(403, 'Forbidden');
-  }
+	if (post.authorId !== locals.user.id) {
+		throw error(403, 'Forbidden');
+	}
 
-  await db.posts.delete({ where: { id: params.id } });
+	await db.posts.delete({ where: { id: params.id } });
 
-  return new Response(null, { status: 204 });
+	return new Response(null, { status: 204 });
 };
 ```
 
@@ -714,41 +713,41 @@ import { sequence } from '@sveltejs/kit/hooks';
 
 // Authentication middleware
 const auth: Handle = async ({ event, resolve }) => {
-  const sessionToken = event.cookies.get('session');
+	const sessionToken = event.cookies.get('session');
 
-  if (sessionToken) {
-    event.locals.user = await getUserFromSession(sessionToken);
-  }
+	if (sessionToken) {
+		event.locals.user = await getUserFromSession(sessionToken);
+	}
 
-  return resolve(event);
+	return resolve(event);
 };
 
 // Logging middleware
 const logging: Handle = async ({ event, resolve }) => {
-  const start = Date.now();
-  const response = await resolve(event);
-  const duration = Date.now() - start;
+	const start = Date.now();
+	const response = await resolve(event);
+	const duration = Date.now() - start;
 
-  console.log(`${event.request.method} ${event.url.pathname} ${response.status} ${duration}ms`);
+	console.log(`${event.request.method} ${event.url.pathname} ${response.status} ${duration}ms`);
 
-  return response;
+	return response;
 };
 
 // Protected routes middleware
 const protect: Handle = async ({ event, resolve }) => {
-  if (event.url.pathname.startsWith('/admin')) {
-    if (!event.locals.user?.isAdmin) {
-      throw redirect(303, '/login');
-    }
-  }
+	if (event.url.pathname.startsWith('/admin')) {
+		if (!event.locals.user?.isAdmin) {
+			throw redirect(303, '/login');
+		}
+	}
 
-  if (event.url.pathname.startsWith('/dashboard')) {
-    if (!event.locals.user) {
-      throw redirect(303, '/login');
-    }
-  }
+	if (event.url.pathname.startsWith('/dashboard')) {
+		if (!event.locals.user) {
+			throw redirect(303, '/login');
+		}
+	}
 
-  return resolve(event);
+	return resolve(event);
 };
 
 // Combine hooks in sequence
@@ -756,22 +755,22 @@ export const handle = sequence(auth, logging, protect);
 
 // Error handling
 export const handleError = async ({ error, event }) => {
-  console.error('Error:', error);
+	console.error('Error:', error);
 
-  return {
-    message: 'An unexpected error occurred',
-    code: error?.code ?? 'UNKNOWN'
-  };
+	return {
+		message: 'An unexpected error occurred',
+		code: error?.code ?? 'UNKNOWN'
+	};
 };
 
 // Fetch handling (modify requests)
 export const handleFetch = async ({ request, fetch }) => {
-  // Add auth headers to internal API calls
-  if (request.url.startsWith('https://api.example.com')) {
-    request.headers.set('Authorization', `Bearer ${process.env.API_TOKEN}`);
-  }
+	// Add auth headers to internal API calls
+	if (request.url.startsWith('https://api.example.com')) {
+		request.headers.set('Authorization', `Bearer ${process.env.API_TOKEN}`);
+	}
 
-  return fetch(request);
+	return fetch(request);
 };
 ```
 
@@ -782,16 +781,16 @@ export const handleFetch = async ({ request, fetch }) => {
 import type { HandleClientError } from '@sveltejs/kit';
 
 export const handleError: HandleClientError = async ({ error, event }) => {
-  console.error('Client error:', error);
+	console.error('Client error:', error);
 
-  // Send to error tracking service
-  if (typeof window !== 'undefined') {
-    // Sentry, LogRocket, etc.
-  }
+	// Send to error tracking service
+	if (typeof window !== 'undefined') {
+		// Sentry, LogRocket, etc.
+	}
 
-  return {
-    message: 'Something went wrong',
-  };
+	return {
+		message: 'Something went wrong'
+	};
 };
 ```
 
@@ -821,16 +820,17 @@ import { env } from '$env/dynamic/private';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
-  // Can change at runtime
-  const apiUrl = env.API_URL;
+	// Can change at runtime
+	const apiUrl = env.API_URL;
 
-  return {
-    data: await fetch(apiUrl).then(r => r.json())
-  };
+	return {
+		data: await fetch(apiUrl).then((r) => r.json())
+	};
 };
 ```
 
 **Environment file (.env)**:
+
 ```bash
 # Public (exposed to browser)
 PUBLIC_API_URL=https://api.example.com
@@ -849,20 +849,21 @@ STRIPE_SECRET_KEY=sk_live_abc123
 ```typescript
 // src/routes/blog/+page.ts
 export const prerender = true; // Prerender at build time
-export const ssr = true;        // Server-side render (default)
-export const csr = true;        // Client-side render (default)
+export const ssr = true; // Server-side render (default)
+export const csr = true; // Client-side render (default)
 ```
 
 **Prerender entire site**:
+
 ```javascript
 // svelte.config.js
 export default {
-  kit: {
-    prerender: {
-      entries: ['*'],
-      crawl: true
-    }
-  }
+	kit: {
+		prerender: {
+			entries: ['*'],
+			crawl: true
+		}
+	}
 };
 ```
 
@@ -873,20 +874,20 @@ export default {
 import type { EntryGenerator, PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
-  const post = await db.posts.findUnique({
-    where: { slug: params.slug }
-  });
+	const post = await db.posts.findUnique({
+		where: { slug: params.slug }
+	});
 
-  return { post };
+	return { post };
 };
 
 // Generate static pages for all posts at build time
 export const entries: EntryGenerator = async () => {
-  const posts = await db.posts.findMany();
+	const posts = await db.posts.findMany();
 
-  return posts.map(post => ({
-    slug: post.slug
-  }));
+	return posts.map((post) => ({
+		slug: post.slug
+	}));
 };
 
 export const prerender = true;
@@ -905,13 +906,13 @@ npm install -D @sveltejs/adapter-vercel
 import adapter from '@sveltejs/adapter-vercel';
 
 export default {
-  kit: {
-    adapter: adapter({
-      runtime: 'edge', // or 'nodejs'
-      regions: ['iad1', 'sfo1'],
-      split: false
-    })
-  }
+	kit: {
+		adapter: adapter({
+			runtime: 'edge', // or 'nodejs'
+			regions: ['iad1', 'sfo1'],
+			split: false
+		})
+	}
 };
 ```
 
@@ -926,12 +927,12 @@ npm install -D @sveltejs/adapter-netlify
 import adapter from '@sveltejs/adapter-netlify';
 
 export default {
-  kit: {
-    adapter: adapter({
-      edge: false, // true for edge functions
-      split: false
-    })
-  }
+	kit: {
+		adapter: adapter({
+			edge: false, // true for edge functions
+			split: false
+		})
+	}
 };
 ```
 
@@ -946,17 +947,18 @@ npm install -D @sveltejs/adapter-node
 import adapter from '@sveltejs/adapter-node';
 
 export default {
-  kit: {
-    adapter: adapter({
-      out: 'build',
-      precompress: true,
-      envPrefix: 'MY_'
-    })
-  }
+	kit: {
+		adapter: adapter({
+			out: 'build',
+			precompress: true,
+			envPrefix: 'MY_'
+		})
+	}
 };
 ```
 
 **Run production server**:
+
 ```bash
 npm run build
 node build
@@ -973,14 +975,14 @@ npm install -D @sveltejs/adapter-static
 import adapter from '@sveltejs/adapter-static';
 
 export default {
-  kit: {
-    adapter: adapter({
-      pages: 'build',
-      assets: 'build',
-      fallback: '200.html', // SPA fallback
-      precompress: false
-    })
-  }
+	kit: {
+		adapter: adapter({
+			pages: 'build',
+			assets: 'build',
+			fallback: '200.html', // SPA fallback
+			precompress: false
+		})
+	}
 };
 ```
 
@@ -995,14 +997,14 @@ npm install -D @sveltejs/adapter-cloudflare
 import adapter from '@sveltejs/adapter-cloudflare';
 
 export default {
-  kit: {
-    adapter: adapter({
-      routes: {
-        include: ['/*'],
-        exclude: ['<build>']
-      }
-    })
-  }
+	kit: {
+		adapter: adapter({
+			routes: {
+				include: ['/*'],
+				exclude: ['<build>']
+			}
+		})
+	}
 };
 ```
 
@@ -1016,10 +1018,10 @@ import { describe, it, expect } from 'vitest';
 import { formatDate } from './utils';
 
 describe('formatDate', () => {
-  it('formats date correctly', () => {
-    const date = new Date('2024-01-15');
-    expect(formatDate(date)).toBe('January 15, 2024');
-  });
+	it('formats date correctly', () => {
+		const date = new Date('2024-01-15');
+		expect(formatDate(date)).toBe('January 15, 2024');
+	});
 });
 ```
 
@@ -1032,25 +1034,25 @@ import { describe, it, expect, vi } from 'vitest';
 import Button from './Button.svelte';
 
 describe('Button', () => {
-  it('renders with text', () => {
-    const { getByText } = render(Button, {
-      props: { text: 'Click me' }
-    });
+	it('renders with text', () => {
+		const { getByText } = render(Button, {
+			props: { text: 'Click me' }
+		});
 
-    expect(getByText('Click me')).toBeInTheDocument();
-  });
+		expect(getByText('Click me')).toBeInTheDocument();
+	});
 
-  it('calls onclick handler', async () => {
-    const handleClick = vi.fn();
-    const { getByText } = render(Button, {
-      props: { text: 'Click me', onclick: handleClick }
-    });
+	it('calls onclick handler', async () => {
+		const handleClick = vi.fn();
+		const { getByText } = render(Button, {
+			props: { text: 'Click me', onclick: handleClick }
+		});
 
-    const button = getByText('Click me');
-    await fireEvent.click(button);
+		const button = getByText('Click me');
+		await fireEvent.click(button);
 
-    expect(handleClick).toHaveBeenCalledOnce();
-  });
+		expect(handleClick).toHaveBeenCalledOnce();
+	});
 });
 ```
 
@@ -1061,22 +1063,22 @@ describe('Button', () => {
 import { expect, test } from '@playwright/test';
 
 test('user can log in', async ({ page }) => {
-  await page.goto('/login');
+	await page.goto('/login');
 
-  await page.fill('input[name="email"]', 'user@example.com');
-  await page.fill('input[name="password"]', 'password123');
-  await page.click('button[type="submit"]');
+	await page.fill('input[name="email"]', 'user@example.com');
+	await page.fill('input[name="password"]', 'password123');
+	await page.click('button[type="submit"]');
 
-  await expect(page).toHaveURL('/dashboard');
-  await expect(page.locator('h1')).toContainText('Dashboard');
+	await expect(page).toHaveURL('/dashboard');
+	await expect(page.locator('h1')).toContainText('Dashboard');
 });
 
 test('login validation works', async ({ page }) => {
-  await page.goto('/login');
+	await page.goto('/login');
 
-  await page.click('button[type="submit"]');
+	await page.click('button[type="submit"]');
 
-  await expect(page.locator('.error')).toContainText('Please fill in all fields');
+	await expect(page.locator('.error')).toContainText('Please fill in all fields');
 });
 ```
 
@@ -1088,23 +1090,25 @@ import { describe, it, expect, vi } from 'vitest';
 import { load } from './+page.server';
 
 vi.mock('$lib/server/database', () => ({
-  db: {
-    posts: {
-      findMany: vi.fn(() => Promise.resolve([
-        { id: '1', title: 'Post 1' },
-        { id: '2', title: 'Post 2' }
-      ]))
-    }
-  }
+	db: {
+		posts: {
+			findMany: vi.fn(() =>
+				Promise.resolve([
+					{ id: '1', title: 'Post 1' },
+					{ id: '2', title: 'Post 2' }
+				])
+			)
+		}
+	}
 }));
 
 describe('blog page load', () => {
-  it('loads posts', async () => {
-    const result = await load({ params: {}, url: new URL('http://localhost') } as any);
+	it('loads posts', async () => {
+		const result = await load({ params: {}, url: new URL('http://localhost') } as any);
 
-    expect(result.posts).toHaveLength(2);
-    expect(result.posts[0].title).toBe('Post 1');
-  });
+		expect(result.posts).toHaveLength(2);
+		expect(result.posts[0].title).toBe('Post 1');
+	});
 });
 ```
 
@@ -1117,18 +1121,18 @@ describe('blog page load', () => {
 import type { LayoutServerLoad } from './$types';
 
 export const load: LayoutServerLoad = async ({ locals }) => {
-  // Load data in parallel
-  const [user, notifications, settings] = await Promise.all([
-    db.users.findUnique({ where: { id: locals.user.id } }),
-    db.notifications.findMany({ where: { userId: locals.user.id } }),
-    db.settings.findUnique({ where: { userId: locals.user.id } })
-  ]);
+	// Load data in parallel
+	const [user, notifications, settings] = await Promise.all([
+		db.users.findUnique({ where: { id: locals.user.id } }),
+		db.notifications.findMany({ where: { userId: locals.user.id } }),
+		db.settings.findUnique({ where: { userId: locals.user.id } })
+	]);
 
-  return {
-    user,
-    notifications,
-    settings
-  };
+	return {
+		user,
+		notifications,
+		settings
+	};
 };
 ```
 
@@ -1140,28 +1144,28 @@ import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params, parent }) => {
-  // Wait for parent layout data
-  const { user } = await parent();
+	// Wait for parent layout data
+	const { user } = await parent();
 
-  const profile = await db.profiles.findUnique({
-    where: { username: params.username }
-  });
+	const profile = await db.profiles.findUnique({
+		where: { username: params.username }
+	});
 
-  if (!profile) {
-    throw error(404, 'Profile not found');
-  }
+	if (!profile) {
+		throw error(404, 'Profile not found');
+	}
 
-  // Load posts only if profile exists
-  const posts = await db.posts.findMany({
-    where: { authorId: profile.id },
-    orderBy: { createdAt: 'desc' }
-  });
+	// Load posts only if profile exists
+	const posts = await db.posts.findMany({
+		where: { authorId: profile.id },
+		orderBy: { createdAt: 'desc' }
+	});
 
-  return {
-    profile,
-    posts,
-    isOwnProfile: user?.id === profile.id
-  };
+	return {
+		profile,
+		posts,
+		isOwnProfile: user?.id === profile.id
+	};
 };
 ```
 
@@ -1169,23 +1173,23 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 
 ```svelte
 <script lang="ts">
-  import { invalidate, invalidateAll } from '$app/navigation';
-  import { page } from '$app/stores';
+	import { invalidate, invalidateAll } from '$app/navigation';
+	import { page } from '$app/stores';
 
-  async function refresh() {
-    // Reload current page data
-    await invalidateAll();
-  }
+	async function refresh() {
+		// Reload current page data
+		await invalidateAll();
+	}
 
-  async function refreshPosts() {
-    // Reload specific data
-    await invalidate('/api/posts');
-  }
+	async function refreshPosts() {
+		// Reload specific data
+		await invalidate('/api/posts');
+	}
 
-  async function refreshUser() {
-    // Reload data depending on specific URL
-    await invalidate(url => url.pathname.startsWith('/api/user'));
-  }
+	async function refreshUser() {
+		// Reload data depending on specific URL
+		await invalidate((url) => url.pathname.startsWith('/api/user'));
+	}
 </script>
 
 <button onclick={refresh}>Refresh All</button>
@@ -1196,8 +1200,8 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 
 ```typescript
 // src/routes/admin/+page.ts
-export const ssr = false;      // Disable server-side rendering
-export const csr = true;       // Enable client-side rendering
+export const ssr = false; // Disable server-side rendering
+export const csr = true; // Enable client-side rendering
 export const prerender = false; // Disable prerendering
 export const trailingSlash = 'always'; // /page/ instead of /page
 ```
@@ -1221,17 +1225,19 @@ vercel --prod
 ```
 
 **vercel.json**:
+
 ```json
 {
-  "buildCommand": "npm run build",
-  "devCommand": "npm run dev",
-  "framework": "sveltekit"
+	"buildCommand": "npm run build",
+	"devCommand": "npm run dev",
+	"framework": "sveltekit"
 }
 ```
 
 ### Docker Deployment (Node Adapter)
 
 **Dockerfile**:
+
 ```dockerfile
 FROM node:20-alpine AS builder
 
@@ -1270,6 +1276,7 @@ npm run build
 ```
 
 **netlify.toml**:
+
 ```toml
 [build]
   command = "npm run build"
@@ -1301,31 +1308,31 @@ npm run build
 ```typescript
 // src/routes/login/+page.server.ts
 export const actions = {
-  default: async ({ request, cookies }) => {
-    const data = await request.formData();
-    const user = await authenticate(data.get('email'), data.get('password'));
+	default: async ({ request, cookies }) => {
+		const data = await request.formData();
+		const user = await authenticate(data.get('email'), data.get('password'));
 
-    cookies.set('session', user.sessionToken, {
-      path: '/',
-      httpOnly: true,
-      sameSite: 'strict',
-      secure: true,
-      maxAge: 60 * 60 * 24 * 7
-    });
+		cookies.set('session', user.sessionToken, {
+			path: '/',
+			httpOnly: true,
+			sameSite: 'strict',
+			secure: true,
+			maxAge: 60 * 60 * 24 * 7
+		});
 
-    throw redirect(303, '/dashboard');
-  }
+		throw redirect(303, '/dashboard');
+	}
 };
 ```
 
 ```typescript
 // src/hooks.server.ts
 export const handle: Handle = async ({ event, resolve }) => {
-  const sessionToken = event.cookies.get('session');
-  if (sessionToken) {
-    event.locals.user = await getUserFromSession(sessionToken);
-  }
-  return resolve(event);
+	const sessionToken = event.cookies.get('session');
+	if (sessionToken) {
+		event.locals.user = await getUserFromSession(sessionToken);
+	}
+	return resolve(event);
 };
 ```
 
@@ -1337,13 +1344,13 @@ import { redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
-  if (!locals.user) {
-    throw redirect(303, '/login');
-  }
+	if (!locals.user) {
+		throw redirect(303, '/login');
+	}
 
-  return {
-    user: locals.user
-  };
+	return {
+		user: locals.user
+	};
 };
 ```
 
@@ -1355,32 +1362,34 @@ import { fail } from '@sveltejs/kit';
 import { z } from 'zod';
 import type { Actions } from './$types';
 
-const schema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8),
-  confirmPassword: z.string()
-}).refine(data => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ['confirmPassword']
-});
+const schema = z
+	.object({
+		email: z.string().email(),
+		password: z.string().min(8),
+		confirmPassword: z.string()
+	})
+	.refine((data) => data.password === data.confirmPassword, {
+		message: "Passwords don't match",
+		path: ['confirmPassword']
+	});
 
 export const actions = {
-  default: async ({ request }) => {
-    const data = await request.formData();
-    const formData = Object.fromEntries(data);
+	default: async ({ request }) => {
+		const data = await request.formData();
+		const formData = Object.fromEntries(data);
 
-    const result = schema.safeParse(formData);
+		const result = schema.safeParse(formData);
 
-    if (!result.success) {
-      return fail(400, {
-        errors: result.error.flatten().fieldErrors,
-        data: formData
-      });
-    }
+		if (!result.success) {
+			return fail(400, {
+				errors: result.error.flatten().fieldErrors,
+				data: formData
+			});
+		}
 
-    await createUser(result.data);
-    throw redirect(303, '/login');
-  }
+		await createUser(result.data);
+		throw redirect(303, '/login');
+	}
 } satisfies Actions;
 ```
 

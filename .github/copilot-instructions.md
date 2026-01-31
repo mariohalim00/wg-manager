@@ -29,6 +29,7 @@ When generating code:
 **See**: [ai-context/agents/AGENTS.md](ai-context/agents/AGENTS.md) for universal rules
 
 **Summary**:
+
 - **Propose before acting** on significant changes
 - **Type safety always** (TypeScript frontend, Go backend)
 - **Cross-stack awareness** (API changes affect both sides)
@@ -51,6 +52,7 @@ When generating code:
 **See**: [ai-context/skills/go.skills.md](ai-context/skills/go.skills.md)
 
 **Quick facts**:
+
 - Module: `wg-manager/backend`, Go 1.25.6
 - Web: Standard library `net/http` (no framework)
 - Logging: `log/slog` (JSON structured)
@@ -58,6 +60,7 @@ When generating code:
 - WireGuard: `golang.zx2c4.com/wireguard/wgctrl` library
 
 **Handler pattern**:
+
 ```go
 func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
     // 1. Validate input
@@ -76,6 +79,7 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 **See**: [ai-context/skills/svelte.skills.md](ai-context/skills/svelte.skills.md)
 
 **Quick facts**:
+
 - SvelteKit 2.x, Svelte 5.x, TypeScript 5.x
 - Routing: File-based (`src/routes/`)
 - State: Svelte stores (`$store` syntax)
@@ -83,15 +87,16 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 - Build: Vite 7.x
 
 **Component pattern**:
+
 ```svelte
 <script lang="ts">
-    import type { Peer } from '$lib/types';
-    export let peer: Peer;
-    export let onDelete: (id: string) => void = () => {};
+	import type { Peer } from '$lib/types';
+	export let peer: Peer;
+	export let onDelete: (id: string) => void = () => {};
 </script>
 
 <div class="card bg-base-100">
-    <!-- Use TailwindCSS + DaisyUI -->
+	<!-- Use TailwindCSS + DaisyUI -->
 </div>
 ```
 
@@ -104,12 +109,14 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 **See**: [ai-context/knowledge/architecture.md](ai-context/knowledge/architecture.md)
 
 **Summary**:
+
 - Frontend (SvelteKit) → Backend API (Go) → WireGuard Kernel
 - Hybrid persistence: Metadata (peers.json) + Real-time state (kernel)
 - REST API: 4 endpoints (List, Add, Remove, Stats)
 - Data flow: Frontend store → HTTP → Handler → Service → WireGuard/Storage
 
 **Integration points**:
+
 - API contract: `backend/API.md` (source of truth)
 - Types: Keep `src/lib/types.ts` in sync with Go structs
 - CORS: Backend middleware allows frontend origin
@@ -119,6 +126,7 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 **See**: [ai-context/knowledge/domains.md](ai-context/knowledge/domains.md)
 
 **Critical terms**:
+
 - **Peer**: WireGuard client (identified by PublicKey, not name)
 - **PublicKey**: Immutable identifier (base64, ~44 chars)
 - **AllowedIPs**: CIDR notation (e.g., `10.0.0.2/32`)
@@ -131,6 +139,7 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 **See**: [ai-context/knowledge/decisions.md](ai-context/knowledge/decisions.md)
 
 **Key decisions**:
+
 - D002: No web framework (standard library `net/http`)
 - D003: Mock service for graceful fallback
 - D006: Frontend UX/performance over test coverage
@@ -143,6 +152,7 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 **Current phase**: Frontend development (branch: `feat/frontend`)
 
 **Recent work**:
+
 - Constitution established (v1.0.0)
 - AI context system created
 - Frontend components implemented (PeerTable, PeerModal, StatusBadge)
@@ -152,11 +162,13 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 **See**: [ai-context/knowledge/chatmem.md](ai-context/knowledge/chatmem.md)
 
 **Active work**:
+
 - Frontend integration (API calls in stores)
 - Performance optimization (bundle size, Lighthouse)
 - Deployment preparation
 
 **Critical invariants**:
+
 - PublicKey is immutable
 - AllowedIPs must be valid CIDR
 - TDD mandatory for backend
@@ -167,6 +179,7 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 ### Task: Add New API Endpoint
 
 **Process**:
+
 1. **Document first**: Add to `backend/API.md` (endpoint, request/response, status codes)
 2. **Write tests**: Create test in `backend/cmd/server/main_test.go` (TDD)
 3. **Implement handler**: Add method to `PeerHandler` in `backend/internal/handlers/handlers.go`
@@ -177,6 +190,7 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 ### Task: Add New Svelte Component
 
 **Process**:
+
 1. **Create file**: `src/lib/components/[Name].svelte`
 2. **Define props**: `export let prop: Type;` (TypeScript types required)
 3. **Use TailwindCSS + DaisyUI**: Style with utility classes
@@ -186,6 +200,7 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 ### Task: Modify Backend Handler
 
 **Process**:
+
 1. **Read existing tests**: Understand expected behavior
 2. **Add new test**: Write failing test for new behavior (TDD)
 3. **Modify handler**: Update logic in `handlers/handlers.go`
@@ -195,6 +210,7 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 ### Task: Integrate New API in Frontend
 
 **Process**:
+
 1. **Update types**: Add/modify interface in `src/lib/types.ts`
 2. **Add store function**: Create API call in `src/lib/stores/[name].ts`
 3. **Use in component**: Subscribe with `$store` or call store function
@@ -204,6 +220,7 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 ### Task: Optimize Frontend Performance
 
 **Process**:
+
 1. **Baseline**: Run `npm run build`, note bundle sizes
 2. **Identify heavy imports**: Check build output, use visualizer
 3. **Optimize**: Lazy-load routes, remove unused deps, tree-shake
@@ -216,8 +233,8 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 
 ```go
 if err != nil {
-    slog.Error("operation failed", 
-        "error", err, 
+    slog.Error("operation failed",
+        "error", err,
         "context_key", contextValue)
     http.Error(w, "User-facing message", http.StatusInternalServerError)
     return
@@ -241,9 +258,9 @@ import { writable } from 'svelte/store';
 export const data = writable<Type[]>([]);
 
 export async function loadData() {
-    const response = await fetch('/api/endpoint');
-    const json = await response.json();
-    data.set(json);
+	const response = await fetch('/api/endpoint');
+	const json = await response.json();
+	data.set(json);
 }
 ```
 
@@ -251,13 +268,13 @@ export async function loadData() {
 
 ```svelte
 <script lang="ts">
-    import type { Peer } from '$lib/types';
-    export let peer: Peer;
-    export let onClick: () => void = () => {};
+	import type { Peer } from '$lib/types';
+	export let peer: Peer;
+	export let onClick: () => void = () => {};
 </script>
 
 <button class="btn btn-primary" on:click={onClick}>
-    {peer.name}
+	{peer.name}
 </button>
 ```
 
@@ -274,6 +291,7 @@ export async function loadData() {
 This project uses **Spec-Driven Development** via SpecKit.
 
 **Workflow**:
+
 1. Feature specification: `/specs/[###-feature]/spec.md`
 2. Implementation plan: `/speckit.plan` command generates `plan.md`
 3. Task decomposition: `/speckit.tasks` command generates `tasks.md`
@@ -289,7 +307,8 @@ This project uses **Spec-Driven Development** via SpecKit.
 
 **Symptom**: "Failed to initialize WireGuard service"
 
-**Solution**: 
+**Solution**:
+
 - Check if WireGuard kernel module loaded: `lsmod | grep wireguard`
 - Run with sudo: `sudo go run cmd/server/main.go`
 - Or accept mock service (warning logged)
@@ -299,6 +318,7 @@ This project uses **Spec-Driven Development** via SpecKit.
 **Symptom**: Browser console shows CORS policy error
 
 **Solution**:
+
 - Verify backend CORS middleware enabled
 - Set `CORS_ALLOWED_ORIGINS=http://localhost:5173`
 - Or use reverse proxy (serve frontend + backend from same origin)
@@ -308,6 +328,7 @@ This project uses **Spec-Driven Development** via SpecKit.
 **Symptom**: TypeScript errors, unexpected null values
 
 **Solution**:
+
 - Verify `src/lib/types.ts` matches backend response schemas
 - Check `backend/API.md` for correct response format
 - Test API in browser DevTools Network tab
@@ -317,6 +338,7 @@ This project uses **Spec-Driven Development** via SpecKit.
 **Symptom**: Build output shows >200KB bundle
 
 **Solution**:
+
 - Check for large imports (use `rollup-plugin-visualizer`)
 - Lazy-load heavy components
 - Remove unused dependencies
@@ -344,7 +366,6 @@ This project uses **Spec-Driven Development** via SpecKit.
 ---
 
 **Remember**: Backend = TDD mandatory | Frontend = UX-first, no tests | API = documented contracts | Performance = strict budgets
-
 
 You are able to use the Svelte MCP server, where you have access to comprehensive Svelte 5 and SvelteKit documentation. Here's how to use the available tools effectively:
 

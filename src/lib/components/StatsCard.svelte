@@ -32,10 +32,12 @@
 	};
 </script>
 
-<div class="glass-card p-6 hover:scale-105 transition-transform duration-200">
+<div class="glass-card p-6 transition-transform duration-200 hover:scale-105">
 	<!-- Icon -->
-	<div class="flex items-start justify-between mb-4">
-		<div class="w-12 h-12 rounded-lg {colorClasses[color]} flex items-center justify-center text-2xl">
+	<div class="mb-4 flex items-start justify-between">
+		<div
+			class="h-12 w-12 rounded-lg {colorClasses[color]} flex items-center justify-center text-2xl"
+		>
 			{icon}
 		</div>
 		{#if trend}
@@ -45,8 +47,8 @@
 
 	<!-- Content -->
 	<div>
-		<p class="text-sm text-gray-400 mb-1">{title}</p>
-		<p class="text-3xl font-bold mb-1">{value}</p>
+		<p class="mb-1 text-sm text-gray-400">{title}</p>
+		<p class="mb-1 text-3xl font-bold">{value}</p>
 		{#if subtitle}
 			<p class="text-xs text-gray-500">{subtitle}</p>
 		{/if}

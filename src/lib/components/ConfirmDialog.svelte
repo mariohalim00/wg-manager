@@ -29,19 +29,16 @@
 
 <!-- Modal overlay -->
 <div
-	class="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-fade-in"
+	class="animate-fade-in fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
 	onclick={handleOverlayClick}
 	role="dialog"
 	aria-modal="true"
 	aria-labelledby="confirm-dialog-title"
 >
 	<!-- Modal content -->
-	<div
-		class="glass-card p-6 w-full max-w-md animate-slide-up"
-		onclick={(e) => e.stopPropagation()}
-	>
+	<div class="glass-card animate-slide-up w-full max-w-md p-6" onclick={(e) => e.stopPropagation()}>
 		<!-- Header -->
-		<div class="flex items-center gap-3 mb-4">
+		<div class="mb-4 flex items-center gap-3">
 			{#if danger}
 				<span class="text-3xl">⚠️</span>
 			{:else}
@@ -51,10 +48,10 @@
 		</div>
 
 		<!-- Message -->
-		<p class="text-gray-300 mb-6">{message}</p>
+		<p class="mb-6 text-gray-300">{message}</p>
 
 		<!-- Actions -->
-		<div class="flex gap-3 justify-end">
+		<div class="flex justify-end gap-3">
 			<button onclick={onCancel} class="glass-btn-secondary px-6 py-2">{cancelText}</button>
 			<button
 				onclick={onConfirm}

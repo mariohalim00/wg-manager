@@ -32,7 +32,7 @@
 	});
 
 	// Handle download config (for existing peers - not yet supported by API)
-	function handleDownloadConfig(peer: Peer) {
+	function handleDownloadConfig() {
 		addNotification({
 			type: 'warning',
 			message: `Config download for existing peers not yet supported. Please save the config when adding a new peer.`,
@@ -88,11 +88,11 @@
 	<title>Peers - WireGuard Manager</title>
 </svelte:head>
 
-<div class="max-w-7xl mx-auto">
+<div class="mx-auto max-w-7xl">
 	<!-- Page header -->
-	<div class="flex items-center justify-between mb-8">
+	<div class="mb-8 flex items-center justify-between">
 		<div>
-			<h1 class="text-3xl font-bold mb-2">WireGuard Peers</h1>
+			<h1 class="mb-2 text-3xl font-bold">WireGuard Peers</h1>
 			<p class="text-gray-400">Manage VPN clients and connections</p>
 		</div>
 		<button onclick={handleAddPeer} class="glass-btn-primary px-6 py-3 text-lg font-semibold">
@@ -137,5 +137,3 @@
 		onCancel={cancelRemove}
 	/>
 {/if}
-
-

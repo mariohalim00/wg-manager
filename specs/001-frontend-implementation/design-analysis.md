@@ -36,7 +36,9 @@ Based on the provided HTML design files in `specs/001-frontend-implementation/de
 ### Design Files Breakdown
 
 #### 1. **vpn_management_dashboard_1/code.html** (Main Dashboard)
+
 **Content**:
+
 - **Sidebar navigation** (left side, 64px width)
   - Logo + version badge
   - Navigation links: Dashboard, Peers, Settings, Logs
@@ -53,6 +55,7 @@ Based on the provided HTML design files in `specs/001-frontend-implementation/de
     - Actions (hover-reveal: download, QR, delete icons)
 
 **Gaps vs. Current Spec**:
+
 - ✅ Peer list: Covered in spec (FR-001, User Story 1)
 - ✅ Status badges: Covered (FR-002)
 - ✅ Transfer stats: Covered (FR-009)
@@ -62,7 +65,9 @@ Based on the provided HTML design files in `specs/001-frontend-implementation/de
 - ❌ **Usage limit widget**: No API endpoint or spec requirement for quota tracking
 
 #### 2. **create_new_peer/code.html** (Add Peer Modal/Page)
+
 **Content**:
+
 - Full-page centered form with glassmorphism card
 - Top navigation bar (alternative layout, not sidebar)
 - Form fields:
@@ -73,13 +78,16 @@ Based on the provided HTML design files in `specs/001-frontend-implementation/de
 - Accent glow effects on focus
 
 **Gaps vs. Current Spec**:
+
 - ✅ Add peer form: Covered (FR-003, FR-004, User Story 2)
 - ❌ **Endpoint field**: Not in current API `/peers POST` request (API.md shows only name, publicKey, allowedIPs)
 - ❌ **Pre-shared Key option**: Not in API
 - ✅ Validation and error handling: Covered (FR-004, FR-012)
 
 #### 3. **peer_connection_details_1/code.html** (QR Code Modal)
+
 **Content**:
+
 - Full-screen overlay with backdrop blur
 - Centered glassmorphism modal
 - Peer name + online status indicator
@@ -88,12 +96,15 @@ Based on the provided HTML design files in `specs/001-frontend-implementation/de
 - Close button (top-right)
 
 **Gaps vs. Current Spec**:
+
 - ✅ QR code display: Covered (FR-006, User Story 5)
 - ✅ Modal overlay: Covered implicitly
 - ✅ Peer details: Covered (name, status)
 
-#### 4. **interface_settings_&_logs/code.html** (Settings Page)
+#### 4. **interface*settings*&\_logs/code.html** (Settings Page)
+
 **Content**:
+
 - Top navigation bar
 - Breadcrumbs: System / Interface Configuration
 - Page heading: "wg0 Interface" with Active badge
@@ -108,19 +119,23 @@ Based on the provided HTML design files in `specs/001-frontend-implementation/de
   - Server Private Key (hidden, reveal toggle)
 
 **Gaps vs. Current Spec & API**:
+
 - ❌ **NO API ENDPOINT** for interface settings (GET/PUT /interface or /settings)
 - ❌ **NO API ENDPOINT** for service control (POST /interface/restart)
 - ❌ Not in spec: Interface configuration is entirely missing from functional requirements
 - ❌ **Server keys display**: API.md shows `WG_SERVER_PUBKEY` in config, but no GET endpoint to fetch dynamically
 
-#### 5. **Mobile Views** (mobile_*.html files)
+#### 5. **Mobile Views** (mobile\_\*.html files)
+
 **Content**:
+
 - Responsive layouts for peer creation, dashboard, QR display
 - Bottom navigation instead of sidebar
 - Stacked card layouts
 - Touch-optimized buttons
 
 **Gaps vs. Current Spec**:
+
 - ⚠️ Spec assumption #5 states "Desktop-first design; mobile responsiveness is secondary"
 - Mobile views suggest more investment in responsive design than spec indicates
 
@@ -128,34 +143,34 @@ Based on the provided HTML design files in `specs/001-frontend-implementation/de
 
 ### Existing API Endpoints (from backend/API.md)
 
-| Endpoint | Method | Purpose | Design Usage |
-|----------|--------|---------|--------------|
-| `/peers` | GET | List all peers | ✅ Main dashboard table |
-| `/peers` | POST | Add new peer | ✅ Create peer form |
-| `/peers/{id}` | DELETE | Remove peer | ✅ Delete action in table |
-| `/stats` | GET | Interface statistics | ✅ Stats page |
+| Endpoint      | Method | Purpose              | Design Usage              |
+| ------------- | ------ | -------------------- | ------------------------- |
+| `/peers`      | GET    | List all peers       | ✅ Main dashboard table   |
+| `/peers`      | POST   | Add new peer         | ✅ Create peer form       |
+| `/peers/{id}` | DELETE | Remove peer          | ✅ Delete action in table |
+| `/stats`      | GET    | Interface statistics | ✅ Stats page             |
 
 ### Missing API Endpoints (Required by Design)
 
-| Feature (Design) | Required Endpoint | Priority | Notes |
-|------------------|-------------------|----------|-------|
-| **Interface Settings** | `GET /interface` or `/config` | P3 (Future) | Fetch listen port, MTU, addresses, server keys |
-| **Interface Settings** | `PUT /interface` or `/config` | P3 (Future) | Update listen port, MTU, addresses |
-| **Service Control** | `POST /interface/restart` or `/service/restart` | P3 (Future) | Restart WireGuard service |
-| **Service Control** | `POST /interface/toggle` or `/service/toggle` | P3 (Future) | Start/stop WireGuard service |
-| **Usage Quota** | `GET /usage` or part of `/stats` | P3 (Future) | Current usage vs. limit (sidebar widget) |
-| **Server Keys** | `GET /keys` or part of `/stats` | P2 (Medium) | Fetch server public key dynamically for display |
+| Feature (Design)       | Required Endpoint                               | Priority    | Notes                                           |
+| ---------------------- | ----------------------------------------------- | ----------- | ----------------------------------------------- |
+| **Interface Settings** | `GET /interface` or `/config`                   | P3 (Future) | Fetch listen port, MTU, addresses, server keys  |
+| **Interface Settings** | `PUT /interface` or `/config`                   | P3 (Future) | Update listen port, MTU, addresses              |
+| **Service Control**    | `POST /interface/restart` or `/service/restart` | P3 (Future) | Restart WireGuard service                       |
+| **Service Control**    | `POST /interface/toggle` or `/service/toggle`   | P3 (Future) | Start/stop WireGuard service                    |
+| **Usage Quota**        | `GET /usage` or part of `/stats`                | P3 (Future) | Current usage vs. limit (sidebar widget)        |
+| **Server Keys**        | `GET /keys` or part of `/stats`                 | P2 (Medium) | Fetch server public key dynamically for display |
 
 ### Data Gaps in Existing API
 
-| API Response | Current Schema | Design Requirement | Gap? |
-|--------------|----------------|-------------------|------|
-| `POST /peers` response | Includes `config` (string) and `privateKey` | ✅ Sufficient for QR + download | No |
-| `GET /peers` response | Includes `receiveBytes`, `transmitBytes` | ✅ Sufficient for transfer stats | No |
-| `GET /peers` response | Includes `endpoint`, `lastHandshake` | ✅ Sufficient for status + display | No |
-| `GET /stats` response | `interfaceName`, `peerCount`, `totalRx`, `totalTx` | ❌ Missing server public key | Yes (P2) |
-| `GET /stats` response | Basic totals only | ❌ Missing per-peer RX/TX history for charts | Yes (P3) |
-| **NEW**: Server metadata | N/A | Design shows server public key, subnet, version | Yes (P2-P3) |
+| API Response             | Current Schema                                     | Design Requirement                              | Gap?        |
+| ------------------------ | -------------------------------------------------- | ----------------------------------------------- | ----------- |
+| `POST /peers` response   | Includes `config` (string) and `privateKey`        | ✅ Sufficient for QR + download                 | No          |
+| `GET /peers` response    | Includes `receiveBytes`, `transmitBytes`           | ✅ Sufficient for transfer stats                | No          |
+| `GET /peers` response    | Includes `endpoint`, `lastHandshake`               | ✅ Sufficient for status + display              | No          |
+| `GET /stats` response    | `interfaceName`, `peerCount`, `totalRx`, `totalTx` | ❌ Missing server public key                    | Yes (P2)    |
+| `GET /stats` response    | Basic totals only                                  | ❌ Missing per-peer RX/TX history for charts    | Yes (P3)    |
+| **NEW**: Server metadata | N/A                                                | Design shows server public key, subnet, version | Yes (P2-P3) |
 
 ## Recommendations
 
@@ -170,6 +185,7 @@ Based on the provided HTML design files in `specs/001-frontend-implementation/de
 ### Future Feature Specifications (Deferred)
 
 Create separate specs for:
+
 1. **Interface Configuration Management** (P3):
    - API endpoints: GET/PUT `/interface` or `/config`
    - Settings page UI for listen port, MTU, addresses
@@ -189,6 +205,7 @@ Create separate specs for:
 ### Design Implementation Notes
 
 **For developers**:
+
 - Use TailwindCSS classes matching design: `bg-white/5`, `backdrop-blur-lg`, `border-white/10`
 - Material Symbols Outlined icons (already in design CDN links)
 - Pulse animation keyframes for online status badges
@@ -232,12 +249,14 @@ These features are **visually designed** but cannot be implemented without new b
 ## Conclusion
 
 **Current spec covers 80% of design functionality.** The main gaps are:
+
 - **Settings page** (no API endpoints)
 - **Service control** (no API endpoints)
 - **Usage quota** (no API endpoints)
 - **Server public key display** (minor API enhancement needed)
 
 **Recommended next steps**:
+
 1. Run `/speckit.clarify` to refine navigation structure, visual design requirements, and mobile priority
 2. Update spec with glassmorphism design system details (FR-019, FR-020)
 3. Add Interface Settings, Service Control, and Usage Quota to Out of Scope

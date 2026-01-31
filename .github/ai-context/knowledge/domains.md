@@ -11,6 +11,7 @@ This document clarifies domain-specific terms and concepts used in this codebase
 In WireGuard terminology, a **peer** is a client or remote endpoint connected to the VPN.
 
 **Key properties**:
+
 - **PublicKey** (immutable identifier): The peer's WireGuard public key (base64 string, ~44 chars)
   - Unique identifier in the system
   - Used in API URLs: `DELETE /peers/{publicKey}`
@@ -28,6 +29,7 @@ In WireGuard terminology, a **peer** is a client or remote endpoint connected to
 - **RX/TX bytes**: Real-time data transfer statistics from kernel
 
 **In this system**:
+
 - Stored in WireGuard kernel interface
 - Metadata (names) stored in `peers.json` for user-friendly display
 - Status (online/offline) inferred from LastHandshake time
@@ -37,6 +39,7 @@ In WireGuard terminology, a **peer** is a client or remote endpoint connected to
 A **WireGuard interface** is a virtual network device on the server.
 
 **Key properties**:
+
 - **Name**: Interface name in Linux (default: `wg0`)
   - Configured via `WG_INTERFACE_NAME` env var
   - May differ on different systems
@@ -45,6 +48,7 @@ A **WireGuard interface** is a virtual network device on the server.
 - **ListenPort**: UDP port (usually 51820)
 
 **In this system**:
+
 - One interface configured per server
 - Peers connect TO this interface
 - Interface is managed via kernel module + `wgctrl` library
@@ -54,11 +58,13 @@ A **WireGuard interface** is a virtual network device on the server.
 A **handshake** is a WireGuard protocol exchange that establishes a secure channel.
 
 **When it happens**:
+
 - Client initiates connection
 - Server responds
 - Both sides agree on encryption keys
 
 **In this system**:
+
 - `LastHandshake` timestamp indicates peer is active
 - If LastHandshake > some threshold (e.g., 2 minutes), peer is considered "offline"
 - Status badge logic depends on this
@@ -68,6 +74,7 @@ A **handshake** is a WireGuard protocol exchange that establishes a secure chann
 **CIDR** = Classless Inter-Domain Routing (IP + prefix length)
 
 **Format**: `IP/PREFIX`
+
 - `10.0.0.2/32` = Single IP (host, /32 means all 32 bits are network)
 - `10.0.0.0/24` = Network (first 24 bits fixed, last 8 bits variable)
   - Includes `10.0.0.1` through `10.0.0.255`
@@ -76,6 +83,7 @@ A **handshake** is a WireGuard protocol exchange that establishes a secure chann
 **Validation**: Backend checks that AllowedIPs are valid CIDR using `net.ParseCIDR()`
 
 **In this system**:
+
 - Each peer typically has `AllowedIPs: ["10.0.0.X/32"]` (single IP)
 - Could support subnets if needed
 
@@ -86,18 +94,21 @@ A **handshake** is a WireGuard protocol exchange that establishes a secure chann
 The system has two implementations of the `wireguard.Service` interface:
 
 **realService**:
+
 - Actually controls WireGuard kernel module via `wgctrl` library
 - Requires: Linux, WireGuard kernel module, root/CAP_NET_ADMIN permissions
 - Used in production and when WireGuard is available
 - Lives in `backend/internal/wireguard/`
 
 **mockService**:
+
 - Stores peers in memory (HashMap)
 - No kernel interaction
 - Used for: Development, testing, fallback if WireGuard unavailable
 - Lives in `backend/internal/wireguard/`
 
 **Fallback logic** in `main.go`:
+
 ```go
 wgService, err := wireguard.NewRealService(...)
 if err != nil {
@@ -111,12 +122,14 @@ if err != nil {
 ### Handler vs. Service
 
 **Handler** (HTTP layer):
+
 - Parses incoming HTTP request
 - Validates input (CIDR, required fields)
 - Calls service method
 - Returns HTTP response
 
 **Service** (business logic layer):
+
 - Performs actual WireGuard operations
 - Persists metadata
 - Returns domain objects (Peer, Stats)
@@ -127,17 +140,20 @@ if err != nil {
 ### Metadata vs. Real-Time State
 
 **Metadata** (persistent, from `peers.json`):
+
 - Peer name (user-chosen label)
 - Stored on disk
 - Changes only when user adds/removes peer
 
 **Real-time state** (from kernel):
+
 - LastHandshake (when peer last connected)
 - RX/TX bytes (cumulative since peer added)
 - Endpoint (current IP:port)
 - Extracted fresh from kernel on every `ListPeers()` call
 
 **Why separate?**:
+
 - WireGuard kernel doesn't store names (only PublicKey + config)
 - Metadata needs persistence across reboots
 - Real-time stats need freshness
@@ -149,10 +165,12 @@ if err != nil {
 A peer can be "online" or "offline" based on LastHandshake time.
 
 **Definition** (in frontend):
+
 - **Online**: LastHandshake < ~2 minutes ago (configurable threshold)
 - **Offline**: LastHandshake > 2 minutes ago or never connected (LastHandshake = 0)
 
 **Why this matters**:
+
 - Users see visual indicator (StatusBadge component)
 - Online = peer can route traffic
 - Offline = peer may need reconnection
@@ -167,6 +185,7 @@ Data transfer metrics displayed in UI.
 **TX** = Transmitted bytes (data from server to peer)
 
 **Characteristics**:
+
 - Cumulative since peer was added (never resets)
 - From kernel's perspective (updated in real-time)
 - Displayed in PeerTable and stats pages
@@ -177,20 +196,21 @@ Data transfer metrics displayed in UI.
 
 ```typescript
 interface Peer {
-    id: string;              // PublicKey (unique identifier)
-    name: string;            // User-chosen name from metadata
-    publicKey: string;       // WireGuard public key (same as id)
-    status: 'online' | 'offline'; // Inferred from LastHandshake
-    allowedIps: string[];    // CIDR notation array
-    latestHandshake: string; // ISO timestamp or "Never"
-    transfer: {
-        received: number;    // RX bytes
-        sent: number;        // TX bytes
-    };
+	id: string; // PublicKey (unique identifier)
+	name: string; // User-chosen name from metadata
+	publicKey: string; // WireGuard public key (same as id)
+	status: 'online' | 'offline'; // Inferred from LastHandshake
+	allowedIps: string[]; // CIDR notation array
+	latestHandshake: string; // ISO timestamp or "Never"
+	transfer: {
+		received: number; // RX bytes
+		sent: number; // TX bytes
+	};
 }
 ```
 
 **Naming conventions**:
+
 - TypeScript uses camelCase: `allowedIps`, `latestHandshake`
 - Backend uses snake_case in JSON: `allowed_ips`, `latest_handshake` (if needed)
 - Keep in sync across frontend/backend (type definitions in `types.ts`)
@@ -199,10 +219,10 @@ interface Peer {
 
 ```typescript
 interface Stats {
-    interfaceName: string;   // e.g., "wg0"
-    peerCount: number;       // Total peers connected
-    totalRx: number;         // Total bytes received across all peers
-    totalTx: number;         // Total bytes transmitted across all peers
+	interfaceName: string; // e.g., "wg0"
+	peerCount: number; // Total peers connected
+	totalRx: number; // Total bytes received across all peers
+	totalTx: number; // Total bytes transmitted across all peers
 }
 ```
 
@@ -220,17 +240,20 @@ interface Stats {
 ### Configuration & Deployment
 
 **WireGuard configuration scope**:
+
 - This system manages ONE WireGuard interface (e.g., `wg0`)
 - Multiple interfaces not currently supported
 - Interface name configurable via `WG_INTERFACE_NAME`
 
 **Peer configuration scope**:
+
 - Each peer is independent
 - Adding peer: Just adds to WireGuard (doesn't connect client automatically)
 - Client must be configured with server's endpoint + key to connect
 - Server endpoint is `WG_SERVER_ENDPOINT` (public IP:port for clients to connect to)
 
 **Bootstrapping a peer**:
+
 1. Server adds peer (POST /peers)
 2. Server generates/displays QR code or config file (frontend responsibility)
 3. Client scans QR or imports config
@@ -245,7 +268,8 @@ interface Stats {
 
 ### Q: Why does adding a peer NOT require a private key?
 
-**A**: 
+**A**:
+
 - PublicKey can be provided by client (they generated their own keypair)
 - Backend can generate a keypair if not provided
 - PrivateKey is never stored or transmitted (security)
@@ -269,14 +293,14 @@ interface Stats {
 
 ## Glossary
 
-| Term | Definition |
-|------|-----------|
-| **Peer** | A client/endpoint in WireGuard (identified by PublicKey) |
-| **Handshake** | WireGuard protocol exchange (LastHandshake indicates peer activity) |
-| **CIDR** | IP notation (e.g., `10.0.0.2/32`) for allowed IP ranges |
-| **RX/TX** | Bytes received/transmitted (from kernel stats) |
-| **Interface** | Virtual WireGuard network device (e.g., `wg0`) |
-| **Metadata** | Peer names, stored in `peers.json` |
-| **Real-time state** | Current kernel state (LastHandshake, RX/TX, endpoint) |
-| **Status** | Online/offline (based on LastHandshake freshness) |
-| **Endpoint** | Peer's public IP:port (set by kernel when peer connects) |
+| Term                | Definition                                                          |
+| ------------------- | ------------------------------------------------------------------- |
+| **Peer**            | A client/endpoint in WireGuard (identified by PublicKey)            |
+| **Handshake**       | WireGuard protocol exchange (LastHandshake indicates peer activity) |
+| **CIDR**            | IP notation (e.g., `10.0.0.2/32`) for allowed IP ranges             |
+| **RX/TX**           | Bytes received/transmitted (from kernel stats)                      |
+| **Interface**       | Virtual WireGuard network device (e.g., `wg0`)                      |
+| **Metadata**        | Peer names, stored in `peers.json`                                  |
+| **Real-time state** | Current kernel state (LastHandshake, RX/TX, endpoint)               |
+| **Status**          | Online/offline (based on LastHandshake freshness)                   |
+| **Endpoint**        | Peer's public IP:port (set by kernel when peer connects)            |

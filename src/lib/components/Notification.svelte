@@ -30,13 +30,13 @@
 </script>
 
 <div
-	class="glass-card p-4 border-l-4 {typeClasses[
+	class="glass-card border-l-4 p-4 {typeClasses[
 		notification.type
 	]} animate-slide-up flex items-start gap-3"
 	role="alert"
 >
 	<!-- Icon -->
-	<span class="text-xl flex-shrink-0">{typeIcons[notification.type]}</span>
+	<span class="flex-shrink-0 text-xl">{typeIcons[notification.type]}</span>
 
 	<!-- Message -->
 	<p class="flex-1 text-sm">{notification.message}</p>
@@ -44,10 +44,9 @@
 	<!-- Close button -->
 	<button
 		onclick={handleClose}
-		class="text-gray-400 hover:text-white transition-colors flex-shrink-0"
+		class="flex-shrink-0 text-gray-400 transition-colors hover:text-white"
 		aria-label="Close notification"
 	>
 		<span class="text-lg">✕</span>
 	</button>
 </div>
-

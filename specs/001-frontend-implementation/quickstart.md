@@ -34,6 +34,7 @@ npm install
 ```
 
 This will install:
+
 - SvelteKit 2.x
 - Svelte 5.x
 - TypeScript 5.x
@@ -129,6 +130,7 @@ go run cmd/server/main.go
 ```
 
 **Verify backend is running**:
+
 ```bash
 curl http://localhost:8080/peers
 ```
@@ -141,11 +143,12 @@ Backend must allow frontend origin. In `backend/internal/config/config.json`:
 
 ```json
 {
-  "corsAllowedOrigins": ["http://localhost:5173"]
+	"corsAllowedOrigins": ["http://localhost:5173"]
 }
 ```
 
 Or set environment variable:
+
 ```bash
 export CORS_ALLOWED_ORIGINS=http://localhost:5173
 ```
@@ -230,6 +233,7 @@ export CORS_ALLOWED_ORIGINS=http://localhost:5173
 2. **Verify**:
    - File downloads as `peer-name.conf` (name sanitized, no spaces/special chars)
    - File contains valid WireGuard config:
+
      ```ini
      [Interface]
      PrivateKey = <base64>
@@ -323,6 +327,7 @@ export CORS_ALLOWED_ORIGINS=http://localhost:5173
 **Manual test**: Navigate to http://localhost:5173/settings
 
 **Verify**:
+
 - "Coming Soon" banner with construction emoji
 - 4 mock panels displayed (2x2 grid):
   - Interface Settings (wg0, port, MTU, address)
@@ -345,6 +350,7 @@ export CORS_ALLOWED_ORIGINS=http://localhost:5173
 4. Click "Analyze page load"
 
 **Target scores** (Constitution V):
+
 - Performance: ≥90
 - First Contentful Paint (FCP): <1.5s
 - Time to Interactive (TTI): <3s
@@ -356,6 +362,7 @@ npm run build
 ```
 
 **Check output**:
+
 ```
 vite v7.x.x building for production...
 ✓ built in Xs
@@ -380,6 +387,7 @@ dist/_app/immutable/... (gzipped size should be <200KB total)
 Test at these viewport sizes:
 
 **Mobile** (320px width):
+
 - Open DevTools → Device Toolbar (Ctrl+Shift+M)
 - Select "iPhone SE" or custom 320px width
 - **Verify**:
@@ -390,6 +398,7 @@ Test at these viewport sizes:
   - Text remains readable
 
 **Tablet** (768px width):
+
 - Select "iPad Mini" or custom 768px width
 - **Verify**:
   - 2-column grid for stat cards
@@ -397,6 +406,7 @@ Test at these viewport sizes:
   - Tables fit within viewport
 
 **Desktop** (1024px+):
+
 - Select "Laptop" or custom 1024px width
 - **Verify**:
   - 3-column grid for dashboard cards
@@ -407,12 +417,14 @@ Test at these viewport sizes:
 ### Cross-Browser Testing
 
 Test in:
+
 - **Chrome**: Latest version (primary target)
 - **Firefox**: Latest version
 - **Safari**: Latest version (macOS)
 - **Edge**: Latest version
 
 **Verify**:
+
 - Glassmorphism effects render correctly
 - Modals open/close smoothly
 - API calls succeed
@@ -430,7 +442,8 @@ Test in:
 
 **Issue**: "Network error" notifications
 
-**Solution**: 
+**Solution**:
+
 1. Verify backend is running: `curl http://localhost:8080/peers`
 2. Check CORS configuration in backend
 3. Verify API_BASE_URL in `src/lib/utils/api.ts`
@@ -446,6 +459,7 @@ Test in:
 **Issue**: Blank page or white screen
 
 **Solution**:
+
 1. Check browser console for errors
 2. Verify backend is running
 3. Clear browser cache and reload
@@ -461,6 +475,7 @@ Test in:
 **Issue**: Styles not applied
 
 **Solution**:
+
 1. Check Tailwind config includes correct content paths
 2. Restart dev server: `Ctrl+C` then `npm run dev`
 
@@ -485,21 +500,23 @@ npm run preview
 ### Deploy Production Build
 
 The `build/` directory contains static files. Deploy to:
+
 - **Nginx**: Serve from `build/` directory
 - **Caddy**: Serve with SPA fallback
 - **Netlify/Vercel**: Connect Git repo (auto-deploy)
 
 **Example Nginx config**:
+
 ```nginx
 server {
     listen 80;
     server_name wg-manager.example.com;
     root /path/to/build;
-    
+
     location / {
         try_files $uri $uri/ /index.html;
     }
-    
+
     location /api {
         proxy_pass http://localhost:8080;
     }
@@ -515,6 +532,7 @@ npm run lint
 ```
 
 **Fix issues automatically**:
+
 ```bash
 npm run lint -- --fix
 ```
@@ -532,6 +550,7 @@ npm run check
 ```
 
 **Watch mode** (auto-check on file changes):
+
 ```bash
 npm run check:watch
 ```
@@ -547,14 +566,16 @@ npm run check:watch
 ### Debugging
 
 **Browser DevTools**:
+
 - Use React DevTools for component inspection (Svelte adapters available)
 - Network tab shows API calls
 - Console logs errors and warnings
 
 **Svelte-specific debugging**:
+
 ```svelte
 <script>
-  $inspect(variableName); // Logs reactive changes
+	$inspect(variableName); // Logs reactive changes
 </script>
 ```
 

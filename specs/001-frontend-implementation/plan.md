@@ -8,6 +8,7 @@
 Build a glassmorphism-styled VPN management dashboard using SvelteKit, TypeScript, and TailwindCSS to provide peer management, statistics visualization, and interface configuration (mock UI). The frontend connects to an existing Go backend API (GET/POST/DELETE /peers, GET /stats) with responsive layouts from desktop (1024px+) to mobile (320px+), sidebar navigation, and strict performance budgets (TTI <3s, bundle <200KB).
 
 **Primary Technical Approach**:
+
 - **SvelteKit 2.x** with TypeScript (strict, no `any`)
 - **TailwindCSS 4.x** for utility-first styling with glassmorphism design system
 - **Svelte Stores** for state management (peers, stats, UI state)
@@ -20,6 +21,7 @@ Build a glassmorphism-styled VPN management dashboard using SvelteKit, TypeScrip
 **Language/Version**: TypeScript 5.x (strict mode, no `any` types)  
 **Framework**: SvelteKit 2.x, Svelte 5.x  
 **Primary Dependencies**:
+
 - **TailwindCSS 4.x** (utility-first CSS)
 - **@tailwindcss/forms** (form styling plugin)
 - **Material Symbols Outlined** (icon library, CDN or package)
@@ -31,6 +33,7 @@ Build a glassmorphism-styled VPN management dashboard using SvelteKit, TypeScrip
 **Target Platform**: Modern browsers (Chrome, Firefox, Safari, Edge - latest 2 versions)  
 **Project Type**: Web application (frontend only, connects to existing backend)  
 **Performance Goals**:
+
 - Time to Interactive (TTI): <3 seconds on 3G
 - First Contentful Paint (FCP): <1.5 seconds
 - Bundle size: <200KB gzipped
@@ -38,12 +41,14 @@ Build a glassmorphism-styled VPN management dashboard using SvelteKit, TypeScrip
 - 60fps animations for modals, transitions, status badges
 
 **Constraints**:
+
 - No `any` types in TypeScript (strict typing)
 - Backend API is read-only (cannot modify API contract)
 - Settings page is UI-only (mock data, no functional backend)
 - Must match glassmorphism design aesthetic from provided mockups
 
 **Scale/Scope**:
+
 - 4 main pages (Dashboard, Peers, Stats, Settings)
 - ~15-20 Svelte components
 - 3 Svelte stores (peers, stats, UI/notifications)
@@ -52,39 +57,46 @@ Build a glassmorphism-styled VPN management dashboard using SvelteKit, TypeScrip
 
 ## Constitution Check
 
-*GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
+_GATE: Must pass before Phase 0 research. Re-check after Phase 1 design._
 
 **Principle I: Backend Testing Discipline (Go)**:
+
 - [x] N/A - This is frontend-only implementation
 - [x] Backend API already tested and documented (backend/API.md)
 - [x] No backend code modifications required
 
 **Principle II: Frontend User Experience First (Svelte)**:
+
 - [x] Frontend features focus on UX and performance (no automated test requirements per Constitution)
 - [x] Performance budgets defined: TTI <3s on 3G, FCP <1.5s, bundle <200KB gzipped, Lighthouse ≥90
 - [x] Manual testing approach documented (visual QA in quickstart.md, API integration testing)
 - [x] Accessibility considerations: ARIA labels, keyboard navigation for modals/forms
 
 **Principle III: API Contract Stability**:
+
 - [x] No API changes required (consuming existing endpoints: GET/POST /peers, DELETE /peers/{id}, GET /stats)
 - [x] API contract documented in backend/API.md (stable, no breaking changes)
 - [x] Frontend TypeScript types match backend response schemas
 
 **Principle IV: Configuration & Environment**:
+
 - [x] Backend API base URL configurable via VITE_API_BASE_URL environment variable (.env file)
 - [x] No hardcoded credentials or secrets in source code
 - [x] Twelve-Factor configuration pattern followed
 
 **Principle V: Performance Budgets**:
+
 - [x] Frontend: TTI <3s on 3G, FCP <1.5s, bundle <200KB gzipped, Lighthouse ≥90
 - [x] Backend: API response <100ms p95 (already validated by existing backend)
 
 **Principle VI: Observability & Structured Logging**:
+
 - [x] Frontend error logging to browser console (structured, with context)
 - [x] API error responses captured and displayed to user (no sensitive data exposed)
 - [x] No sensitive data (private keys, passwords) logged client-side
 
 **Complexity Justification**:
+
 - [x] No principle violations
 
 **GATE STATUS**: ✅ PASS - All constitution principles satisfied
@@ -224,62 +236,63 @@ wg-manager/
 ```typescript
 // src/lib/types/peer.ts
 export interface Peer {
-  id: string;                    // PublicKey (unique identifier)
-  publicKey: string;             // WireGuard public key (base64)
-  name: string;                  // User-friendly name
-  endpoint?: string;             // Peer's public IP:port (optional, set by kernel)
-  allowedIPs: string[];          // CIDR notation array (e.g., ["10.0.0.2/32"])
-  lastHandshake: string;         // ISO timestamp or "0" (never connected)
-  receiveBytes: number;          // Total bytes received
-  transmitBytes: number;         // Total bytes transmitted
-  status: 'online' | 'offline';  // Derived from lastHandshake (client-side)
+	id: string; // PublicKey (unique identifier)
+	publicKey: string; // WireGuard public key (base64)
+	name: string; // User-friendly name
+	endpoint?: string; // Peer's public IP:port (optional, set by kernel)
+	allowedIPs: string[]; // CIDR notation array (e.g., ["10.0.0.2/32"])
+	lastHandshake: string; // ISO timestamp or "0" (never connected)
+	receiveBytes: number; // Total bytes received
+	transmitBytes: number; // Total bytes transmitted
+	status: 'online' | 'offline'; // Derived from lastHandshake (client-side)
 }
 
 export interface PeerFormData {
-  name: string;
-  allowedIPs: string[];          // CIDR strings (validated before submit)
-  publicKey?: string;            // Optional (backend generates if omitted)
+	name: string;
+	allowedIPs: string[]; // CIDR strings (validated before submit)
+	publicKey?: string; // Optional (backend generates if omitted)
 }
 
 export interface PeerCreateResponse {
-  id: string;
-  publicKey: string;
-  name: string;
-  allowedIPs: string[];
-  config: string;                // WireGuard .conf file content
-  privateKey?: string;           // Only if backend generated keypair
+	id: string;
+	publicKey: string;
+	name: string;
+	allowedIPs: string[];
+	config: string; // WireGuard .conf file content
+	privateKey?: string; // Only if backend generated keypair
 }
 
 // src/lib/types/stats.ts
 export interface InterfaceStats {
-  interfaceName: string;         // e.g., "wg0"
-  peerCount: number;             // Total peers
-  totalRx: number;               // Total bytes received
-  totalTx: number;               // Total bytes transmitted
+	interfaceName: string; // e.g., "wg0"
+	peerCount: number; // Total peers
+	totalRx: number; // Total bytes received
+	totalTx: number; // Total bytes transmitted
 }
 
 // src/lib/types/api.ts
 export interface APIError {
-  error: string;                 // User-facing error message
-  details?: string;              // Optional detailed error
+	error: string; // User-facing error message
+	details?: string; // Optional detailed error
 }
 
 export interface APIResponse<T> {
-  data?: T;
-  error?: APIError;
-  status: number;
+	data?: T;
+	error?: APIError;
+	status: number;
 }
 
 // src/lib/types/notification.ts
 export interface Notification {
-  id: string;                    // Unique ID for dismissal
-  type: 'success' | 'error' | 'warning' | 'info';
-  message: string;
-  duration?: number;             // Auto-dismiss duration (ms), undefined = manual dismiss
+	id: string; // Unique ID for dismissal
+	type: 'success' | 'error' | 'warning' | 'info';
+	message: string;
+	duration?: number; // Auto-dismiss duration (ms), undefined = manual dismiss
 }
 ```
 
 **Validation Rules**:
+
 - `Peer.name`: Required, non-empty string (trimmed)
 - `Peer.allowedIPs`: Required, array of valid CIDR strings (e.g., `10.0.0.2/32`)
 - `Peer.status`: Derived from `lastHandshake` (online if within last 2-3 minutes)
@@ -291,34 +304,35 @@ export interface Notification {
 ```typescript
 // Base HTTP client wrapper
 export interface HTTPClient {
-  get<T>(url: string): Promise<APIResponse<T>>;
-  post<T>(url: string, body: unknown): Promise<APIResponse<T>>;
-  delete<T>(url: string): Promise<APIResponse<T>>;
+	get<T>(url: string): Promise<APIResponse<T>>;
+	post<T>(url: string, body: unknown): Promise<APIResponse<T>>;
+	delete<T>(url: string): Promise<APIResponse<T>>;
 }
 
 // Peer API
 export interface PeerAPI {
-  listPeers(): Promise<APIResponse<Peer[]>>;
-  addPeer(data: PeerFormData): Promise<APIResponse<PeerCreateResponse>>;
-  removePeer(peerId: string): Promise<APIResponse<void>>;
+	listPeers(): Promise<APIResponse<Peer[]>>;
+	addPeer(data: PeerFormData): Promise<APIResponse<PeerCreateResponse>>;
+	removePeer(peerId: string): Promise<APIResponse<void>>;
 }
 
 // Stats API
 export interface StatsAPI {
-  getStats(): Promise<APIResponse<InterfaceStats>>;
+	getStats(): Promise<APIResponse<InterfaceStats>>;
 }
 ```
 
 **API Endpoints** (from backend/API.md):
 
-| Endpoint | Method | Request | Response | Status Codes |
-|----------|--------|---------|----------|--------------|
-| `/peers` | GET | - | `Peer[]` | 200 |
-| `/peers` | POST | `{ name, publicKey?, allowedIPs }` | `PeerCreateResponse` | 201, 400 |
-| `/peers/{id}` | DELETE | - | - | 204, 404 |
-| `/stats` | GET | - | `InterfaceStats` | 200 |
+| Endpoint      | Method | Request                            | Response             | Status Codes |
+| ------------- | ------ | ---------------------------------- | -------------------- | ------------ |
+| `/peers`      | GET    | -                                  | `Peer[]`             | 200          |
+| `/peers`      | POST   | `{ name, publicKey?, allowedIPs }` | `PeerCreateResponse` | 201, 400     |
+| `/peers/{id}` | DELETE | -                                  | -                    | 204, 404     |
+| `/stats`      | GET    | -                                  | `InterfaceStats`     | 200          |
 
 **Error Handling**:
+
 - 400 Bad Request: Validation error (display inline in form)
 - 404 Not Found: Peer not found (show notification)
 - 500 Internal Server Error: Backend failure (show generic error notification)
@@ -352,6 +366,7 @@ App (+layout.svelte)
 ```
 
 **Component Responsibilities**:
+
 - **Sidebar**: Navigation, branding, usage widget (mock)
 - **PeerTable**: Display peer list, row actions (hover-reveal on desktop, always-visible on mobile)
 - **PeerModal**: Add peer form with validation, submit to API, display QR/config on success
@@ -372,6 +387,7 @@ App (+layout.svelte)
 6. **Preview production build**: `npm run preview`
 
 **Key Commands**:
+
 ```bash
 npm run dev           # Start dev server (http://localhost:5173)
 npm run build         # Build for production (SSR/SPA)
@@ -382,11 +398,13 @@ npm run check         # TypeScript type checking
 ```
 
 **Environment Variables**:
+
 ```bash
 VITE_API_BASE_URL=http://localhost:8080  # Backend API base URL
 ```
 
 **Manual Testing Checklist**:
+
 - [ ] Dashboard loads within 3 seconds
 - [ ] Peer list displays correctly (online/offline status, transfer stats)
 - [ ] Add peer form validates CIDR notation
@@ -407,6 +425,7 @@ VITE_API_BASE_URL=http://localhost:8080  # Backend API base URL
 **Deferred to `/speckit.tasks` command** - Will generate detailed tasks after this plan is approved.
 
 **High-level task categories** (preview):
+
 1. **Project Setup** (SvelteKit, TypeScript, TailwindCSS, ESLint, Prettier)
 2. **Design System** (Glassmorphism theme, Tailwind config, global styles)
 3. **Layout & Navigation** (Sidebar, responsive breakpoints, bottom nav)
@@ -425,34 +444,37 @@ VITE_API_BASE_URL=http://localhost:8080  # Backend API base URL
 ## Dependencies & Package Requirements
 
 **Core Dependencies** (require approval):
+
 ```json
 {
-  "@sveltejs/kit": "^2.0.0",
-  "svelte": "^5.0.0",
-  "typescript": "^5.0.0",
-  "tailwindcss": "^4.0.0",
-  "@tailwindcss/forms": "^0.5.0",
-  "svelte-qrcode": "^1.0.0",
-  "vite": "^7.0.0"
+	"@sveltejs/kit": "^2.0.0",
+	"svelte": "^5.0.0",
+	"typescript": "^5.0.0",
+	"tailwindcss": "^4.0.0",
+	"@tailwindcss/forms": "^0.5.0",
+	"svelte-qrcode": "^1.0.0",
+	"vite": "^7.0.0"
 }
 ```
 
 **Dev Dependencies**:
+
 ```json
 {
-  "@sveltejs/adapter-auto": "^3.0.0",
-  "@sveltejs/vite-plugin-svelte": "^4.0.0",
-  "eslint": "^9.0.0",
-  "eslint-plugin-svelte": "^2.0.0",
-  "@typescript-eslint/eslint-plugin": "^8.0.0",
-  "@typescript-eslint/parser": "^8.0.0",
-  "prettier": "^3.0.0",
-  "prettier-plugin-svelte": "^3.0.0",
-  "prettier-plugin-tailwindcss": "^0.6.0"
+	"@sveltejs/adapter-auto": "^3.0.0",
+	"@sveltejs/vite-plugin-svelte": "^4.0.0",
+	"eslint": "^9.0.0",
+	"eslint-plugin-svelte": "^2.0.0",
+	"@typescript-eslint/eslint-plugin": "^8.0.0",
+	"@typescript-eslint/parser": "^8.0.0",
+	"prettier": "^3.0.0",
+	"prettier-plugin-svelte": "^3.0.0",
+	"prettier-plugin-tailwindcss": "^0.6.0"
 }
 ```
 
 **Optional Dependencies** (lightweight alternatives available):
+
 - `date-fns` (for rich date formatting, can use native `Intl.RelativeTimeFormat` instead)
 - `@material-symbols/svg-400` (for offline icon support, can use CDN instead)
 
@@ -462,20 +484,21 @@ VITE_API_BASE_URL=http://localhost:8080  # Backend API base URL
 
 ## Risks & Mitigation
 
-| Risk | Impact | Mitigation |
-|------|--------|------------|
-| **Bundle size exceeds 200KB** | High (performance budget violation) | Use Vite bundle analyzer, lazy-load heavy components (QR modal), tree-shake unused TailwindCSS |
-| **CIDR validation edge cases** | Medium (user confusion) | Comprehensive regex testing, clear error messages with examples |
-| **Backend API unavailable during dev** | Medium (blocks integration testing) | Use mock data in stores until backend is available, feature flag for mock mode |
-| **Glassmorphism performance on low-end devices** | Low (degraded UX) | Use `@supports` CSS queries to disable backdrop blur on unsupported browsers |
-| **TypeScript strict mode friction** | Low (dev velocity) | Use `satisfies` operator, utility types (`Partial<T>`, `Pick<T>`), avoid type assertions |
-| **Responsive layout complexity** | Medium (maintenance overhead) | Use Tailwind responsive utilities (`lg:`, `md:`, `sm:`), test at breakpoint boundaries |
+| Risk                                             | Impact                              | Mitigation                                                                                     |
+| ------------------------------------------------ | ----------------------------------- | ---------------------------------------------------------------------------------------------- |
+| **Bundle size exceeds 200KB**                    | High (performance budget violation) | Use Vite bundle analyzer, lazy-load heavy components (QR modal), tree-shake unused TailwindCSS |
+| **CIDR validation edge cases**                   | Medium (user confusion)             | Comprehensive regex testing, clear error messages with examples                                |
+| **Backend API unavailable during dev**           | Medium (blocks integration testing) | Use mock data in stores until backend is available, feature flag for mock mode                 |
+| **Glassmorphism performance on low-end devices** | Low (degraded UX)                   | Use `@supports` CSS queries to disable backdrop blur on unsupported browsers                   |
+| **TypeScript strict mode friction**              | Low (dev velocity)                  | Use `satisfies` operator, utility types (`Partial<T>`, `Pick<T>`), avoid type assertions       |
+| **Responsive layout complexity**                 | Medium (maintenance overhead)       | Use Tailwind responsive utilities (`lg:`, `md:`, `sm:`), test at breakpoint boundaries         |
 
 ---
 
 ## Success Criteria
 
 **Implementation is complete when**:
+
 - ✅ All functional requirements (FR-001 through FR-021) are implemented
 - ✅ All user stories (P1, P2) have acceptance scenarios passing
 - ✅ Performance budgets met (TTI <3s, FCP <1.5s, bundle <200KB, Lighthouse ≥90)
@@ -486,6 +509,7 @@ VITE_API_BASE_URL=http://localhost:8080  # Backend API base URL
 - ✅ ESLint and Prettier pass
 
 **Definition of Done**:
+
 - Code merged to `1-frontend-implementation` branch
 - Manual QA completed against backend API
 - Performance audit (Lighthouse) results documented

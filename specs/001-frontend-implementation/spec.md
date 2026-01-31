@@ -162,6 +162,7 @@ As a WireGuard administrator, I need to download peer configuration files after 
 ### Performance Requirements
 
 **Frontend (per Constitution Principle II & V)**:
+
 - Time to Interactive (TTI): <3s on 3G connection
 - First Contentful Paint (FCP): <1.5s on initial page load
 - Bundle size impact: Total bundle size <200KB gzipped (SvelteKit + TailwindCSS + components)
@@ -169,6 +170,7 @@ As a WireGuard administrator, I need to download peer configuration files after 
 - Animation smoothness: 60fps for modal transitions, status badge updates, and list rendering
 
 **Backend Integration**:
+
 - API response handling: Display loading state for requests >500ms, timeout after 10s with error notification
 - State updates: Svelte store updates propagate to UI within 100ms (reactive updates)
 
@@ -188,6 +190,7 @@ As a WireGuard administrator, I need to download peer configuration files after 
 ## Testing Strategy
 
 **Frontend Testing Approach (per Constitution Principle II)**:
+
 - **Manual testing prioritized**: No automated unit/integration tests required for frontend components (align with Constitution: Frontend UX First)
 - **Type safety via TypeScript**: Leverage TypeScript strict mode to catch type errors at compile time (primary quality gate)
 - **Visual QA**: Manual testing of all user flows in development environment (add peer, remove peer, view stats, form validation)
@@ -195,10 +198,12 @@ As a WireGuard administrator, I need to download peer configuration files after 
 - **API integration testing**: Manually test against real backend API to verify request/response handling and error scenarios
 
 **Backend Testing (existing, no changes)**:
+
 - Backend already has comprehensive test coverage per Constitution Principle I (TDD mandatory)
 - Frontend assumes backend API contract is stable and tested
 
 **Exploratory Testing Focus Areas**:
+
 - Form validation edge cases (empty inputs, invalid CIDR, special characters in names)
 - API error handling (network failures, 400/500 responses, timeout scenarios)
 - UI responsiveness on different screen sizes (desktop, tablet)
@@ -228,17 +233,17 @@ The following features are explicitly excluded from this specification and may b
 7. **Usage Quota Tracking**: Sidebar usage widget displays mock data; actual quota tracking requires backend API (deferred)
 8. **Traffic Visualization Charts**: Dashboard shows numeric stats cards only; SVG/Canvas line graphs for RX/TX trends deferred to future release
 9. **Historical Stats Data**: Real-time stats only; no time-series history or trend analysis (requires backend API enhancement)
-5. **Advanced Filtering & Search**: No search bar or filters for peer list; simple list display only
-6. **Peer Groups/Organization**: No ability to group peers by tags, categories, or custom metadata
-7. **Activity Logs/Audit Trail**: No logging of administrator actions (who added/removed peers, when)
-8. **Email/Notification Integration**: No automatic notifications for peer status changes or system events
-9. **Multi-Interface Support**: Single WireGuard interface management only; no support for managing multiple interfaces
-10. **Backup/Export**: No ability to export peer list or configuration backups
-11. **Internationalization (i18n)**: English language only; no multi-language support
-12. **Accessibility (a11y) enhancements**: Basic accessibility compliance, but no WCAG 2.1 AA certification effort
-13. **Peer Connection Diagnostics**: No ping tests, traceroute, or advanced troubleshooting tools
-14. **Bandwidth Limiting**: No ability to set transfer rate limits per peer
-15. **Mobile App**: Web-only interface; no native iOS/Android app
+10. **Advanced Filtering & Search**: No search bar or filters for peer list; simple list display only
+11. **Peer Groups/Organization**: No ability to group peers by tags, categories, or custom metadata
+12. **Activity Logs/Audit Trail**: No logging of administrator actions (who added/removed peers, when)
+13. **Email/Notification Integration**: No automatic notifications for peer status changes or system events
+14. **Multi-Interface Support**: Single WireGuard interface management only; no support for managing multiple interfaces
+15. **Backup/Export**: No ability to export peer list or configuration backups
+16. **Internationalization (i18n)**: English language only; no multi-language support
+17. **Accessibility (a11y) enhancements**: Basic accessibility compliance, but no WCAG 2.1 AA certification effort
+18. **Peer Connection Diagnostics**: No ping tests, traceroute, or advanced troubleshooting tools
+19. **Bandwidth Limiting**: No ability to set transfer rate limits per peer
+20. **Mobile App**: Web-only interface; no native iOS/Android app
 
 These items may be prioritized in subsequent specifications based on user feedback and business priorities.
 

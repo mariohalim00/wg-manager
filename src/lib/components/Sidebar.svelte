@@ -25,7 +25,7 @@
 
 <!-- Mobile hamburger button -->
 <button
-	class="fixed top-4 left-4 z-50 md:hidden glass-btn-primary p-2"
+	class="glass-btn-primary fixed top-4 left-4 z-50 p-2 md:hidden"
 	onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
 	aria-label="Toggle menu"
 >
@@ -38,7 +38,7 @@
 
 <!-- Sidebar (responsive: hidden on mobile unless menu open) -->
 <aside
-	class="glass-card w-64 h-screen p-6 flex flex-col gap-6 fixed md:static transition-transform duration-300 z-40 {mobileMenuOpen
+	class="glass-card fixed z-40 flex h-screen w-64 flex-col gap-6 p-6 transition-transform duration-300 md:static {mobileMenuOpen
 		? 'translate-x-0'
 		: '-translate-x-full md:translate-x-0'}"
 >
@@ -53,12 +53,13 @@
 
 	<!-- Navigation links -->
 	<nav class="flex flex-col gap-2">
-		{#each navItems as item}
+		{#each navItems as item (item.path)}
 			<a
 				href={item.path}
-				class="flex items-center gap-3 px-4 py-3 rounded-lg transition-all {isActive(item.path)
+				data-sveltekit-noscroll
+				class="flex items-center gap-3 rounded-lg px-4 py-3 transition-all {isActive(item.path)
 					? 'bg-glass-hover text-white'
-					: 'text-gray-300 hover:bg-glass-bg hover:text-white'}"
+					: 'hover:bg-glass-bg text-gray-300 hover:text-white'}"
 				onclick={() => (mobileMenuOpen = false)}
 			>
 				<span class="text-xl">{item.icon}</span>
@@ -68,8 +69,8 @@
 	</nav>
 
 	<!-- Usage widget (bottom of sidebar) -->
-	<div class="mt-auto glass-card p-4">
-		<h3 class="text-sm font-semibold mb-3 text-gray-300">Interface Usage</h3>
+	<div class="glass-card mt-auto p-4">
+		<h3 class="mb-3 text-sm font-semibold text-gray-300">Interface Usage</h3>
 		{#if $stats}
 			<div class="space-y-2 text-sm">
 				<div class="flex justify-between">
@@ -98,7 +99,7 @@
 <!-- Overlay for mobile menu (click outside to close) -->
 {#if mobileMenuOpen}
 	<button
-		class="fixed inset-0 bg-black/50 z-30 md:hidden"
+		class="fixed inset-0 z-30 bg-black/50 md:hidden"
 		onclick={() => (mobileMenuOpen = false)}
 		aria-label="Close menu"
 	></button>

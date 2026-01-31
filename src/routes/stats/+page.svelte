@@ -19,10 +19,10 @@
 	<title>Statistics - WireGuard Manager</title>
 </svelte:head>
 
-<div class="max-w-7xl mx-auto">
+<div class="mx-auto max-w-7xl">
 	<!-- Page header -->
 	<div class="mb-8">
-		<h1 class="text-3xl font-bold mb-2">Interface Statistics</h1>
+		<h1 class="mb-2 text-3xl font-bold">Interface Statistics</h1>
 		<p class="text-gray-400">Monitor VPN network performance and usage</p>
 	</div>
 
@@ -32,7 +32,7 @@
 		</div>
 	{:else if $stats}
 		<!-- Stats cards grid -->
-		<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+		<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
 			<StatsCard
 				title="Interface"
 				value={$stats.interfaceName}
@@ -65,10 +65,10 @@
 
 		<!-- Additional info panel -->
 		<div class="glass-card p-6">
-			<h2 class="text-xl font-semibold mb-4">Network Overview</h2>
-			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+			<h2 class="mb-4 text-xl font-semibold">Network Overview</h2>
+			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				<div>
-					<h3 class="text-sm font-medium text-gray-400 mb-2">Interface Details</h3>
+					<h3 class="mb-2 text-sm font-medium text-gray-400">Interface Details</h3>
 					<dl class="space-y-2">
 						<div class="flex justify-between">
 							<dt class="text-gray-400">Name:</dt>
@@ -76,12 +76,12 @@
 						</div>
 						<div class="flex justify-between">
 							<dt class="text-gray-400">Status:</dt>
-							<dd class="text-green-400 font-medium">Active</dd>
+							<dd class="font-medium text-green-400">Active</dd>
 						</div>
 					</dl>
 				</div>
 				<div>
-					<h3 class="text-sm font-medium text-gray-400 mb-2">Traffic Summary</h3>
+					<h3 class="mb-2 text-sm font-medium text-gray-400">Traffic Summary</h3>
 					<dl class="space-y-2">
 						<div class="flex justify-between">
 							<dt class="text-gray-400">Total Data:</dt>
@@ -97,9 +97,8 @@
 		</div>
 	{:else}
 		<div class="glass-card p-12 text-center">
-			<span class="text-4xl mb-4 block">⚠️</span>
+			<span class="mb-4 block text-4xl">⚠️</span>
 			<p class="text-gray-400">Unable to load statistics. Please try again later.</p>
 		</div>
 	{/if}
 </div>
-

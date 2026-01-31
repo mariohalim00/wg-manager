@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
 	import StatsCard from '$lib/components/StatsCard.svelte';
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
 	import { stats } from '$lib/stores/stats';
@@ -24,10 +23,10 @@
 	<title>Dashboard - WireGuard Manager</title>
 </svelte:head>
 
-<div class="max-w-7xl mx-auto">
+<div class="mx-auto max-w-7xl">
 	<!-- Page header -->
 	<div class="mb-8">
-		<h1 class="text-3xl font-bold mb-2">Dashboard</h1>
+		<h1 class="mb-2 text-3xl font-bold">Dashboard</h1>
 		<p class="text-gray-400">Monitor your WireGuard VPN network at a glance</p>
 	</div>
 
@@ -37,7 +36,7 @@
 		</div>
 	{:else if $stats}
 		<!-- FR-008a: 3-card horizontal grid layout for main stats -->
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+		<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
 			<StatsCard
 				title="Total Peers"
 				value={$stats.peerCount}
@@ -62,46 +61,50 @@
 		</div>
 
 		<!-- Quick actions panel -->
-		<div class="glass-card p-6 mb-8">
-			<h2 class="text-xl font-semibold mb-4">Quick Actions</h2>
+		<div class="glass-card mb-8 p-6">
+			<h2 class="mb-4 text-xl font-semibold">Quick Actions</h2>
 			<div class="flex flex-wrap gap-4">
-				<button onclick={() => goto('/peers')} class="glass-btn-primary px-6 py-3">
+				<a href="/peers" data-sveltekit-noscroll class="glass-btn-primary px-6 py-3">
 					👥 Manage Peers
-				</button>
-				<button onclick={() => goto('/stats')} class="glass-btn-secondary px-6 py-3">
+				</a>
+				<a href="/stats" data-sveltekit-noscroll class="glass-btn-secondary px-6 py-3">
 					📊 View Statistics
-				</button>
-				<button onclick={() => goto('/settings')} class="glass-btn-secondary px-6 py-3">
+				</a>
+				<a href="/settings" data-sveltekit-noscroll class="glass-btn-secondary px-6 py-3">
 					⚙️ Settings
-				</button>
+				</a>
 			</div>
 		</div>
 
 		<!-- Network status panel -->
 		<div class="glass-card p-6">
-			<h2 class="text-xl font-semibold mb-4">Network Status</h2>
+			<h2 class="mb-4 text-xl font-semibold">Network Status</h2>
 			<div class="space-y-4">
 				<div class="flex items-center justify-between">
 					<div>
 						<p class="text-sm text-gray-400">Interface</p>
 						<p class="font-medium">{$stats.interfaceName}</p>
 					</div>
-					<span class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-sm">Active</span>
+					<span class="rounded-full bg-green-500/20 px-3 py-1 text-sm text-green-400">Active</span>
 				</div>
 				<div class="flex items-center justify-between">
 					<div>
 						<p class="text-sm text-gray-400">Configured Peers</p>
 						<p class="font-medium">{$stats.peerCount} peers ({onlinePeersCount} online)</p>
 					</div>
-					<button onclick={() => goto('/peers')} class="text-blue-400 hover:text-blue-300 text-sm">
+					<a
+						href="/peers"
+						data-sveltekit-noscroll
+						class="text-sm text-blue-400 hover:text-blue-300"
+					>
 						View all →
-					</button>
+					</a>
 				</div>
 			</div>
 		</div>
 	{:else}
 		<div class="glass-card p-12 text-center">
-			<span class="text-4xl mb-4 block">⚠️</span>
+			<span class="mb-4 block text-4xl">⚠️</span>
 			<p class="text-gray-400">Unable to load dashboard data. Please try again later.</p>
 		</div>
 	{/if}

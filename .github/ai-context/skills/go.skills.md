@@ -60,6 +60,7 @@ func (h *PeerHandler) MethodName(w http.ResponseWriter, r *http.Request) {
 ```
 
 **Key Points**:
+
 - Validation happens in handler (CIDR parsing, required fields)
 - All business logic delegated to `wireguard.Service` interface
 - Error logging uses `slog.Error()` with context
@@ -79,6 +80,7 @@ type Service interface {
 ```
 
 **Implementations**:
+
 - `realService` — Actual WireGuard interface (requires kernel module + permissions)
 - `mockService` — Test/development fallback
 
@@ -98,6 +100,7 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 ```
 
 Applied in `main.go`:
+
 ```go
 wrappedMux := middleware.LoggingMiddleware(mux)
 wrappedMux = middleware.CORSMiddleware(wrappedMux)
@@ -106,11 +109,13 @@ wrappedMux = middleware.CORSMiddleware(wrappedMux)
 ## Configuration Pattern (Twelve-Factor)
 
 Configuration loading hierarchy:
+
 1. Load defaults from `config.json`
 2. Override with environment variables (if set)
 3. Support `.env` file via `godotenv.Load()`
 
 **Environment variables**:
+
 - `WG_SERVER_PORT` — Server listen address (default `:8080`)
 - `WG_INTERFACE_NAME` — WireGuard interface (default `wg0`)
 - `WG_STORAGE_PATH` — Peer metadata file (default `./data/peers.json`)
@@ -123,6 +128,7 @@ Configuration loading hierarchy:
 **Test file locations**: `*_test.go` in the same package
 
 **Test pattern**:
+
 ```go
 func TestFunctionName(t *testing.T) {
     // Arrange: Setup test data, mocks
@@ -132,6 +138,7 @@ func TestFunctionName(t *testing.T) {
 ```
 
 **Key testing principles** (per Constitution I):
+
 - Write tests FIRST, then implementation (Red-Green-Refactor)
 - All handlers MUST have unit tests
 - Services MUST have contract tests
@@ -140,8 +147,9 @@ func TestFunctionName(t *testing.T) {
 ## Logging Conventions
 
 **Structured logging via `slog`**:
+
 ```go
-slog.Info("operation_name", 
+slog.Info("operation_name",
     "key1", value1,
     "key2", value2)
 
@@ -151,12 +159,14 @@ slog.Error("failed operation",
 ```
 
 **Log levels**:
+
 - `ERROR` — Operation failures, unrecoverable errors
 - `INFO` — Important operations (server start, peer added, removed)
 - `WARN` — Degraded functionality (fallback to mock service)
 - `DEBUG` — Diagnostic info (rarely used in production)
 
 **What to log**:
+
 - Every API request (method, path, status, duration)
 - WireGuard operations (add, remove peer; success/failure)
 - Configuration loading
@@ -166,6 +176,7 @@ slog.Error("failed operation",
 ## Error Handling
 
 **Style**:
+
 ```go
 if err != nil {
     slog.Error("operation failed", "error", err, "context", value)
@@ -175,6 +186,7 @@ if err != nil {
 ```
 
 **Key points**:
+
 - Log with context (what operation failed, what data involved)
 - Return generic user-facing error messages (don't leak internals)
 - Use appropriate HTTP status codes
@@ -197,6 +209,7 @@ if err != nil {
 ## Common Tasks
 
 ### Adding a new endpoint:
+
 1. Add handler method to `PeerHandler`
 2. Register route in `main.go`: `mux.HandleFunc("METHOD /path/{param}", handler.Method)`
 3. Write tests FIRST in `main_test.go` (TDD)
@@ -204,12 +217,14 @@ if err != nil {
 5. Update `API.md` with endpoint docs
 
 ### Modifying existing handler:
+
 1. Write failing test for new behavior
 2. Implement the handler change
 3. Run tests to verify
 4. Update API documentation
 
 ### Adding new service logic:
+
 1. Define new method in `Service` interface
 2. Implement in both `realService` and `mockService`
 3. Write contract tests for the interface

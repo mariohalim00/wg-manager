@@ -12,20 +12,19 @@
 </svelte:head>
 
 <!-- Main layout with gradient background -->
-<div class="min-h-screen flex">
+<div class="flex min-h-screen">
 	<!-- Sidebar navigation -->
 	<Sidebar />
 
 	<!-- Main content area -->
-	<main class="flex-1 p-6 md:p-8 overflow-y-auto">
+	<main class="flex-1 overflow-y-auto p-6 md:p-8">
 		{@render children()}
 	</main>
 
 	<!-- Notification stack (fixed position, top-right) -->
-	<div class="fixed top-4 right-4 z-50 flex flex-col gap-2 w-80 max-w-[calc(100vw-2rem)]">
+	<div class="fixed top-4 right-4 z-50 flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2">
 		{#each $notifications as notification (notification.id)}
 			<Notification {notification} />
 		{/each}
 	</div>
 </div>
-

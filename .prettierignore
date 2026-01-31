@@ -7,3 +7,17 @@ bun.lockb
 
 # Miscellaneous
 /static/
+
+# Build artifacts
+build
+.svelte-kit
+node_modules
+
+# Design mockup files - ignore formatting
+specs/**/design/**/*.html
+**/design/**/*.html
+specs/**/design/**/*.css
+
+# Documentation - keep as-is except README
+*.md
+!README.md

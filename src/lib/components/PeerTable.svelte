@@ -15,24 +15,24 @@
 <div class="glass-card overflow-hidden">
 	<div class="overflow-x-auto">
 		<table class="w-full">
-			<thead class="bg-glass-hover border-b border-glass-border">
+			<thead class="bg-glass-hover border-glass-border border-b">
 				<tr class="text-left text-sm text-gray-300">
 					<th class="px-6 py-4 font-semibold">Name</th>
 					<th class="px-6 py-4 font-semibold">Status</th>
 					<th class="px-6 py-4 font-semibold">Allowed IPs</th>
-					<th class="px-6 py-4 font-semibold hidden md:table-cell">Last Handshake</th>
-					<th class="px-6 py-4 font-semibold hidden lg:table-cell">Transfer</th>
-					<th class="px-6 py-4 font-semibold text-right">Actions</th>
+					<th class="hidden px-6 py-4 font-semibold md:table-cell">Last Handshake</th>
+					<th class="hidden px-6 py-4 font-semibold lg:table-cell">Transfer</th>
+					<th class="px-6 py-4 text-right font-semibold">Actions</th>
 				</tr>
 			</thead>
-			<tbody class="divide-y divide-glass-border">
+			<tbody class="divide-glass-border divide-y">
 				{#each peers as peer (peer.id)}
 					<!-- FR-001a: Responsive action buttons (group for hover reveal ≥1024px) -->
 					<tr class="group hover:bg-glass-hover transition-colors">
 						<td class="px-6 py-4">
 							<div>
 								<p class="font-medium text-white">{peer.name}</p>
-								<p class="text-xs text-gray-400 truncate max-w-xs" title={peer.publicKey}>
+								<p class="max-w-xs truncate text-xs text-gray-400" title={peer.publicKey}>
 									{peer.publicKey}
 								</p>
 							</div>
@@ -42,15 +42,15 @@
 						</td>
 						<td class="px-6 py-4">
 							<div class="text-sm text-gray-300">
-								{#each peer.allowedIPs as ip}
+								{#each peer.allowedIPs as ip (ip)}
 									<div>{ip}</div>
 								{/each}
 							</div>
 						</td>
-						<td class="px-6 py-4 text-sm text-gray-400 hidden md:table-cell">
+						<td class="hidden px-6 py-4 text-sm text-gray-400 md:table-cell">
 							{formatLastHandshake(peer.lastHandshake)}
 						</td>
-						<td class="px-6 py-4 hidden lg:table-cell">
+						<td class="hidden px-6 py-4 lg:table-cell">
 							<div class="text-sm">
 								<div class="text-green-400">
 									↓ {formatBytes(peer.receiveBytes)}
@@ -63,7 +63,7 @@
 						<td class="px-6 py-4 text-right">
 							<!-- FR-001a: Always visible <1024px, hover-reveal ≥1024px -->
 							<div
-								class="flex gap-2 justify-end opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-200"
+								class="flex justify-end gap-2 opacity-100 transition-opacity duration-200 lg:opacity-0 lg:group-hover:opacity-100"
 							>
 								<button
 									onclick={() => onDownloadConfig(peer)}
@@ -96,4 +96,3 @@
 		</table>
 	</div>
 </div>
-
