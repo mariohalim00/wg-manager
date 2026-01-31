@@ -6,8 +6,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"wg-manager/backend/config"
-	"wg-manager/backend/wireguard"
+	"wg-manager/backend/internal/config"
+	"wg-manager/backend/internal/wireguard"
 )
 
 func TestPeersHandler(t *testing.T) {
@@ -47,8 +47,39 @@ func TestPeersHandler(t *testing.T) {
 	}
 }
 
+func TestStatsHandler(t *testing.T) {
+	mockWGService := wireguard.NewMockService()
+	app := &Application{WireGuard: mockWGService}
+
+	req, err := http.NewRequest("GET", "/stats", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	rr := httptest.NewRecorder()
+	handler := http.HandlerFunc(app.statsHandler)
+
+	handler.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var stats wireguard.Stats
+	err = json.Unmarshal(rr.Body.Bytes(), &stats)
+	if err != nil {
+		t.Fatalf("could not unmarshal response: %v", err)
+	}
+
+	if stats.PeerCount != 2 {
+		t.Errorf("handler returned unexpected peer count: got %d want %d",
+			stats.PeerCount, 2)
+	}
+}
+
 func TestLoadConfig(t *testing.T) {
-	cfg, err := config.LoadConfig("./config/config.json")
+	cfg, err := config.LoadConfig("../../internal/config/config.json")
 	if err != nil {
 		t.Fatalf("Failed to load config: %v", err)
 	}
