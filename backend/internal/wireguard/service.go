@@ -66,11 +66,16 @@ func (s *realService) ListPeers() ([]Peer, error) {
 			name = meta.Name
 		}
 
+		endpoint := ""
+		if p.Endpoint != nil {
+			endpoint = p.Endpoint.String()
+		}
+
 		peers = append(peers, Peer{
 			ID:            p.PublicKey.String(),
 			PublicKey:     p.PublicKey.String(),
 			Name:          name,
-			Endpoint:      p.Endpoint.String(),
+			Endpoint:      endpoint,
 			AllowedIPs:    allowedIPs,
 			LastHandshake: p.LastHandshakeTime.String(),
 			ReceiveBytes:  p.ReceiveBytes,
