@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Mobile Interface &amp; Logs - WireGuard VPN</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["ui-monospace", "SFMono-Regular", "Menlo", "Monaco", "Consolas", "Liberation Mono", "Courier New", "monospace"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass {
+            background: rgba(25, 38, 51, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .bg-glow {
+            background: radial-gradient(circle at 50% 50%, #137fec33 0%, transparent 60%);
+        }
+        .log-line {
+            border-left: 2px solid transparent;
+        }
+        .log-line:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-left-color: #137fec;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white min-h-screen relative overflow-x-hidden">
+<!-- Decorative Blurry Background Orbs -->
+<div class="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] bg-primary/20 rounded-full blur-[120px] pointer-events-none"></div>
+<div class="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[100px] pointer-events-none"></div>
+<!-- Main Container (Mobile Constrained) -->
+<div class="relative flex flex-col items-center min-h-screen w-full">
+<div class="w-full max-w-[480px] flex flex-col min-h-screen bg-transparent shadow-2xl">
+<!-- TopNavBar Component -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/10 px-6 py-4 glass sticky top-0 z-50">
+<div class="flex items-center gap-3">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M39.5563 34.1455V13.8546C39.5563 15.708 36.8773 17.3437 32.7927 18.3189C30.2914 18.916 27.263 19.2655 24 19.2655C20.737 19.2655 17.7086 18.916 15.2073 18.3189C11.1227 17.3437 8.44365 15.708 8.44365 13.8546V34.1455C8.44365 35.9988 11.1227 37.6346 15.2073 38.6098C17.7086 39.2069 20.737 39.5564 24 39.5564C27.263 39.5564 30.2914 39.2069 32.7927 38.6098C36.8773 37.6346 39.5563 35.9988 39.5563 34.1455Z" fill="currentColor"></path>
+<path clip-rule="evenodd" d="M10.4485 13.8519C10.4749 13.9271 10.6203 14.246 11.379 14.7361C12.298 15.3298 13.7492 15.9145 15.6717 16.3735C18.0007 16.9296 20.8712 17.2655 24 17.2655C27.1288 17.2655 29.9993 16.9296 32.3283 16.3735C34.2508 15.9145 35.702 15.3298 36.621 14.7361C37.3796 14.246 37.5251 13.9271 37.5515 13.8519C37.5287 13.7876 37.4333 13.5973 37.0635 13.2931C36.5266 12.8516 35.6288 12.3647 34.343 11.9175C31.79 11.0295 28.1333 10.4437 24 10.4437C19.8667 10.4437 16.2099 11.0295 13.657 11.9175C12.3712 12.3647 11.4734 12.8516 10.9365 13.2931C10.5667 13.5973 10.4713 13.7876 10.4485 13.8519ZM37.5563 18.7877C36.3176 19.3925 34.8502 19.8839 33.2571 20.2642C30.5836 20.9025 27.3973 21.2655 24 21.2655C20.6027 21.2655 17.4164 20.9025 14.7429 20.2642C13.1498 19.8839 11.6824 19.3925 10.4436 18.7877V34.1275C10.4515 34.1545 10.5427 34.4867 11.379 35.027C12.298 35.6207 13.7492 36.2054 15.6717 36.6644C18.0007 37.2205 20.8712 37.5564 24 37.5564C27.1288 37.5564 29.9993 37.2205 32.3283 36.6644C34.2508 36.2054 35.702 35.6207 36.621 35.027C37.4573 34.4867 37.5485 34.1546 37.5563 34.1275V18.7877ZM41.5563 13.8546V34.1455C41.5563 36.1078 40.158 37.5042 38.7915 38.3869C37.3498 39.3182 35.4192 40.0389 33.2571 40.5551C30.5836 41.1934 27.3973 41.5564 24 41.5564C20.6027 41.5564 17.4164 41.1934 14.7429 40.5551C12.5808 40.0389 10.6502 39.3182 9.20848 38.3869C7.84205 37.5042 6.44365 36.1078 6.44365 34.1455L6.44365 13.8546C6.44365 12.2684 7.37223 11.0454 8.39581 10.2036C9.43325 9.3505 10.8137 8.67141 12.343 8.13948C15.4203 7.06909 19.5418 6.44366 24 6.44366C28.4582 6.44366 32.5797 7.06909 35.657 8.13948C37.1863 8.67141 38.5667 9.3505 39.6042 10.2036C40.6278 11.0454 41.5563 12.2684 41.5563 13.8546Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<h2 class="text-white text-lg font-bold tracking-tight">WireGuard Mobile</h2>
+</div>
+<div class="flex items-center gap-3">
+<button class="size-10 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="size-10 flex items-center justify-center rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 transition-colors">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+</button>
+</div>
+</header>
+<!-- PageHeading Component -->
+<div class="px-6 py-6">
+<div class="flex flex-col gap-1">
+<p class="text-white text-3xl font-bold leading-tight">Interface &amp; Logs</p>
+<div class="flex items-center gap-2">
+<div class="size-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_8px_rgba(34,197,94,0.6)]"></div>
+<p class="text-[#92adc9] text-sm font-normal">Active • 10.0.0.1</p>
+</div>
+</div>
+</div>
+<!-- Content Area -->
+<div class="flex-1 px-4 space-y-4 pb-24">
+<!-- ActionPanel Component (Modified for Glass) -->
+<div class="glass rounded-xl p-5">
+<div class="flex items-center justify-between gap-4">
+<div class="flex flex-col gap-1">
+<p class="text-white text-lg font-semibold leading-tight">Interface State</p>
+<p class="text-[#92adc9] text-sm font-normal leading-normal">Toggle VPN connection</p>
+</div>
+<label class="relative flex h-[31px] w-[51px] cursor-pointer items-center rounded-full border-none bg-white/10 p-0.5 has-[:checked]:justify-end has-[:checked]:bg-primary transition-all duration-300">
+<div class="h-full w-[27px] rounded-full bg-white shadow-lg"></div>
+<input checked="" class="invisible absolute" type="checkbox"/>
+</label>
+</div>
+</div>
+<!-- TextField Group (Modified for Glass) -->
+<div class="glass rounded-xl p-5 space-y-4">
+<div class="flex gap-4">
+<label class="flex flex-col flex-1">
+<p class="text-[#92adc9] text-xs font-semibold uppercase tracking-wider pb-2">Listen Port</p>
+<input class="w-full rounded-lg text-white border border-white/10 bg-white/5 focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 text-base font-normal outline-none transition-all" placeholder="51820" value="51820"/>
+</label>
+<label class="flex flex-col flex-1">
+<p class="text-[#92adc9] text-xs font-semibold uppercase tracking-wider pb-2">MTU</p>
+<input class="w-full rounded-lg text-white border border-white/10 bg-white/5 focus:border-primary focus:ring-1 focus:ring-primary h-12 px-4 text-base font-normal outline-none transition-all" placeholder="1420" value="1420"/>
+</label>
+</div>
+<!-- SingleButton Component -->
+<button class="w-full cursor-pointer items-center justify-center rounded-lg h-12 px-4 bg-primary hover:bg-primary/90 text-white text-sm font-bold tracking-[0.015em] transition-all flex gap-2">
+<span class="material-symbols-outlined text-[18px]">save</span>
+<span>Update Configuration</span>
+</button>
+</div>
+<!-- Real-time Logs Panel (New Component) -->
+<div class="glass rounded-xl overflow-hidden flex flex-col h-[400px]">
+<div class="flex items-center justify-between px-5 py-3 border-b border-white/10 bg-white/5">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">terminal</span>
+<span class="text-sm font-bold text-white">Real-time System Logs</span>
+</div>
+<div class="flex items-center gap-2">
+<span class="text-[10px] text-[#92adc9] uppercase font-bold">Auto-scroll</span>
+<input checked="" class="rounded bg-white/10 border-white/20 text-primary focus:ring-primary" type="checkbox"/>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto p-4 font-mono text-xs space-y-2 scrollbar-thin scrollbar-thumb-white/10">
+<div class="log-line p-1 px-2">
+<span class="text-white/40">[2023-10-24 14:20:01]</span>
+<span class="text-green-400 font-bold mx-1">HANDSHAKE</span>
+<span class="text-white/70">Received from peer 1 (185.12.44.10)</span>
+</div>
+<div class="log-line p-1 px-2">
+<span class="text-white/40">[2023-10-24 14:20:03]</span>
+<span class="text-primary font-bold mx-1">DATA</span>
+<span class="text-white/70">Encapsulating 120 bytes for 10.0.0.5</span>
+</div>
+<div class="log-line p-1 px-2">
+<span class="text-white/40">[2023-10-24 14:20:05]</span>
+<span class="text-yellow-400 font-bold mx-1">REKEY</span>
+<span class="text-white/70">Initiating rekeying with peer 2</span>
+</div>
+<div class="log-line p-1 px-2">
+<span class="text-white/40">[2023-10-24 14:20:10]</span>
+<span class="text-green-400 font-bold mx-1">HANDSHAKE</span>
+<span class="text-white/70">Established with peer 2 (92.10.5.112)</span>
+</div>
+<div class="log-line p-1 px-2">
+<span class="text-white/40">[2023-10-24 14:21:15]</span>
+<span class="text-primary font-bold mx-1">KEEPALIVE</span>
+<span class="text-white/70">Sent to all 4 peers</span>
+</div>
+<div class="log-line p-1 px-2">
+<span class="text-white/40">[2023-10-24 14:22:00]</span>
+<span class="text-white/40">SYSTEM: Tunnel "wg0" state updated to ACTIVE</span>
+</div>
+<div class="log-line p-1 px-2">
+<span class="text-white/40">[2023-10-24 14:22:12]</span>
+<span class="text-primary font-bold mx-1">DATA</span>
+<span class="text-white/70">Forwarding 1.4KB payload to 10.0.0.12</span>
+</div>
+<div class="log-line p-1 px-2">
+<span class="text-white/40">[2023-10-24 14:22:45]</span>
+<span class="text-green-400 font-bold mx-1">HANDSHAKE</span>
+<span class="text-white/70">Refreshed for peer 1</span>
+</div>
+</div>
+<div class="p-3 bg-white/5 flex justify-center">
+<button class="text-[11px] font-bold text-primary flex items-center gap-1 hover:underline">
+<span class="material-symbols-outlined text-[14px]">download</span>
+                            DOWNLOAD FULL LOGS
+                        </button>
+</div>
+</div>
+</div>
+<!-- Sticky Bottom Navigation Bar (Optional Context Enhancement) -->
+<div class="fixed bottom-0 w-full max-w-[480px] px-4 py-4 glass border-t border-white/10 flex justify-around items-center rounded-t-2xl">
+<button class="flex flex-col items-center gap-1 text-primary">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-[10px] font-bold">DASHBOARD</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#92adc9]">
+<span class="material-symbols-outlined">group</span>
+<span class="text-[10px] font-bold">PEERS</span>
+</button>
+<button class="flex flex-col items-center gap-1 text-[#92adc9]">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-[10px] font-bold">STATS</span>
+</button>
+<div class="size-10 rounded-full bg-cover border-2 border-primary shadow-lg" data-alt="User avatar" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAVfo2xJjiQcDVcMb800QFGMW6qYFSvPeKYm8E0y6J90fekbi98dSfxicP6wlaAo9rdEjUpIO7DlxZRQ0iS_Z1wyFcq0KAkDAGqQEfewlYWiNvJN1d-6Li5k_gSc1YF6AW4itLVNKxU4fsfwMa4CmpYK8Jz6ZS3G8QoxsZ7UR1q8Jedhip3tB-rmKTGyMiE0rtGwVZlJ9aF1mnmmXGvIp63KTDkH-x_gMrPOC7jHL3AyyH0Oilmb100CSB-Pbo3d2hn8Y7L15KGVPQ');"></div>
+</div>
+</div>
+</div>
+</body></html>

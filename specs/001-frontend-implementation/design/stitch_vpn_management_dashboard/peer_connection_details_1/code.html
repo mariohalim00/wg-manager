@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Peer Connection Details - GuardWire VPN</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#0b1117",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"],
+                        "mono": ["JetBrains Mono", "monospace"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-panel {
+            background: rgba(13, 20, 28, 0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .qr-gradient-container {
+            background: linear-gradient(135deg, #1e3a3a 0%, #102a2a 100%);
+            box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
+        }
+        .qr-inner-card {
+            filter: drop-shadow(0 20px 30px rgba(0,0,0,0.4));
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-white overflow-hidden">
+<div class="fixed inset-0 z-0 opacity-20 pointer-events-none select-none">
+<div class="layout-container flex h-full flex-col">
+<header class="flex items-center justify-between border-b border-white/10 px-10 py-3">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-4 text-white">
+<span class="material-symbols-outlined text-primary">shield</span>
+<h2 class="text-lg font-bold">GuardWire VPN</h2>
+</div>
+<div class="flex items-center gap-9 opacity-50">
+<span class="text-sm font-medium">Dashboard</span>
+<span class="text-sm font-medium">Peers</span>
+<span class="text-sm font-medium">Settings</span>
+</div>
+</div>
+</header>
+<main class="p-10 grid grid-cols-3 gap-6">
+<div class="h-32 bg-white/5 rounded-xl border border-white/10"></div>
+<div class="h-32 bg-white/5 rounded-xl border border-white/10"></div>
+<div class="h-32 bg-white/5 rounded-xl border border-white/10"></div>
+<div class="col-span-3 h-96 bg-white/5 rounded-xl border border-white/10"></div>
+</main>
+</div>
+</div>
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
+<div class="glass-panel w-full max-w-[540px] rounded-2xl overflow-hidden shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)] flex flex-col border border-white/10">
+<div class="flex items-center justify-between px-10 pt-10 pb-4">
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<h1 class="text-2xl font-bold tracking-tight text-white">iPhone 15 Pro</h1>
+<span class="flex h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+</div>
+<p class="text-[#92adc9]/60 text-sm font-normal">Peer connection details and setup</p>
+</div>
+<button class="text-white/40 hover:text-white transition-colors bg-white/5 hover:bg-white/10 p-2 rounded-lg">
+<span class="material-symbols-outlined" data-icon="close" data-size="20px">close</span>
+</button>
+</div>
+<div class="px-10 py-6 flex flex-col items-center">
+<div class="relative p-1 rounded-2xl border border-primary/40">
+<div class="qr-gradient-container w-80 h-80 rounded-xl flex items-center justify-center relative overflow-hidden">
+<div class="qr-inner-card bg-white p-6 rounded-lg relative z-10">
+<div class="w-48 h-48 bg-center bg-no-repeat bg-cover" data-alt="A high contrast QR code for VPN configuration" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAp8pANq7UQRu5KVLV9vKzF63bU1cR4J8KntCxscPFAx7lNNfHfU9NoBe9B6Ki9covjsgGvI9I3hmEEdKRX2P1du1q6Mevl1JBvKA5MsXBcO9m1J8nnXVjKtV2hlS9HrZ8uLVZ-e5ohQnud1z9Lo9rWdwfqzNuoZLbkf1FvRJdMb9sFJ6UulvH0-bcRjs5ghwK9Lzb1eutX960pWpDXFoo7CgbNPvD7yJNbjm7hy_KqKkZSx64w-bpPvJeKAYiyXhQWAgW2XcT7vP8");'>
+</div>
+</div>
+</div>
+</div>
+<p class="mt-8 text-[#92adc9]/70 text-[13px] leading-relaxed font-normal text-center max-w-[360px]">
+                    Scan this QR code with the WireGuard app on your mobile device to import the configuration instantly.
+                </p>
+</div>
+<div class="flex gap-3 px-10 py-4">
+<button class="flex-1 flex items-center justify-center gap-3 h-12 rounded-xl bg-primary text-white text-[15px] font-bold hover:bg-primary/90 transition-all active:scale-[0.98] shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-[20px]">content_copy</span>
+<span>Copy Config</span>
+</button>
+<button class="flex items-center justify-center w-12 h-12 rounded-xl bg-[#1e2a37] text-white/80 hover:text-white hover:bg-[#253444] transition-all border border-white/5" title="Download .conf file">
+<span class="material-symbols-outlined text-[20px]">download</span>
+</button>
+</div>
+<div class="px-10 pb-10 pt-4">
+<div class="bg-black/30 rounded-xl border border-white/5 p-6 space-y-5">
+<div class="flex flex-col gap-1.5">
+<span class="text-[10px] uppercase tracking-[0.1em] text-[#92adc9]/50 font-bold">Allowed IPs</span>
+<code class="font-mono text-[14px] text-primary">0.0.0.0/0, ::/0</code>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div class="flex flex-col gap-1.5">
+<span class="text-[10px] uppercase tracking-[0.1em] text-[#92adc9]/50 font-bold">Endpoint</span>
+<code class="font-mono text-[13px] text-white/90">vpn.guardwire.io:51820</code>
+</div>
+<div class="flex flex-col gap-1.5">
+<span class="text-[10px] uppercase tracking-[0.1em] text-[#92adc9]/50 font-bold">Keepalive</span>
+<code class="font-mono text-[13px] text-white/90">25 seconds</code>
+</div>
+</div>
+<div class="flex flex-col gap-1.5 pt-1">
+<div class="flex items-center justify-between">
+<span class="text-[10px] uppercase tracking-[0.1em] text-[#92adc9]/50 font-bold">Public Key</span>
+<span class="material-symbols-outlined text-[16px] text-white/30 cursor-pointer hover:text-white transition-colors">content_copy</span>
+</div>
+<code class="font-mono text-[12px] text-white/50 truncate tracking-tight">h2Xf9Pz7L/8qW1E+J0B9M4K5N6O7P8Q9R0S1T2U3V4W=</code>
+</div>
+</div>
+<div class="mt-8 flex justify-center">
+<button class="text-[11px] text-red-400/60 hover:text-red-400 font-bold transition-all uppercase tracking-[0.15em] flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-red-400/5">
+<span class="material-symbols-outlined text-[18px]">refresh</span>
+                        Regenerate Keys
+                    </button>
+</div>
+</div>
+</div>
+</div>
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50">
+<p class="text-white/30 text-[10px] font-bold uppercase tracking-[0.3em]">Esc to Close • GuardWire Secure Tunnel</p>
+</div>
+
+</body></html>

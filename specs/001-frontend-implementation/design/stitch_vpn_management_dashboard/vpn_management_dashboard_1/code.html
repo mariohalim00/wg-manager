@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>VPN Management Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101922",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .sidebar-glass {
+            background: rgba(16, 25, 34, 0.6);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .pulse-online {
+            box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+        body {
+            background: radial-gradient(circle at top left, #1a2a3a 0%, #101922 100%);
+            background-attachment: fixed;
+        }
+    </style>
+</head>
+<body class="font-display text-white antialiased min-h-screen">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar Navigation -->
+<aside class="w-64 sidebar-glass flex flex-col z-20">
+<div class="p-6">
+<div class="flex items-center gap-3 mb-10">
+<div class="bg-primary p-2 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-white text-2xl">shield_lock</span>
+</div>
+<div>
+<h1 class="text-lg font-bold tracking-tight">WireGuard</h1>
+<p class="text-xs text-primary font-medium uppercase tracking-wider">v2.4.0 Active</p>
+</div>
+</div>
+<nav class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl bg-primary/10 text-primary border border-primary/20" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-medium text-sm">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">group</span>
+<span class="font-medium text-sm text-slate-300">Peers</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-medium text-sm text-slate-300">Settings</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5 transition-colors" href="#">
+<span class="material-symbols-outlined">terminal</span>
+<span class="font-medium text-sm text-slate-300">Logs</span>
+</a>
+</nav>
+</div>
+<div class="mt-auto p-6 flex flex-col gap-4">
+<div class="glass p-4 rounded-xl">
+<p class="text-[10px] uppercase font-bold text-slate-500 mb-2">Usage Limit</p>
+<div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[65%]"></div>
+</div>
+<p class="text-[11px] text-slate-400 mt-2">6.5 GB of 10 GB used</p>
+</div>
+<button class="w-full bg-primary hover:bg-primary/90 transition-all text-white font-bold text-sm py-3 rounded-xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+                    Add New Peer
+                </button>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 flex flex-col overflow-y-auto relative">
+<!-- Header/Top Nav -->
+<header class="flex items-center justify-between px-8 py-6 sticky top-0 bg-background-dark/40 backdrop-blur-md z-10 border-b border-white/5">
+<div class="flex items-center gap-4">
+<h2 class="text-2xl font-black tracking-tight">Interface: <span class="text-primary">wg0</span></h2>
+</div>
+<div class="flex items-center gap-6">
+<div class="relative">
+<span class="material-symbols-outlined text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 text-xl">search</span>
+<input class="bg-white/5 border border-white/10 rounded-xl py-2 pl-10 pr-4 text-sm focus:ring-primary focus:border-primary w-64 text-white" placeholder="Search peers..." type="text"/>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<div class="h-10 w-10 rounded-full bg-cover bg-center ring-2 ring-primary/20" data-alt="User profile avatar" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA5zxJQKv80I4rqBTG_rvJi7xBIZkE0Y3at_Zh88cooZyDAJdWC4pUxl5rB7wwAcZ5fEcCqp0u0T_J_Na4xN0YBXDY1qSDqHKi_mhoe4A3V_FlhldB0V9L0EQMVOCHSVF9ZJTEnO7tNt48uEvYhts5pIzvq6xUYFXIHgplQFvQpggd7obOgVT_bQcRfYYxmTIs9tZYbziGVg2yOj18PW1fLGuCONHJMkJoOahpabHgmN8CXVZp4L9e8HEvT7eGqnJUClgikd4u-OL0");'></div>
+</div>
+</div>
+</header>
+<div class="p-8 space-y-8">
+<!-- Interface Stats Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="glass p-6 rounded-2xl flex flex-col gap-2 relative overflow-hidden group">
+<div class="absolute -right-4 -top-4 w-20 h-20 bg-green-500/10 rounded-full blur-2xl group-hover:bg-green-500/20 transition-all"></div>
+<p class="text-slate-400 text-sm font-medium">Status</p>
+<div class="flex items-center gap-2">
+<div class="size-2.5 rounded-full bg-green-500 pulse-online"></div>
+<p class="text-2xl font-bold tracking-tight">Active</p>
+</div>
+</div>
+<div class="glass p-6 rounded-2xl flex flex-col gap-2 relative overflow-hidden">
+<p class="text-slate-400 text-sm font-medium">Public Key</p>
+<div class="flex items-center justify-between">
+<p class="text-2xl font-bold tracking-tight font-mono truncate">Z1fA...9k=</p>
+<span class="material-symbols-outlined text-slate-400 cursor-pointer hover:text-white">content_copy</span>
+</div>
+</div>
+<div class="glass p-6 rounded-2xl flex flex-col gap-2 relative overflow-hidden">
+<p class="text-slate-400 text-sm font-medium">Listening Port</p>
+<p class="text-2xl font-bold tracking-tight">51820</p>
+</div>
+<div class="glass p-6 rounded-2xl flex flex-col gap-2 relative overflow-hidden">
+<p class="text-slate-400 text-sm font-medium">Subnet</p>
+<p class="text-2xl font-bold tracking-tight font-mono">10.0.0.0/24</p>
+</div>
+</div>
+<!-- Traffic Charts -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+<div class="glass p-6 rounded-2xl">
+<div class="flex justify-between items-start mb-6">
+<div>
+<p class="text-slate-400 text-sm font-medium">Total Received</p>
+<h3 class="text-3xl font-black tracking-tight">14.2 <span class="text-sm font-normal text-slate-500">GiB</span></h3>
+</div>
+<div class="flex items-center gap-1 text-green-400 text-sm font-bold bg-green-400/10 px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                                12%
+                            </div>
+</div>
+<div class="h-32 w-full">
+<svg class="w-full h-full" viewbox="0 0 500 150">
+<path d="M0 130 Q 50 120, 100 140 T 200 80 T 300 100 T 400 40 T 500 70" fill="none" stroke="#137fec" stroke-linecap="round" stroke-width="3"></path>
+<path d="M0 130 Q 50 120, 100 140 T 200 80 T 300 100 T 400 40 T 500 70 V 150 H 0 Z" fill="url(#grad-blue)" opacity="0.1"></path>
+<defs>
+<lineargradient id="grad-blue" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#137fec;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#137fec;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+</div>
+<div class="glass p-6 rounded-2xl">
+<div class="flex justify-between items-start mb-6">
+<div>
+<p class="text-slate-400 text-sm font-medium">Total Sent</p>
+<h3 class="text-3xl font-black tracking-tight">8.4 <span class="text-sm font-normal text-slate-500">GiB</span></h3>
+</div>
+<div class="flex items-center gap-1 text-green-400 text-sm font-bold bg-green-400/10 px-2 py-1 rounded-lg">
+<span class="material-symbols-outlined text-sm">trending_up</span>
+                                5%
+                            </div>
+</div>
+<div class="h-32 w-full">
+<svg class="w-full h-full" viewbox="0 0 500 150">
+<path d="M0 110 Q 70 120, 150 90 T 280 130 T 400 60 T 500 100" fill="none" stroke="#94a3b8" stroke-linecap="round" stroke-width="3"></path>
+<path d="M0 110 Q 70 120, 150 90 T 280 130 T 400 60 T 500 100 V 150 H 0 Z" fill="url(#grad-gray)" opacity="0.1"></path>
+<defs>
+<lineargradient id="grad-gray" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" style="stop-color:#94a3b8;stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:#94a3b8;stop-opacity:0"></stop>
+</lineargradient>
+</defs>
+</svg>
+</div>
+</div>
+</div>
+<!-- Peers Table -->
+<div class="glass rounded-2xl overflow-hidden mb-12">
+<div class="p-6 border-b border-white/5 flex justify-between items-center">
+<h3 class="text-lg font-bold">Active Peers (12)</h3>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-white/5 hover:bg-white/10 text-sm font-medium rounded-xl transition-all">Filter</button>
+<button class="px-4 py-2 bg-white/5 hover:bg-white/10 text-sm font-medium rounded-xl transition-all">Export</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="text-slate-500 text-[11px] uppercase tracking-widest font-bold">
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4">Peer Name</th>
+<th class="px-6 py-4">Internal IP</th>
+<th class="px-6 py-4">Transfer (U/D)</th>
+<th class="px-6 py-4">Last Handshake</th>
+<th class="px-6 py-4 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-white/5">
+<tr class="group hover:bg-white/[0.02] transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-green-500 pulse-online"></div>
+<span class="text-xs font-bold text-green-500 uppercase tracking-tighter">Online</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-lg">laptop_mac</span>
+</div>
+<div>
+<p class="font-bold text-sm">MacBook Pro M2</p>
+<p class="text-xs text-slate-500">macOS Sonoma</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2 py-1 bg-white/5 rounded font-mono text-xs text-slate-300">10.0.0.2</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5 text-xs">
+<span class="material-symbols-outlined text-[14px] text-green-500">arrow_upward</span>
+<span class="text-slate-300">2.4 GiB</span>
+</div>
+<div class="flex items-center gap-1.5 text-xs">
+<span class="material-symbols-outlined text-[14px] text-primary">arrow_downward</span>
+<span class="text-slate-300">5.1 GiB</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="text-xs text-slate-400">2 minutes ago</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors" title="Download Config">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors" title="View QR Code">
+<span class="material-symbols-outlined">qr_code_2</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/5 rounded-lg transition-colors" title="Delete Peer">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="group hover:bg-white/[0.02] transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-slate-600"></div>
+<span class="text-xs font-bold text-slate-500 uppercase tracking-tighter">Offline</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-lg bg-white/10 flex items-center justify-center text-slate-400">
+<span class="material-symbols-outlined text-lg">smartphone</span>
+</div>
+<div>
+<p class="font-bold text-sm">Pixel 8 Pro</p>
+<p class="text-xs text-slate-500">Android 14</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2 py-1 bg-white/5 rounded font-mono text-xs text-slate-300">10.0.0.3</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5 text-xs text-slate-500">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+<span>142 MiB</span>
+</div>
+<div class="flex items-center gap-1.5 text-xs text-slate-500">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+<span>320 MiB</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="text-xs text-slate-400">3 days ago</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">qr_code_2</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</td>
+</tr>
+<tr class="group hover:bg-white/[0.02] transition-colors">
+<td class="px-6 py-5">
+<div class="flex items-center gap-2">
+<div class="size-2 rounded-full bg-green-500 pulse-online"></div>
+<span class="text-xs font-bold text-green-500 uppercase tracking-tighter">Online</span>
+</div>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center gap-3">
+<div class="size-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-lg">router</span>
+</div>
+<div>
+<p class="font-bold text-sm">Home Gateway</p>
+<p class="text-xs text-slate-500">OpenWrt Router</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="px-2 py-1 bg-white/5 rounded font-mono text-xs text-slate-300">10.0.0.10</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-1.5 text-xs text-green-500 font-medium">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+<span>12.8 GiB</span>
+</div>
+<div class="flex items-center gap-1.5 text-xs text-primary font-medium">
+<span class="material-symbols-outlined text-[14px]">arrow_downward</span>
+<span>1.2 TiB</span>
+</div>
+</div>
+</td>
+<td class="px-6 py-5">
+<span class="text-xs text-slate-400">Just now</span>
+</td>
+<td class="px-6 py-5">
+<div class="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">download</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">qr_code_2</span>
+</button>
+<button class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-400/5 rounded-lg transition-colors">
+<span class="material-symbols-outlined">delete</span>
+</button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-white/5 flex items-center justify-center">
+<button class="text-sm font-bold text-slate-400 hover:text-white transition-colors py-2 px-6">View All Peers</button>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Background Decorative Element -->
+<div class="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full z-[-1]"></div>
+<div class="fixed bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-blue-900/10 blur-[100px] rounded-full z-[-1]"></div>
+</body></html>

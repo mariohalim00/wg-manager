@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Create New Peer - WireGuard Manager</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#137fec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#0a0f14",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "2xl": "1rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        .glass-card {
+            background: rgba(25, 38, 51, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glow-primary {
+            box-shadow: 0 0 20px rgba(19, 127, 236, 0.3);
+        }
+        .glow-input:focus {
+            box-shadow: 0 0 10px rgba(19, 127, 236, 0.15);
+        }
+        body {
+            background: radial-gradient(circle at top right, #111a22, #0a0f14);
+        }
+    </style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark min-h-screen text-white">
+<div class="relative flex h-screen w-full flex-col overflow-x-hidden">
+<div class="layout-container flex h-full grow flex-col">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-white/5 px-10 py-3 backdrop-blur-md sticky top-0 z-50">
+<div class="flex items-center gap-4 text-white">
+<div class="size-6 text-primary">
+<svg fill="currentColor" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path d="M44 11.2727C44 14.0109 39.8386 16.3957 33.69 17.6364C39.8386 18.877 44 21.2618 44 24C44 26.7382 39.8386 29.123 33.69 30.3636C39.8386 31.6043 44 33.9891 44 36.7273C44 40.7439 35.0457 44 24 44C12.9543 44 4 40.7439 4 36.7273C4 33.9891 8.16144 31.6043 14.31 30.3636C8.16144 29.123 4 26.7382 4 24C4 21.2618 8.16144 18.877 14.31 17.6364C8.16144 16.3957 4 14.0109 4 11.2727C4 7.25611 12.9543 4 24 4C35.0457 4 44 7.25611 44 11.2727Z"></path>
+</svg>
+</div>
+<h2 class="text-white text-lg font-bold leading-tight tracking-tight">WireGuard Manager</h2>
+</div>
+<div class="flex flex-1 justify-end gap-8">
+<nav class="flex items-center gap-8">
+<a class="text-white/70 hover:text-white text-sm font-medium transition-colors" href="#">Dashboard</a>
+<a class="text-white text-sm font-semibold border-b-2 border-primary py-1" href="#">Peers</a>
+<a class="text-white/70 hover:text-white text-sm font-medium transition-colors" href="#">Settings</a>
+<a class="text-white/70 hover:text-white text-sm font-medium transition-colors" href="#">Logs</a>
+</nav>
+<div class="flex gap-3">
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-white/5 hover:bg-white/10 text-white transition-all">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+</button>
+<button class="flex items-center justify-center rounded-lg h-10 w-10 bg-white/5 hover:bg-white/10 text-white transition-all">
+<span class="material-symbols-outlined text-[20px]">account_circle</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-1 flex items-center justify-center p-6 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] bg-fixed">
+<div class="w-full max-w-[580px] animate-in fade-in zoom-in duration-500">
+<!-- Page Heading Component -->
+<div class="mb-8 text-center">
+<h1 class="text-white text-4xl font-black leading-tight tracking-tight mb-2">Create New Peer</h1>
+<p class="text-[#92adc9] text-base font-normal">Configure a new device connection to your secure network.</p>
+</div>
+<!-- Main Form Card (Glassmorphism) -->
+<div class="glass-card rounded-2xl p-8 shadow-2xl relative overflow-hidden">
+<!-- Top Accent Glow -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-[2px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
+<form class="space-y-6">
+<!-- Peer Name Field -->
+<div class="space-y-2">
+<label class="text-sm font-semibold text-white/80 flex items-center gap-2">
+                                    Peer Name <span class="text-primary">*</span>
+</label>
+<input class="w-full bg-background-dark/50 border border-white/10 rounded-xl h-14 px-4 text-white placeholder:text-white/30 focus:border-primary focus:ring-0 transition-all glow-input" placeholder="e.g., MacBook Pro" type="text"/>
+</div>
+<!-- Allowed IPs Field -->
+<div class="space-y-2">
+<label class="text-sm font-semibold text-white/80 flex items-center gap-2">
+                                    Allowed IPs
+                                    <span class="material-symbols-outlined text-xs text-white/40 cursor-help" title="Traffic to these IP ranges will be routed through the VPN">info</span>
+</label>
+<div class="relative">
+<input class="w-full bg-background-dark/50 border border-white/10 rounded-xl h-14 px-4 pr-12 text-white placeholder:text-white/30 focus:border-primary focus:ring-0 transition-all glow-input" type="text" value="10.0.0.5/32"/>
+<div class="absolute right-4 top-1/2 -translate-y-1/2 text-white/40">
+<span class="material-symbols-outlined">edit</span>
+</div>
+</div>
+</div>
+<!-- Security/Keys Info Card -->
+<div class="p-4 rounded-xl bg-primary/5 border border-primary/20 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary/20 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined">key</span>
+</div>
+<div>
+<p class="text-xs font-bold text-white uppercase tracking-wider">Security</p>
+<p class="text-sm text-[#92adc9]">Keys managed server-side</p>
+</div>
+</div>
+<button class="text-xs font-bold text-primary hover:text-white flex items-center gap-1 transition-colors" type="button">
+<span class="material-symbols-outlined text-sm">refresh</span>
+                                    REGENERATE
+                                </button>
+</div>
+<!-- Advanced Section Toggle -->
+<details class="group">
+<summary class="flex items-center justify-between cursor-pointer list-none py-2 text-white/60 hover:text-white transition-colors">
+<span class="text-sm font-semibold uppercase tracking-widest flex items-center gap-2">
+                                        Advanced Options
+                                        <span class="material-symbols-outlined text-sm group-open:rotate-180 transition-transform">expand_more</span>
+</span>
+</summary>
+<div class="pt-4 space-y-4 animate-in slide-in-from-top-2">
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-2">
+<label class="text-xs font-semibold text-white/60">Persistent Keepalive</label>
+<input class="w-full bg-background-dark/50 border border-white/10 rounded-lg h-12 px-3 text-white focus:border-primary focus:ring-0" type="number" value="25"/>
+</div>
+<div class="space-y-2">
+<label class="text-xs font-semibold text-white/60">Custom DNS</label>
+<input class="w-full bg-background-dark/50 border border-white/10 rounded-lg h-12 px-3 text-white focus:border-primary focus:ring-0" placeholder="1.1.1.1" type="text"/>
+</div>
+</div>
+</div>
+</details>
+<!-- Actions -->
+<div class="pt-4 flex flex-col gap-4">
+<button class="w-full bg-primary hover:bg-primary/90 text-white font-bold h-14 rounded-xl transition-all glow-primary flex items-center justify-center gap-2" type="submit">
+<span>Create Peer</span>
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+</button>
+<button class="w-full h-12 text-white/40 hover:text-white text-sm font-medium transition-colors" type="button">
+                                    Cancel &amp; Return
+                                </button>
+</div>
+</form>
+</div>
+<!-- Footer Security Disclaimer -->
+<div class="mt-8 flex items-center justify-center gap-2 text-white/30 text-xs">
+<span class="material-symbols-outlined text-sm">lock</span>
+<span>End-to-end encrypted connection setup</span>
+</div>
+</div>
+</main>
+</div>
+</div>
+</body></html>
