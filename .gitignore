@@ -34,3 +34,7 @@ vite.config.ts.timestamp-*
 # backend
 backend/main 
 backend/coverage.out*
+
+
+## mockups
+specs/**/design
