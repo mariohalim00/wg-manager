@@ -1,6 +1,6 @@
 # Architectural Decisions
 
-**Last Updated**: 2026-01-31
+**Last Updated**: 2026-02-01
 
 This document records important architectural decisions, trade-offs, and why they were made.
 
@@ -241,6 +241,60 @@ go run . | jq .  # pretty-print JSON logs
 - `API.md` is source of truth for endpoint behavior
 - Tests verify code matches API.md
 - Frontend builds against API.md spec (not code-reading)
+
+## D010: SvelteKit adapter-static for SPA Mode (2026-02-01)
+
+**Decision**: Use `@sveltejs/adapter-static` instead of `adapter-auto` for production builds.
+
+**Context**:
+
+- `adapter-auto` failed to detect a supported production environment
+- Build was failing with "Could not detect a supported production environment"
+- Frontend is a Single Page Application (SPA), not a traditional SSR site
+
+**Trade-offs**:
+
+| Adapter             | Pros                              | Cons                                   |
+| ------------------- | --------------------------------- | -------------------------------------- |
+| **Static (chosen)** | Reliable builds, SPA support      | No SSR, requires fallback config       |
+| Auto                | Automatic detection               | Failed in our environment              |
+| Node                | SSR support                       | Requires Node.js server in production  |
+| Vercel/Netlify      | Platform-optimized                | Vendor lock-in                         |
+
+**Rationale**: Frontend is purely client-side rendered (communicates with Go backend API). Static adapter is simpler and appropriate for SPA deployment.
+
+**Impact on code**:
+
+- `svelte.config.js` uses `adapter-static` with `fallback: 'index.html'`
+- Created `src/routes/+layout.ts` with `ssr = false`, `prerender = false`
+- Build output goes to `build/` directory
+- Can be served by any static file server (Nginx, Caddy, etc.)
+
+## D011: API.md as Source of Truth for Frontend Data (2026-02-01)
+
+**Decision**: Frontend must only use properties documented in `backend/API.md`. Missing properties should be added to backlog, not hardcoded.
+
+**Context**:
+
+- Mockup designs showed UI elements (Public Key, Listen Port, Subnet) that required data not in API
+- Frontend was using non-existent properties (`$stats.publicKey`, `$stats.listenPort`, `$stats.subnet`)
+- Build succeeded but runtime would fail with undefined values
+
+**Trade-offs**:
+
+| Approach                          | Pros                      | Cons                          |
+| --------------------------------- | ------------------------- | ----------------------------- |
+| **API.md as truth (chosen)**      | Type-safe, no surprises   | May need to adapt UI design   |
+| Hardcode placeholder values       | Quick fix                 | Misleading UI, tech debt      |
+| Expand API without documentation  | Faster UI development     | Contract drift, breaking changes |
+
+**Rationale**: Constitution III mandates API contract stability. Adding undocumented properties creates implicit contracts that can break. Better to document gaps in BACKLOG.md.
+
+**Impact on code**:
+
+- `+page.svelte` dashboard cards show available data (interface name, peer count, online count)
+- `BACKLOG.md` documents missing API properties for future backend work
+- `src/lib/types/stats.ts` matches API.md exactly
 
 ## Decision Methodology
 
