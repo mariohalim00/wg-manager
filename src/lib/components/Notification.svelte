@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Notification } from '$lib/types/notification';
 	import { notifications } from '$lib/stores/notifications';
+	import { CheckCircle2, XCircle, AlertTriangle, Info, X } from 'lucide-svelte';
 
 	type Props = {
 		notification: Notification;
@@ -10,18 +11,20 @@
 
 	// Type-based styling
 	const typeClasses = {
-		success: 'border-green-500 bg-green-500/20',
-		error: 'border-red-500 bg-red-500/20',
-		warning: 'border-yellow-500 bg-yellow-500/20',
-		info: 'border-blue-500 bg-blue-500/20'
+		success: 'border-green-500 bg-green-500/20 text-green-400',
+		error: 'border-red-500 bg-red-500/20 text-red-400',
+		warning: 'border-yellow-500 bg-yellow-500/20 text-yellow-400',
+		info: 'border-blue-500 bg-blue-500/20 text-blue-400'
 	};
 
 	const typeIcons = {
-		success: '✓',
-		error: '✕',
-		warning: '⚠',
-		info: 'ℹ'
+		success: CheckCircle2,
+		error: XCircle,
+		warning: AlertTriangle,
+		info: Info
 	};
+
+	let Icon = $derived(typeIcons[notification.type]);
 
 	// Handle close
 	function handleClose() {
@@ -36,17 +39,19 @@
 	role="alert"
 >
 	<!-- Icon -->
-	<span class="flex-shrink-0 text-xl">{typeIcons[notification.type]}</span>
+	<div class="flex-shrink-0 mt-0.5">
+		<Icon size={20} />
+	</div>
 
 	<!-- Message -->
-	<p class="flex-1 text-sm">{notification.message}</p>
+	<p class="flex-1 text-sm text-white/90">{notification.message}</p>
 
 	<!-- Close button -->
 	<button
 		onclick={handleClose}
-		class="flex-shrink-0 text-gray-400 transition-colors hover:text-white"
+		class="flex-shrink-0 text-white/50 transition-colors hover:text-white"
 		aria-label="Close notification"
 	>
-		<span class="text-lg">✕</span>
+		<X size={18} />
 	</button>
 </div>

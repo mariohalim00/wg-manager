@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { TriangleAlert, HelpCircle } from 'lucide-svelte';
+
 	type Props = {
 		title: string;
 		message: string;
@@ -40,9 +42,9 @@
 		<!-- Header -->
 		<div class="mb-4 flex items-center gap-3">
 			{#if danger}
-				<span class="text-3xl">⚠️</span>
+				<TriangleAlert class="text-red-500" size={28} />
 			{:else}
-				<span class="text-3xl">❓</span>
+				<HelpCircle class="text-blue-500" size={28} />
 			{/if}
 			<h2 id="confirm-dialog-title" class="text-xl font-bold">{title}</h2>
 		</div>

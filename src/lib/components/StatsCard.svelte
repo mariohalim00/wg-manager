@@ -1,28 +1,31 @@
 <script lang="ts">
+	import { Activity, TrendingUp, TrendingDown, Minus } from 'lucide-svelte';
+	import type { ComponentType } from 'svelte';
+
 	type Props = {
 		title: string;
 		value: string | number;
-		icon: string;
+		icon: ComponentType;
 		subtitle?: string;
 		trend?: 'up' | 'down' | 'neutral';
 		color?: 'blue' | 'green' | 'purple' | 'yellow';
 	};
 
-	let { title, value, icon, subtitle, trend, color = 'blue' }: Props = $props();
+	let { title, value, icon: IconComponent, subtitle, trend, color = 'blue' }: Props = $props();
 
 	// Color classes for icon background
 	const colorClasses = {
-		blue: 'bg-blue-500/20 text-blue-400',
-		green: 'bg-green-500/20 text-green-400',
-		purple: 'bg-purple-500/20 text-purple-400',
-		yellow: 'bg-yellow-500/20 text-yellow-400'
+		blue: 'bg-blue-500/10 text-blue-400',
+		green: 'bg-green-500/10 text-green-400',
+		purple: 'bg-purple-500/10 text-purple-400',
+		yellow: 'bg-yellow-500/10 text-yellow-400'
 	};
 
-	// Trend indicators
-	const trendIcons = {
-		up: '↗',
-		down: '↘',
-		neutral: '→'
+	// Trend components
+	const trendComponents = {
+		up: TrendingUp,
+		down: TrendingDown,
+		neutral: Minus
 	};
 
 	const trendColors = {
@@ -32,22 +35,28 @@
 	};
 </script>
 
-<div class="glass-card p-6 transition-transform duration-200 hover:scale-105">
+<div class="glass-card group relative overflow-hidden p-6 transition-all hover:bg-white/5">
+	<!-- Glow effect on hover -->
+	<div
+		class="absolute -top-4 -right-4 h-20 w-20 rounded-full bg-{color}-500/10 blur-2xl transition-all group-hover:bg-{color}-500/20"
+	></div>
+
 	<!-- Icon -->
-	<div class="mb-4 flex items-start justify-between">
-		<div
-			class="h-12 w-12 rounded-lg {colorClasses[color]} flex items-center justify-center text-2xl"
-		>
-			{icon}
+	<div class="relative mb-4 flex items-start justify-between">
+		<div class="rounded-lg {colorClasses[color]} flex h-12 w-12 items-center justify-center">
+			<IconComponent class="h-6 w-6" />
 		</div>
 		{#if trend}
-			<span class="text-xl {trendColors[trend]}">{trendIcons[trend]}</span>
+			{@const TrendIcon = trendComponents[trend]}
+			<span class="flex items-center gap-1 text-sm font-semibold {trendColors[trend]}">
+				<TrendIcon class="h-4 w-4" />
+			</span>
 		{/if}
 	</div>
 
 	<!-- Content -->
-	<div>
-		<p class="mb-1 text-sm text-gray-400">{title}</p>
+	<div class="relative">
+		<p class="mb-1 text-sm font-medium text-slate-400">{title}</p>
 		<p class="mb-1 text-3xl font-bold">{value}</p>
 		{#if subtitle}
 			<p class="text-xs text-gray-500">{subtitle}</p>

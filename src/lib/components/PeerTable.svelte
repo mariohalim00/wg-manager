@@ -1,7 +1,8 @@
 <script lang="ts">
-	import type { Peer } from '../types/peer';
+	import type { Peer } from '$lib/types';
 	import StatusBadge from './StatusBadge.svelte';
-	import { formatBytes, formatLastHandshake } from '../utils/formatting';
+	import { formatBytes, formatLastHandshake } from '$lib/utils/formatting';
+	import { Download, Upload, Trash2, Copy, Search, Filter } from 'lucide-svelte';
 
 	type Props = {
 		peers: Peer[];
@@ -12,82 +13,106 @@
 	let { peers, onDownloadConfig, onRemove }: Props = $props();
 </script>
 
-<div class="glass-card overflow-hidden">
+<div class="glass mb-12 overflow-hidden rounded-2xl">
+	<!-- Header with Filter -->
+	<div class="flex items-center justify-between border-b border-white/5 p-6">
+		<h3 class="text-lg font-bold">Active Peers ({peers.length})</h3>
+		<div class="flex gap-2">
+			<button
+				class="gap-2 rounded-xl bg-white/5 px-4 py-2 text-sm font-medium transition-all hover:bg-white/10 flex items-center"
+			>
+				<Filter size={16} />
+				Filter
+			</button>
+		</div>
+	</div>
+
+	<!-- Table -->
 	<div class="overflow-x-auto">
 		<table class="w-full">
-			<thead class="bg-glass-hover border-glass-border border-b">
-				<tr class="text-left text-sm text-gray-300">
-					<th class="px-6 py-4 font-semibold">Name</th>
-					<th class="px-6 py-4 font-semibold">Status</th>
-					<th class="px-6 py-4 font-semibold">Allowed IPs</th>
-					<th class="hidden px-6 py-4 font-semibold md:table-cell">Last Handshake</th>
-					<th class="hidden px-6 py-4 font-semibold lg:table-cell">Transfer</th>
-					<th class="px-6 py-4 text-right font-semibold">Actions</th>
+			<thead>
+				<tr class="border-b border-white/5 text-left text-xs font-semibold text-slate-400 uppercase">
+					<th class="px-6 py-4">Peer Name / Public Key</th>
+					<th class="px-6 py-4">Status</th>
+					<th class="px-6 py-4">Allowed IPs</th>
+					<th class="px-6 py-4">Transfer</th>
+					<th class="px-6 py-4">Last Handshake</th>
+					<th class="px-6 py-4 text-right">Actions</th>
 				</tr>
 			</thead>
-			<tbody class="divide-glass-border divide-y">
+			<tbody class="divide-y divide-white/5">
 				{#each peers as peer (peer.id)}
-					<!-- FR-001a: Responsive action buttons (group for hover reveal ≥1024px) -->
-					<tr class="group hover:bg-glass-hover transition-colors">
+					<tr class="group hover:bg-white/5 transition-colors">
 						<td class="px-6 py-4">
-							<div>
-								<p class="font-medium text-white">{peer.name}</p>
-								<p class="max-w-xs truncate text-xs text-gray-400" title={peer.publicKey}>
-									{peer.publicKey}
-								</p>
+							<div class="flex flex-col">
+								<span class="font-bold text-white max-w-[200px] truncate" title={peer.name}
+									>{peer.name || 'Unnamed Peer'}</span
+								>
+								<div class="flex items-center gap-1 text-slate-400 text-xs">
+									<span class="font-mono max-w-[120px] truncate">{peer.publicKey}</span>
+									<button class="hover:text-white" title="Copy Public Key">
+										<Copy size={12} />
+									</button>
+								</div>
 							</div>
 						</td>
 						<td class="px-6 py-4">
 							<StatusBadge status={peer.status} />
 						</td>
 						<td class="px-6 py-4">
-							<div class="text-sm text-gray-300">
+							<div class="flex flex-wrap gap-1">
 								{#each peer.allowedIPs as ip (ip)}
-									<div>{ip}</div>
+									<span class="rounded bg-white/5 px-1.5 py-0.5 text-xs font-mono text-slate-300"
+										>{ip}</span
+									>
 								{/each}
 							</div>
 						</td>
-						<td class="hidden px-6 py-4 text-sm text-gray-400 md:table-cell">
-							{formatLastHandshake(peer.lastHandshake)}
-						</td>
-						<td class="hidden px-6 py-4 lg:table-cell">
-							<div class="text-sm">
-								<div class="text-green-400">
-									↓ {formatBytes(peer.receiveBytes)}
-								</div>
-								<div class="text-blue-400">
-									↑ {formatBytes(peer.transmitBytes)}
-								</div>
+						<td class="px-6 py-4">
+							<div class="flex flex-col text-xs font-medium">
+								<span class="text-green-400 flex items-center gap-1">
+									<Download size={12} /> {formatBytes(peer.receiveBytes)}
+								</span>
+								<span class="text-blue-400 flex items-center gap-1">
+									<Upload size={12} /> {formatBytes(peer.transmitBytes)}
+								</span>
 							</div>
 						</td>
-						<td class="px-6 py-4 text-right">
-							<!-- FR-001a: Always visible <1024px, hover-reveal ≥1024px -->
-							<div
-								class="flex justify-end gap-2 opacity-100 transition-opacity duration-200 lg:opacity-0 lg:group-hover:opacity-100"
+						<td class="px-6 py-4">
+							<span class="text-sm text-slate-400 font-mono"
+								>{formatLastHandshake(peer.lastHandshake)}</span
 							>
+						</td>
+						<td class="px-6 py-4 text-right">
+							<div class="flex justify-end gap-2 text-slate-400 opacity-60 group-hover:opacity-100 transition-opacity">
 								<button
 									onclick={() => onDownloadConfig(peer)}
-									class="glass-btn-secondary px-3 py-1 text-sm"
-									title="Download config"
+									class="rounded-lg p-2 hover:bg-white/10 hover:text-white transition-colors"
+									title="Download Configuration"
 								>
-									📥 Config
+									<Download size={18} />
 								</button>
 								<button
 									onclick={() => onRemove(peer)}
-									class="glass-btn-secondary px-3 py-1 text-sm text-red-400 hover:text-red-300"
-									title="Remove peer"
+									class="rounded-lg p-2 hover:bg-red-500/20 hover:text-red-400 transition-colors"
+									title="Remove Peer"
 								>
-									🗑️ Remove
+									<Trash2 size={18} />
 								</button>
 							</div>
 						</td>
 					</tr>
 				{:else}
 					<tr>
-						<td colspan="6" class="px-6 py-12 text-center text-gray-400">
+						<td colspan="6" class="px-6 py-12 text-center text-slate-400">
 							<div class="flex flex-col items-center gap-4">
-								<span class="text-4xl">📭</span>
-								<p>No peers found. Add your first peer to get started!</p>
+								<div class="p-4 rounded-full bg-white/5">
+									<Search size={32} />
+								</div>
+								<div>
+									<p class="font-medium text-white">No peers found</p>
+									<p class="text-sm mt-1">Add a new peer to get started</p>
+								</div>
 							</div>
 						</td>
 					</tr>

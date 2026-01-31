@@ -8,16 +8,16 @@
 
 {#if status === 'online'}
 	<span
-		class="inline-flex items-center gap-2 rounded-full border border-green-500/40 bg-green-500/20 px-3 py-1 text-sm font-medium text-green-400"
+		class="inline-flex items-center gap-1.5 rounded-lg bg-green-400/10 px-2 py-1 text-xs font-bold text-green-400"
 	>
-		<span class="h-2 w-2 animate-pulse rounded-full bg-green-400"></span>
-		Online
+		<span class="pulse-online h-1.5 w-1.5 rounded-full bg-green-400"></span>
+		Active
 	</span>
 {:else}
 	<span
-		class="inline-flex items-center gap-2 rounded-full border border-gray-500/40 bg-gray-500/20 px-3 py-1 text-sm font-medium text-gray-400"
+		class="inline-flex items-center gap-1.5 rounded-lg bg-slate-400/10 px-2 py-1 text-xs font-bold text-slate-400"
 	>
-		<span class="h-2 w-2 rounded-full bg-gray-400"></span>
-		Offline
+		<span class="h-1.5 w-1.5 rounded-full bg-slate-400"></span>
+		Inactive
 	</span>
 {/if}

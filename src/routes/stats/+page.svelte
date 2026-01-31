@@ -4,6 +4,7 @@
 	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
 	import { stats } from '$lib/stores/stats';
 	import { formatBytes } from '$lib/utils/formatting';
+	import { Settings, Users, ArrowDown, ArrowUp, TriangleAlert } from 'lucide-svelte';
 
 	// Loading state
 	let loading = $state(true);
@@ -36,28 +37,28 @@
 			<StatsCard
 				title="Interface"
 				value={$stats.interfaceName}
-				icon="🔧"
+				icon={Settings}
 				color="blue"
 				subtitle="WireGuard interface"
 			/>
 			<StatsCard
 				title="Total Peers"
 				value={$stats.peerCount}
-				icon="👥"
+				icon={Users}
 				color="purple"
 				subtitle={`${$stats.peerCount === 1 ? 'peer' : 'peers'} configured`}
 			/>
 			<StatsCard
 				title="Data Received"
 				value={formatBytes($stats.totalRx)}
-				icon="📥"
+				icon={ArrowDown}
 				color="green"
 				subtitle="Total RX"
 			/>
 			<StatsCard
 				title="Data Transmitted"
 				value={formatBytes($stats.totalTx)}
-				icon="📤"
+				icon={ArrowUp}
 				color="yellow"
 				subtitle="Total TX"
 			/>
@@ -96,8 +97,8 @@
 			</div>
 		</div>
 	{:else}
-		<div class="glass-card p-12 text-center">
-			<span class="mb-4 block text-4xl">⚠️</span>
+		<div class="glass-card flex flex-col items-center justify-center p-12 text-center">
+			<TriangleAlert class="mb-4 text-yellow-500" size={48} />
 			<p class="text-gray-400">Unable to load statistics. Please try again later.</p>
 		</div>
 	{/if}

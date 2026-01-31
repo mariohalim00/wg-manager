@@ -9,6 +9,7 @@
 	import { addNotification } from '$lib/stores/notifications';
 	import { generateWireGuardConfig, downloadConfigFile } from '$lib/utils/config';
 	import type { Peer, PeerCreateResponse } from '$lib/types/peer';
+	import { Plus } from 'lucide-svelte';
 
 	// Loading state
 	let loading = $state(true);
@@ -95,8 +96,9 @@
 			<h1 class="mb-2 text-3xl font-bold">WireGuard Peers</h1>
 			<p class="text-gray-400">Manage VPN clients and connections</p>
 		</div>
-		<button onclick={handleAddPeer} class="glass-btn-primary px-6 py-3 text-lg font-semibold">
-			➕ Add Peer
+		<button onclick={handleAddPeer} class="glass-btn-primary flex items-center gap-2 px-6 py-3 text-lg font-semibold">
+			<Plus size={24} />
+			Add Peer
 		</button>
 	</div>
 

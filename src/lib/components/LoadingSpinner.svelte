@@ -8,17 +8,15 @@
 
 	// Size classes
 	const sizeClasses = {
-		sm: 'w-8 h-8 border-2',
-		md: 'w-12 h-12 border-4',
-		lg: 'w-16 h-16 border-4'
+		sm: 'h-6 w-6 border-2',
+		md: 'h-10 w-10 border-[3px]',
+		lg: 'h-16 w-16 border-4'
 	};
 </script>
 
-<div class="flex items-center justify-center p-8">
+<div class="flex items-center justify-center p-4">
 	<div
-		class="animate-spin rounded-full border-t-blue-400 border-r-transparent border-b-transparent border-l-transparent {sizeClasses[
-			size
-		]}"
+		class="animate-spin rounded-full border-white/20 border-t-[#137fec] {sizeClasses[size]}"
 		role="status"
 		aria-label="Loading"
 	></div>

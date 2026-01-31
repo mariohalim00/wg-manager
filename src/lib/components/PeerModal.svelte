@@ -1,7 +1,8 @@
 <script lang="ts">
-	import { peers } from '../stores/peers';
-	import { validateCIDRList } from '../utils/validation';
-	import type { PeerFormData, PeerCreateResponse } from '../types/peer';
+	import { peers } from '$lib/stores/peers';
+	import { validateCIDRList } from '$lib/utils/validation';
+	import type { PeerFormData, PeerCreateResponse } from '$lib/types/peer';
+	import { X, User, Server, Shield } from 'lucide-svelte';
 
 	type Props = {
 		onClose: () => void;
@@ -93,35 +94,43 @@
 	aria-labelledby="modal-title"
 >
 	<!-- Modal content -->
-	<div class="glass-card animate-slide-up w-full max-w-md p-6" onclick={(e) => e.stopPropagation()}>
+	<div
+		class="glass-card animate-slide-up w-full max-w-md overflow-hidden"
+		onclick={(e) => e.stopPropagation()}
+	>
 		<!-- Header -->
-		<div class="mb-6 flex items-center justify-between">
-			<h2 id="modal-title" class="text-2xl font-bold">Add New Peer</h2>
+		<div
+			class="flex items-center justify-between border-b border-white/5 bg-white/5 px-6 py-4"
+		>
+			<h2 id="modal-title" class="text-xl font-bold tracking-tight text-white">Add New Peer</h2>
 			<button
 				onclick={onClose}
-				class="text-gray-400 transition-colors hover:text-white"
+				class="rounded-lg p-1 text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
 				aria-label="Close modal"
 			>
-				<span class="text-2xl">✕</span>
+				<X size={20} />
 			</button>
 		</div>
 
 		<!-- Form -->
-		<form onsubmit={(e) => (e.preventDefault(), handleSubmit())}>
+		<form class="p-6" onsubmit={(e) => (e.preventDefault(), handleSubmit())}>
 			<!-- Name field -->
-			<div class="mb-4">
-				<label for="peer-name" class="mb-2 block text-sm font-medium">
+			<div class="mb-5">
+				<label for="peer-name" class="mb-2 block text-sm font-medium text-slate-300">
 					Peer Name <span class="text-red-400">*</span>
 				</label>
-				<input
-					id="peer-name"
-					type="text"
-					bind:value={name}
-					placeholder="e.g., John's Laptop"
-					class="glass-input w-full"
-					disabled={loading}
-					required
-				/>
+				<div class="relative">
+					<User class="absolute top-1/2 left-3 -translate-y-1/2 text-slate-400" size={18} />
+					<input
+						id="peer-name"
+						type="text"
+						bind:value={name}
+						placeholder="e.g., iPhone 15 Pro"
+						class="glass-input w-full pl-10"
+						disabled={loading}
+						required
+					/>
+				</div>
 				{#if nameError}
 					<p class="mt-1 text-sm text-red-400">{nameError}</p>
 				{/if}
@@ -129,49 +138,53 @@
 
 			<!-- Allowed IPs field -->
 			<div class="mb-6">
-				<label for="allowed-ips" class="mb-2 block text-sm font-medium">
+				<label for="allowed-ips" class="mb-2 block text-sm font-medium text-slate-300">
 					Allowed IPs (CIDR) <span class="text-red-400">*</span>
 				</label>
-				<textarea
-					id="allowed-ips"
-					bind:value={allowedIPsInput}
-					placeholder="10.0.0.2/32&#10;10.0.1.0/24"
-					rows="3"
-					class="glass-input w-full resize-none"
-					disabled={loading}
-					required
-				></textarea>
-				<p class="mt-1 text-xs text-gray-400">
-					Enter one or more CIDR notations (comma or newline separated)
+				<div class="relative">
+					<Server class="absolute top-3 left-3 text-slate-400" size={18} />
+					<textarea
+						id="allowed-ips"
+						bind:value={allowedIPsInput}
+						placeholder="10.0.0.2/32&#10;10.0.1.0/24"
+						rows="3"
+						class="glass-input w-full resize-none pl-10"
+						disabled={loading}
+						required
+					></textarea>
+				</div>
+				<p class="mt-2 text-xs text-slate-400">
+					Enter one or more CIDR notations (comma or newline separated).
 				</p>
 				{#if allowedIPsError}
 					<p class="mt-1 text-sm text-red-400">{allowedIPsError}</p>
-					<p class="mt-1 text-xs text-gray-400">
-						Examples: <code class="text-blue-400">10.0.0.5/32</code>,
-						<code class="text-blue-400">192.168.1.0/24</code>
+				{:else}
+					<p class="mt-1 text-xs text-slate-500">
+						Example: <code class="rounded bg-white/5 px-1 py-0.5 text-blue-400">10.0.0.5/32</code>
 					</p>
 				{/if}
 			</div>
 
 			<!-- Actions -->
-			<div class="flex justify-end gap-3">
+			<div class="flex items-center justify-end gap-3 pt-2">
 				<button
 					type="button"
 					onclick={onClose}
-					class="glass-btn-secondary px-6 py-2"
+					class="glass-btn-secondary"
 					disabled={loading}
 				>
 					Cancel
 				</button>
-				<button type="submit" class="glass-btn-primary px-6 py-2" disabled={loading}>
+				<button
+					type="submit"
+					class="glass-btn-primary flex items-center gap-2"
+					disabled={loading}
+				>
 					{#if loading}
-						<span class="flex items-center gap-2">
-							<span
-								class="h-4 w-4 animate-spin rounded-full border-2 border-t-white border-r-transparent border-b-transparent border-l-transparent"
-							></span>
-							Adding...
-						</span>
+						<span class="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white"></span>
+						Adding...
 					{:else}
+						<Shield size={18} />
 						Add Peer
 					{/if}
 				</button>
