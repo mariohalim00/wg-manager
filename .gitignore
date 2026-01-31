@@ -21,11 +21,15 @@ Thumbs.db
 # .vscode (personal)
 .vscode/settings.json
 
+#speckit
+.specify/templates
+.specify/scripts
+
 # Vite
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
 #### backend ####
 
-# go binary (output)
+# backend
 backend/main 
