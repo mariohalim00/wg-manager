@@ -1,3 +1,186 @@
-@tailwind base;
-@tailwind components;
+@import 'tailwindcss/preflight';
 @tailwind utilities;
+
+/* Design system colors from mockup */
+@layer base {
+	:root {
+		--primary: #137fec;
+		--background-dark: #101922;
+		--background-darker: #0a0f14;
+	}
+
+	body {
+		background: radial-gradient(circle at top left, #1a2a3a 0%, #101922 100%);
+		background-attachment: fixed;
+		color: white;
+		min-height: 100vh;
+		font-family: 'Inter', sans-serif;
+		-webkit-font-smoothing: antialiased;
+	}
+}
+
+/* Glassmorphism components matching design mockup */
+@layer components {
+	/* Main glass panel effect */
+	.glass {
+		background: rgba(255, 255, 255, 0.03);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	/* Glass card effect */
+	.glass-card {
+		background: rgba(255, 255, 255, 0.03);
+		backdrop-filter: blur(12px);
+		-webkit-backdrop-filter: blur(12px);
+		border-radius: 1rem;
+		border: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	/* Glass panel for modals/dialogs */
+	.glass-panel {
+		background: rgba(13, 20, 28, 0.85);
+		backdrop-filter: blur(24px);
+		-webkit-backdrop-filter: blur(24px);
+		border: 1px solid rgba(255, 255, 255, 0.08);
+	}
+
+	/* Sidebar glass effect */
+	.sidebar-glass {
+		background: rgba(16, 25, 34, 0.6);
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
+		border-right: 1px solid rgba(255, 255, 255, 0.05);
+	}
+
+	/* Glass input field */
+	.glass-input {
+		background: rgba(255, 255, 255, 0.05);
+		backdrop-filter: blur(12px);
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		border-radius: 0.75rem;
+		padding: 0.5rem 1rem;
+		color: white;
+		transition: all 0.2s;
+	}
+
+	.glass-input::placeholder {
+		color: rgba(255, 255, 255, 0.3);
+	}
+
+	.glass-input:focus {
+		outline: none;
+		border-color: #137fec;
+		box-shadow: 0 0 0 3px rgba(19, 127, 236, 0.15);
+	}
+
+	/* Primary button - matches #137fec from design */
+	.glass-btn-primary {
+		background: #137fec;
+		border-radius: 0.75rem;
+		border: none;
+		box-shadow: 0 4px 16px 0 rgba(19, 127, 236, 0.3);
+		padding: 0.75rem 1.5rem;
+		font-weight: 700;
+		font-size: 0.875rem;
+		color: white;
+		transition: all 0.2s;
+	}
+
+	.glass-btn-primary:hover {
+		background: #0f6bc4;
+		box-shadow: 0 6px 20px 0 rgba(19, 127, 236, 0.4);
+	}
+
+	.glass-btn-primary:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	/* Secondary button */
+	.glass-btn-secondary {
+		background: rgba(255, 255, 255, 0.05);
+		backdrop-filter: blur(16px);
+		border-radius: 0.75rem;
+		border: 1px solid rgba(255, 255, 255, 0.1);
+		padding: 0.75rem 1.5rem;
+		font-weight: 500;
+		font-size: 0.875rem;
+		color: rgb(226, 232, 240);
+		transition: all 0.2s;
+	}
+
+	.glass-btn-secondary:hover {
+		color: white;
+		background: rgba(255, 255, 255, 0.1);
+	}
+
+	.glass-btn-secondary:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	/* Pulse animation for online status indicator */
+	.pulse-online {
+		box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+		animation: pulse 2s infinite;
+	}
+
+	@keyframes pulse {
+		0% {
+			transform: scale(0.95);
+			box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+		}
+		70% {
+			transform: scale(1);
+			box-shadow: 0 0 0 6px rgba(34, 197, 94, 0);
+		}
+		100% {
+			transform: scale(0.95);
+			box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+		}
+	}
+
+	/* QR gradient container from design */
+	.qr-gradient-container {
+		background: linear-gradient(135deg, #1e3a3a 0%, #102a2a 100%);
+		box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.5);
+	}
+
+	/* Input focus glow */
+	.glow-input:focus {
+		box-shadow: 0 0 10px rgba(19, 127, 236, 0.15);
+	}
+}
+
+/* Animation utilities */
+@layer utilities {
+	.animate-fade-in {
+		animation: fadeIn 0.3s ease-in-out;
+	}
+
+	.animate-slide-up {
+		animation: slideUp 0.3s ease-out;
+	}
+
+	@keyframes fadeIn {
+		from {
+			opacity: 0;
+		}
+		to {
+			opacity: 1;
+		}
+	}
+
+	@keyframes slideUp {
+		from {
+			transform: translateY(20px);
+			opacity: 0;
+		}
+		to {
+			transform: translateY(0);
+			opacity: 1;
+		}
+	}
+}

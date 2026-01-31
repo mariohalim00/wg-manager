@@ -1,37 +1,105 @@
 <script lang="ts">
-  import { stats } from '$lib/stores/stats';
-  import type { Stats } from '$lib/stores/stats';
+	import { onMount } from 'svelte';
+	import StatsCard from '$lib/components/StatsCard.svelte';
+	import LoadingSpinner from '$lib/components/LoadingSpinner.svelte';
+	import { stats } from '$lib/stores/stats';
+	import { formatBytes } from '$lib/utils/formatting';
+	import { Settings, Users, ArrowDown, ArrowUp, TriangleAlert } from 'lucide-svelte';
 
-  const dummyStats: Stats = {
-    totalPeers: 2,
-    onlinePeers: 1,
-    totalDataUsage: {
-      sent: 1024,
-      received: 2048,
-    }
-  };
+	// Loading state
+	let loading = $state(true);
 
-  stats.set(dummyStats);
+	// Load stats on mount
+	onMount(async () => {
+		await stats.load();
+		loading = false;
+	});
 </script>
 
-<div class="p-4">
-  <h1 class="text-2xl font-bold mb-4">Statistics</h1>
-  <div class="stats shadow">
-    <div class="stat">
-      <div class="stat-title">Total Peers</div>
-      <div class="stat-value">{$stats.totalPeers}</div>
-    </div>
-    <div class="stat">
-      <div class="stat-title">Online Peers</div>
-      <div class="stat-value">{$stats.onlinePeers}</div>
-    </div>
-    <div class="stat">
-      <div class="stat-title">Total Data Sent</div>
-      <div class="stat-value">{$stats.totalDataUsage.sent} KB</div>
-    </div>
-    <div class="stat">
-      <div class="stat-title">Total Data Received</div>
-      <div class="stat-value">{$stats.totalDataUsage.received} KB</div>
-    </div>
-  </div>
+<svelte:head>
+	<title>Statistics - WireGuard Manager</title>
+</svelte:head>
+
+<div class="mx-auto max-w-7xl">
+	<!-- Page header -->
+	<div class="mb-8">
+		<h1 class="mb-2 text-3xl font-bold">Interface Statistics</h1>
+		<p class="text-gray-400">Monitor VPN network performance and usage</p>
+	</div>
+
+	{#if loading}
+		<div class="glass-card">
+			<LoadingSpinner size="lg" />
+		</div>
+	{:else if $stats}
+		<!-- Stats cards grid -->
+		<div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+			<StatsCard
+				title="Interface"
+				value={$stats.interfaceName}
+				icon={Settings}
+				color="blue"
+				subtitle="WireGuard interface"
+			/>
+			<StatsCard
+				title="Total Peers"
+				value={$stats.peerCount}
+				icon={Users}
+				color="purple"
+				subtitle={`${$stats.peerCount === 1 ? 'peer' : 'peers'} configured`}
+			/>
+			<StatsCard
+				title="Data Received"
+				value={formatBytes($stats.totalRx)}
+				icon={ArrowDown}
+				color="green"
+				subtitle="Total RX"
+			/>
+			<StatsCard
+				title="Data Transmitted"
+				value={formatBytes($stats.totalTx)}
+				icon={ArrowUp}
+				color="yellow"
+				subtitle="Total TX"
+			/>
+		</div>
+
+		<!-- Additional info panel -->
+		<div class="glass-card p-6">
+			<h2 class="mb-4 text-xl font-semibold">Network Overview</h2>
+			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+				<div>
+					<h3 class="mb-2 text-sm font-medium text-gray-400">Interface Details</h3>
+					<dl class="space-y-2">
+						<div class="flex justify-between">
+							<dt class="text-gray-400">Name:</dt>
+							<dd class="font-medium">{$stats.interfaceName}</dd>
+						</div>
+						<div class="flex justify-between">
+							<dt class="text-gray-400">Status:</dt>
+							<dd class="font-medium text-green-400">Active</dd>
+						</div>
+					</dl>
+				</div>
+				<div>
+					<h3 class="mb-2 text-sm font-medium text-gray-400">Traffic Summary</h3>
+					<dl class="space-y-2">
+						<div class="flex justify-between">
+							<dt class="text-gray-400">Total Data:</dt>
+							<dd class="font-medium">{formatBytes($stats.totalRx + $stats.totalTx)}</dd>
+						</div>
+						<div class="flex justify-between">
+							<dt class="text-gray-400">Configured Peers:</dt>
+							<dd class="font-medium">{$stats.peerCount}</dd>
+						</div>
+					</dl>
+				</div>
+			</div>
+		</div>
+	{:else}
+		<div class="glass-card flex flex-col items-center justify-center p-12 text-center">
+			<TriangleAlert class="mb-4 text-yellow-500" size={48} />
+			<p class="text-gray-400">Unable to load statistics. Please try again later.</p>
+		</div>
+	{/if}
 </div>

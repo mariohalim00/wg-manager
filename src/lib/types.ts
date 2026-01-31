@@ -1,12 +1,5 @@
-export interface Peer {
-  id: string;
-  name: string;
-  publicKey: string;
-  status: 'online' | 'offline';
-  allowedIps: string[];
-  latestHandshake: string;
-  transfer: {
-    received: number;
-    sent: number;
-  }
-}
+// Export all types from sub-modules
+export * from './types/peer';
+export * from './types/stats';
+export * from './types/notification';
+export * from './types/api';

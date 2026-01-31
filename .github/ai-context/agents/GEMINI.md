@@ -5,16 +5,19 @@
 ## Behavior Optimization for Gemini
 
 ### Rapid Pattern Recognition
+
 - Identify recurring patterns and apply them consistently (e.g., middleware wrapping, handler structure)
 - Use existing examples as templates for new code
 - Generate boilerplate efficiently following established conventions
 
 ### Code Generation
+
 - When generating Go code, follow the handler/service/middleware pattern established in backend/
 - When generating Svelte code, use existing components as templates (PeerTable, PeerModal pattern)
 - Include type hints and interfaces—don't skip TypeScript or Go signatures
 
 ### Focused Scope
+
 - Work on well-defined, specific tasks (e.g., "add a new API endpoint" vs. "refactor logging")
 - For complex changes, break into smaller subtasks and handle sequentially
 - Ask for clarification on ambiguous requirements rather than guessing

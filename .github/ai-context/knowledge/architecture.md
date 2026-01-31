@@ -5,6 +5,7 @@
 ## High-Level Overview
 
 WireGuard Manager is a **full-stack VPN peer management system** consisting of:
+
 1. **Frontend** (SvelteKit + TypeScript + TailwindCSS) — User-facing dashboard for managing WireGuard peers
 2. **Backend** (Go + net/http) — REST API exposing WireGuard interface control
 
@@ -19,7 +20,7 @@ graph TB
         Store["Svelte Stores<br/>(peers, stats)"]
         API_Client["HTTP Client<br/>(fetch API)"]
     end
-    
+
     subgraph Server["Linux Server (WireGuard Host)"]
         Backend["Go HTTP Server<br/>(:8080)"]
         Handlers["Request Handlers<br/>(List/Add/Remove/Stats)"]
@@ -27,17 +28,17 @@ graph TB
         Storage["Peer Metadata Storage<br/>(peers.json)"]
         Kernel["Linux Kernel<br/>(WireGuard Module)"]
     end
-    
+
     UI -->|GET /peers| API_Client
     API_Client -->|HTTP| Backend
     Backend --> Handlers
     Handlers -->|List/Add/Remove| WG_Service
     WG_Service -->|netlink| Kernel
     Handlers -->|Read/Write| Storage
-    
+
     UI -->|Real-time Updates| Store
     Store -->|GET /stats| API_Client
-    
+
     style UI fill:#ff6b6b
     style Store fill:#ffd43b
     style Backend fill:#4c6ef5
@@ -52,6 +53,7 @@ graph TB
 **Purpose**: User interface for managing WireGuard peers
 
 **Key files**:
+
 - **Routes** (`src/routes/`):
   - `+page.svelte` — Dashboard showing overall stats
   - `peers/+page.svelte` — Peer list with add/remove buttons
@@ -70,6 +72,7 @@ graph TB
   - `stats.ts` — Statistics fetching and caching
 
 **Data types** (`src/lib/types.ts`):
+
 - `Peer` interface (matches backend response)
 
 **Styling**: TailwindCSS utility-first + DaisyUI component library
@@ -117,6 +120,7 @@ graph TB
 ## Data Flow
 
 ### List Peers
+
 ```
 Frontend (peers store)
   ↓
@@ -138,6 +142,7 @@ Frontend updates store → UI re-renders
 ```
 
 ### Add Peer
+
 ```
 Frontend (PeerModal)
   ↓
@@ -159,6 +164,7 @@ Frontend updates store → PeerTable re-renders
 ```
 
 ### Remove Peer
+
 ```
 Frontend (PeerTable delete button)
   ↓
@@ -204,16 +210,19 @@ Frontend updates store → PeerTable re-renders
 **API Base URL**: `http://localhost:8080` (configurable)
 
 **Endpoints** (documented in `backend/API.md`):
+
 - `GET /peers` → `Peer[]`
 - `POST /peers` → `Peer` (201 Created)
 - `DELETE /peers/{id}` → 204 No Content
 - `GET /stats` → `Stats`
 
 **Response schemas**:
+
 - `Peer`: `{ id, name, publicKey, status, allowedIps, latestHandshake, transfer }`
 - `Stats`: `{ interfaceName, peerCount, totalRx, totalTx }`
 
 **Error responses**:
+
 - `400 Bad Request` — Validation failure (invalid CIDR, missing fields)
 - `500 Internal Server Error` — Unrecoverable error (kernel failure, file I/O)
 
@@ -226,18 +235,19 @@ graph LR
     FrontendBuild["Static Files<br/>(SvelteKit Build)"]
     Backend["Go Backend<br/>(:8080)"]
     WG["WireGuard<br/>(Linux)"]
-    
+
     Browser -->|HTTPS| Nginx
     Nginx -->|/| FrontendBuild
     Nginx -->|/api| Backend
     Backend <-->|netlink| WG
-    
+
     style FrontendBuild fill:#ff6b6b
     style Backend fill:#4c6ef5
     style WG fill:#12b886
 ```
 
 **Typical deployment**:
+
 - Frontend served as static files (HTML + JS bundle) via Nginx/Caddy
 - Backend API runs on same host (localhost:8080) or separate machine
 - CORS configured to allow frontend origin
@@ -267,12 +277,14 @@ graph LR
 ### Frontend (Constitution II - UX First)
 
 **Performance targets**:
+
 - Time to Interactive (TTI): < 3 seconds on 3G
 - First Contentful Paint (FCP): < 1.5 seconds
 - Bundle size: < 200KB gzipped
 - Lighthouse: ≥ 90
 
 **Current optimizations**:
+
 - Svelte's reactive compilation (minimal overhead)
 - TailwindCSS + DaisyUI (pre-built components)
 - SvelteKit's code splitting
@@ -280,11 +292,13 @@ graph LR
 ### Backend (Constitution I - Testing + Performance)
 
 **Performance targets**:
+
 - API response: < 100ms p95
 - `/stats` endpoint: < 50ms p95
 - WireGuard config updates: < 200ms
 
 **Current characteristics**:
+
 - Net/http is lightweight, no framework overhead
 - WireGuard operations are kernel-limited (typically 10-50ms)
 - Metadata file I/O dominates peer operations (< 100ms)
