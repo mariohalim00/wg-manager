@@ -47,6 +47,13 @@ func NewRealService(interfaceName string, storagePath string, serverEndpoint str
 	}, nil
 }
 
+// Close releases resources held by the realService.
+func (s *realService) Close() error {
+	if s.client == nil {
+		return nil
+	}
+	return s.client.Close()
+}
 // ListPeers returns the current list of peers from the WireGuard interface.
 func (s *realService) ListPeers() ([]Peer, error) {
 	device, err := s.client.Device(s.interfaceName)
