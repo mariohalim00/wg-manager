@@ -25,13 +25,14 @@ type Stats struct {
 	TotalTX       int64  `json:"totalTx"`
 }
 
-// Service defines the interface for WireGuard operations.
+// PeerResponse represents a peer along with optional configuration details.
 type PeerResponse struct {
 	Peer
 	Config     string `json:"config,omitempty"`
 	PrivateKey string `json:"privateKey,omitempty"`
 }
 
+// Service defines the interface for WireGuard operations.
 type Service interface {
 	ListPeers() ([]Peer, error)
 	AddPeer(name string, publicKey string, allowedIPs []string) (PeerResponse, error)
