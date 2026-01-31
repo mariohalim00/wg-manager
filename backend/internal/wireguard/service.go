@@ -186,8 +186,9 @@ func (s *realService) RemovePeer(id string) error {
 		return fmt.Errorf("failed to remove peer: %w", err)
 	}
 
+	// Delete metadata from storage
 	if err := s.storage.DeleteMetadata(id); err != nil {
-		return fmt.Errorf("failed to delete peer metadata: %w", err)
+		return fmt.Errorf("failed to delete metadata: %w", err)
 	}
 	return nil
 }

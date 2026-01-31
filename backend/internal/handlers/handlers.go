@@ -2,8 +2,11 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"log/slog"
+	"net"
 	"net/http"
+	"strings"
 	"wg-manager/backend/internal/wireguard"
 )
 
@@ -41,6 +44,25 @@ func (h *PeerHandler) Add(w http.ResponseWriter, r *http.Request) {
 		slog.Error("Failed to decode add peer request", "error", err)
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
+	}
+
+	// Input Validation
+	req.Name = strings.TrimSpace(req.Name)
+	if req.Name == "" {
+		http.Error(w, "Name is required", http.StatusBadRequest)
+		return
+	}
+
+	if len(req.AllowedIPs) == 0 {
+		http.Error(w, "At least one AllowedIP is required", http.StatusBadRequest)
+		return
+	}
+
+	for _, ip := range req.AllowedIPs {
+		if _, _, err := net.ParseCIDR(ip); err != nil {
+			http.Error(w, fmt.Sprintf("Invalid AllowedIP CIDR: %s", ip), http.StatusBadRequest)
+			return
+		}
 	}
 
 	peer, err := h.Service.AddPeer(req.Name, req.PublicKey, req.AllowedIPs)

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"wg-manager/backend/internal/config"
@@ -54,6 +55,61 @@ func TestRemovePeerHandler(t *testing.T) {
 		t.Errorf("handler returned wrong status code: got %v want %v",
 			status, http.StatusNoContent)
 	}
+}
+
+func TestAddPeerHandler(t *testing.T) {
+	mockWGService := wireguard.NewMockService()
+	h := handlers.NewPeerHandler(mockWGService)
+	mux := http.NewServeMux()
+	mux.HandleFunc("POST /peers", h.Add)
+
+	t.Run("Success", func(t *testing.T) {
+		reqBody := `{"name":"New Peer", "allowedIPs":["10.0.0.5/32"]}`
+		req := httptest.NewRequest("POST", "/peers", strings.NewReader(reqBody))
+		rr := httptest.NewRecorder()
+
+		mux.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusCreated {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusCreated)
+		}
+
+		var resp wireguard.PeerResponse
+		if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("could not unmarshal response: %v", err)
+		}
+
+		if resp.Name != "New Peer" {
+			t.Errorf("expected name 'New Peer', got '%s'", resp.Name)
+		}
+	})
+
+	t.Run("MissingName", func(t *testing.T) {
+		reqBody := `{"name":"", "allowedIPs":["10.0.0.5/32"]}`
+		req := httptest.NewRequest("POST", "/peers", strings.NewReader(reqBody))
+		rr := httptest.NewRecorder()
+
+		mux.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusBadRequest {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusBadRequest)
+		}
+	})
+
+	t.Run("InvalidCIDR", func(t *testing.T) {
+		reqBody := `{"name":"Test", "allowedIPs":["invalid-cidr"]}`
+		req := httptest.NewRequest("POST", "/peers", strings.NewReader(reqBody))
+		rr := httptest.NewRecorder()
+
+		mux.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusBadRequest {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusBadRequest)
+		}
+	})
 }
 
 func TestStatsHandler(t *testing.T) {
