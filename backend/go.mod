@@ -2,7 +2,10 @@ module wg-manager/backend
 
 go 1.25.6
 
-require golang.zx2c4.com/wireguard/wgctrl v0.0.0-20241231184526-a9ab2273dd10
+require (
+	github.com/joho/godotenv v1.5.1
+	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20241231184526-a9ab2273dd10
+)
 
 require (
 	github.com/google/go-cmp v0.6.0 // indirect

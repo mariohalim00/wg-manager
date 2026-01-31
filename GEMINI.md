@@ -105,47 +105,35 @@ This is a minimal Go backend application (`wg-manager/backend`) designed to serv
 
 The Go backend code resides in the `backend/` directory:
 
-*   **`backend/main.go`**: The application's entry point, responsible for loading configuration, initializing dependencies (like the WireGuard service), setting up routes, and starting the HTTP server.
-*   **`backend/main_test.go`**: Contains integration tests for the HTTP handlers and configuration loading.
-*   **`backend/config/`**:
-    *   `config.go`: Defines the `Config` struct and provides a `LoadConfig` function to parse settings from a JSON file.
-    *   `config.json`: Example JSON configuration file (e.g., `{"server_port": ":8080"}`).
-*   **`backend/middleware/`**:
-    *   `logging.go`: Implements an `slog`-based HTTP logging middleware to log request details.
-*   **`backend/wireguard/`**:
-    *   `wireguard.go`: Defines the `Peer` struct, `Service` interface for WireGuard operations, and a `mockService` implementation for development and testing purposes.
+*   **`backend/cmd/server/main.go`**: Application entry point, handles configuration loading (JSON + .env), dependency injection, modern route registration, and graceful shutdown.
+*   **`backend/internal/handlers/`**: Contains modular HTTP handlers for Peers and Stats, including robust input validation.
+*   **`backend/internal/config/`**: Manages configuration via JSON and environment variable overrides (Twelve-Factor App).
+*   **`backend/internal/middleware/`**: Implements logging and CORS with dynamic origin support.
+*   **`backend/internal/wireguard/`**: Interface with `wgctrl`, persistent storage for metadata, and key/config generation.
 
 ## API Endpoints
 
-*   **`GET /peers`**: Returns a JSON array of WireGuard peers. Currently uses a mock service.
+*   **`GET /peers`**: Returns a JSON array of WireGuard peers with real-time stats and persistent names.
+*   **`POST /peers`**: Adds/configures a peer. Supports auto-key generation and returns client config.
+*   **`DELETE /peers/{id}`**: Removes a peer and its metadata using path parameters.
+*   **`GET /stats`**: Returns aggregate interface statistics.
 
 ## Building and Running
 
-This project uses Go modules for dependency management. Ensure `mise` is set up to use the latest Go version.
-
-*   **Initialize Go Modules and Install Dependencies:**
-    (This step should be performed once after cloning or creating the project)
+*   **Configuration**: Use `backend/internal/config/config.json` for defaults and `.env` for environment-specific overrides (see `.env.example`).
+*   **Run Server**:
     ```bash
     cd backend
-    go mod tidy
+    go run ./cmd/server/main.go
     ```
-*   **Run the Backend Server:**
+*   **Testing**:
     ```bash
-    cd backend
-    go run .
-    ```
-    The server will start on the port specified in `backend/config/config.json` (defaulting to `:8080`).
-
-*   **Run Tests:**
-    ```bash
-    cd backend
+    cd backend/cmd/server
     go test .
     ```
 
 ## Development Conventions
 
-*   **Go Best Practices:** Follows standard Go conventions for package naming, error handling, and code organization.
-*   **TDD:** Development was guided by Test-Driven Development principles, ensuring functionality is covered by tests.
-*   **Structured Logging:** Uses `log/slog` for structured, leveled logging.
-*   **Modular Design:** Application logic is separated into distinct packages (`config`, `middleware`, `wireguard`) for maintainability and extensibility.
-*   **Dependency Injection:** Handlers and services are designed to accept dependencies (e.g., `wireguard.Service` interface) making them easier to test and swap implementations.
+*   **Graceful Shutdown**: Always close the `wireguard.Service` to release system resources.
+*   **Configuration**: Prioritize environment variables for production secrets and endpoint settings.
+*   **Validation**: Validate all user input at the handler level before processing.

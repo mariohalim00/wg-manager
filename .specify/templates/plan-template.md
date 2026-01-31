@@ -31,7 +31,39 @@
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+**Backend Testing Discipline (Principle I)**:
+- [ ] Backend features include TDD workflow in tasks
+- [ ] Test files planned for all API handlers and service logic
+- [ ] Red-Green-Refactor cycle documented
+
+**Frontend User Experience First (Principle II)**:
+- [ ] Frontend features focus on UX and performance (no test requirements)
+- [ ] Performance budgets defined (TTI, FCP, bundle size)
+- [ ] Manual testing approach documented
+- [ ] Accessibility considerations noted
+
+**API Contract Stability (Principle III)**:
+- [ ] API changes documented in API.md
+- [ ] Breaking changes identified and versioned
+- [ ] Migration plan for backward-incompatible changes
+
+**Configuration & Environment (Principle IV)**:
+- [ ] Configuration values documented
+- [ ] Environment variables specified
+- [ ] No hardcoded credentials in plan
+
+**Performance Budgets (Principle V)**:
+- [ ] Backend: <100ms p95 for operations, <50ms for stats
+- [ ] Frontend: <3s TTI, <1.5s FCP, <200KB bundle (gzipped)
+- [ ] Lighthouse target: ≥90
+
+**Observability & Structured Logging (Principle VI)**:
+- [ ] Logging strategy defined for backend operations
+- [ ] Error handling approach specified
+- [ ] No sensitive data in logs
+
+**Complexity Justification**:
+- [ ] Any principle violations explicitly justified below
 
 ## Project Structure
 

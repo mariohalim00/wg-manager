@@ -15,9 +15,13 @@
   Assign priorities (P1, P2, P3, etc.) to each story, where P1 is the most critical.
   Think of each story as a standalone slice of functionality that can be:
   - Developed independently
-  - Tested independently
+  - Tested independently (Backend: automated tests required | Frontend: manual testing acceptable per Constitution)
   - Deployed independently
   - Demonstrated to users independently
+  
+  CONSTITUTION ALIGNMENT:
+  - Backend features: Design for automated testing (TDD workflow per Principle I)
+  - Frontend features: Prioritize UX and performance over test coverage (Principle II)
 -->
 
 ### User Story 1 - [Brief Title] (Priority: P1)
@@ -105,6 +109,10 @@
 <!--
   ACTION REQUIRED: Define measurable success criteria.
   These must be technology-agnostic and measurable.
+  
+  CONSTITUTION ALIGNMENT (Principle V - Performance Budgets):
+  - Backend APIs: <100ms p95 response time, <50ms for stats endpoint
+  - Frontend: <3s TTI on 3G, <1.5s FCP, <200KB bundle (gzipped), Lighthouse ≥90
 -->
 
 ### Measurable Outcomes
@@ -113,3 +121,16 @@
 - **SC-002**: [Measurable metric, e.g., "System handles 1000 concurrent users without degradation"]
 - **SC-003**: [User satisfaction metric, e.g., "90% of users successfully complete primary task on first attempt"]
 - **SC-004**: [Business metric, e.g., "Reduce support tickets related to [X] by 50%"]
+
+### Performance Requirements *(mandatory for frontend features)*
+
+**Frontend (per Constitution Principle II & V)**:
+- Time to Interactive (TTI): [target, e.g., "<3s on 3G"]
+- First Contentful Paint (FCP): [target, e.g., "<1.5s"]
+- Bundle size impact: [target, e.g., "adds <50KB gzipped"]
+- Lighthouse Performance score: [target, e.g., "≥90"]
+- Animation smoothness: [target, e.g., "60fps for all interactions"]
+
+**Backend (if applicable, per Constitution Principle V)**:
+- API response time: [target, e.g., "<100ms p95"]
+- WireGuard operations: [target, e.g., "<200ms for config updates"]

@@ -41,7 +41,7 @@ Adds a new peer to the WireGuard interface and persists its metadata. If no publ
       "allowedIPs": ["10.0.0.3/32"]
     }
     ```
-- **Response Body**: `PeerResponse`
+- **Response Body (201 Created)**: `PeerResponse`
     ```json
     {
       "id": "publicKey...",
@@ -52,6 +52,10 @@ Adds a new peer to the WireGuard interface and persists its metadata. If no publ
       "privateKey": "generatedPrivateKey (if applicable)"
     }
     ```
+- **Error Responses (400 Bad Request)**:
+    - `Name is required`: If the `name` field is empty or whitespace-only.
+    - `At least one AllowedIP is required`: If the `allowedIPs` array is empty.
+    - `Invalid AllowedIP CIDR: <value>`: If any item in `allowedIPs` is not a valid CIDR notation.
 
 ### 3. Remove Peer
 Removes a peer from the WireGuard interface and deletes its persistent metadata.
@@ -77,9 +81,23 @@ Returns aggregated real-time statistics for the WireGuard interface.
     }
     ```
 
+## Configuration
+The backend uses a hybrid configuration system (Twelve-Factor App). It loads defaults from `backend/internal/config/config.json` and supports overrides via a `.env` file or environment variables.
+
+### Environment Variables
+| Variable | Description | Default (JSON) |
+| :--- | :--- | :--- |
+| `WG_SERVER_PORT` | Port for the HTTP server | `:8080` |
+| `WG_INTERFACE_NAME` | Name of the WireGuard interface | `wg0` |
+| `WG_STORAGE_PATH` | Path to persistent peer metadata | `./data/peers.json` |
+| `WG_SERVER_ENDPOINT` | Public IP/Domain:Port of the server | `1.2.3.4:51820` |
+| `WG_SERVER_PUBKEY` | Public Key of the server interface | (None) |
+| `CORS_ALLOWED_ORIGINS` | Comma-separated list of origins | (Reflective/Dev) |
+
 ## Middleware
-- **Logging**: All requests are logged in structured JSON format.
-- **CORS**: Enabled for all origins (`*`) with methods `GET, POST, DELETE, OPTIONS`.
+- **Logging**: All requests are logged in structured JSON format via `slog`.
+- **Graceful Shutdown**: Intercepts `SIGINT`/`SIGTERM` to drained connections and close `wgctrl` safely.
+- **CORS**: Configurable origins; defaults to reflecting `Origin` header in development.
 
 ## Running the Server
 The server requires `CAP_NET_ADMIN` to interact with native WireGuard interfaces.

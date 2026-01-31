@@ -8,7 +8,9 @@ description: "Task list template for feature implementation"
 **Input**: Design documents from `/specs/[###-feature-name]/`
 **Prerequisites**: plan.md (required), spec.md (required for user stories), research.md, data-model.md, contracts/
 
-**Tests**: The examples below include test tasks. Tests are OPTIONAL - only include them if explicitly requested in the feature specification.
+**Tests**: 
+- **Backend (Go)**: Tests are MANDATORY per Constitution Principle I (Backend Testing Discipline). Write tests FIRST before implementation.
+- **Frontend (Svelte)**: Tests are NOT required per Constitution Principle II (Frontend User Experience First). Focus on UX and performance instead.
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
@@ -79,12 +81,13 @@ Examples of foundational tasks (adjust based on your project):
 
 **Independent Test**: [How to verify this story works on its own]
 
-### Tests for User Story 1 (OPTIONAL - only if tests requested) ⚠️
+### Tests for User Story 1 ⚠️
 
-> **NOTE: Write these tests FIRST, ensure they FAIL before implementation**
+> **BACKEND ONLY**: Write these tests FIRST per Constitution Principle I (TDD). Ensure they FAIL before implementation.
+> **FRONTEND**: Skip test tasks. Focus on UX/performance per Constitution Principle II.
 
-- [ ] T010 [P] [US1] Contract test for [endpoint] in tests/contract/test_[name].py
-- [ ] T011 [P] [US1] Integration test for [user journey] in tests/integration/test_[name].py
+- [ ] T010 [P] [US1] [BACKEND] Contract test for [endpoint] in backend/tests/[name]_test.go
+- [ ] T011 [P] [US1] [BACKEND] Integration test for [user journey] in backend/tests/integration_[name]_test.go
 
 ### Implementation for User Story 1
 
@@ -104,10 +107,13 @@ Examples of foundational tasks (adjust based on your project):
 **Goal**: [Brief description of what this story delivers]
 
 **Independent Test**: [How to verify this story works on its own]
+⚠️
 
-### Tests for User Story 2 (OPTIONAL - only if tests requested) ⚠️
+> **BACKEND ONLY**: Write tests FIRST per Constitution Principle I (TDD).
+> **FRONTEND**: Skip test tasks. Focus on UX/performance per Constitution Principle II.
 
-- [ ] T018 [P] [US2] Contract test for [endpoint] in tests/contract/test_[name].py
+- [ ] T018 [P] [US2] [BACKEND] Contract test for [endpoint] in backend/tests/[name]_test.go
+- [ ] T019 [P] [US2] [BACKEND] Integration test for [user journey] in backend/tests/integration_[name]_test.go
 - [ ] T019 [P] [US2] Integration test for [user journey] in tests/integration/test_[name].py
 
 ### Implementation for User Story 2
@@ -123,10 +129,13 @@ Examples of foundational tasks (adjust based on your project):
 
 ## Phase 5: User Story 3 - [Title] (Priority: P3)
 
-**Goal**: [Brief description of what this story delivers]
+**Goal**: [Brief descriptio⚠️
 
-**Independent Test**: [How to verify this story works on its own]
+> **BACKEND ONLY**: Write tests FIRST per Constitution Principle I (TDD).
+> **FRONTEND**: Skip test tasks. Focus on UX/performance per Constitution Principle II.
 
+- [ ] T024 [P] [US3] [BACKEND] Contract test for [endpoint] in backend/tests/[name]_test.go
+- [ ] T025 [P] [US3] [BACKEND] Integration test for [user journey] in backend/tests/integration_[name]_test.go
 ### Tests for User Story 3 (OPTIONAL - only if tests requested) ⚠️
 
 - [ ] T024 [P] [US3] Contract test for [endpoint] in tests/contract/test_[name].py
