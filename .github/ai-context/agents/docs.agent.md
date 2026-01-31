@@ -5,6 +5,7 @@
 ## Documentation Philosophy
 
 Documentation in this project serves three audiences:
+
 1. **AI agents** — Context for code generation and understanding
 2. **Developers** — Setup, troubleshooting, and contribution guides
 3. **Users** — Feature guides and API references
@@ -16,6 +17,7 @@ Documentation in this project serves three audiences:
 **Purpose**: Help AI understand project architecture, decisions, conventions
 
 **Style**:
+
 - Structured Markdown with clear sections
 - Bullet points for scanability
 - Code examples for patterns
@@ -23,6 +25,7 @@ Documentation in this project serves three audiences:
 - Decision rationale (why, not just what)
 
 **Maintenance**:
+
 - Update when architecture changes
 - Keep in sync with constitution
 - Add to `chatmem.md` when new patterns emerge
@@ -32,12 +35,14 @@ Documentation in this project serves three audiences:
 **Purpose**: Source of truth for backend endpoints
 
 **Style**:
+
 - One section per endpoint
 - Request/response schemas with examples
 - HTTP status codes documented
 - Error responses explained
 
 **Requirements**:
+
 - **Must update** when API changes
 - JSON examples must be valid
 - Keep in sync with implementation
@@ -48,12 +53,14 @@ Documentation in this project serves three audiences:
 **Purpose**: Non-negotiable project principles
 
 **Style**:
+
 - Principle-based structure
 - Rationale for each principle
 - Version tracking
 - Sync impact report at top
 
 **Requirements**:
+
 - Never modify without consensus
 - Version bump on changes
 - Update templates when principles change
@@ -63,6 +70,7 @@ Documentation in this project serves three audiences:
 **Purpose**: Help users understand and use the system
 
 **Style**:
+
 - Clear step-by-step instructions
 - Troubleshooting sections
 - Screenshots/diagrams where helpful
@@ -75,6 +83,7 @@ Documentation in this project serves three audiences:
 **When**: Any time an endpoint changes
 
 **Process**:
+
 1. Locate endpoint in `backend/API.md`
 2. Update request/response schemas
 3. Update status codes if changed
@@ -83,29 +92,32 @@ Documentation in this project serves three audiences:
 6. Test endpoint to confirm accuracy
 
 **Template**:
-```markdown
+
+````markdown
 ### X. Endpoint Name
+
 Returns description of what it does.
 
 - **URL**: `/path/{param}`
 - **Method**: `GET`/`POST`/`DELETE`
 - **Request Body** (if applicable):
-    ```json
-    { "field": "value" }
-    ```
+  ```json
+  { "field": "value" }
+  ```
 - **Response Body**: `Type`
-    ```json
-    { "field": "value" }
-    ```
+  ```json
+  { "field": "value" }
+  ```
 - **Error Responses**:
-    - `400 Bad Request`: Description
-```
+  - `400 Bad Request`: Description
+````
 
 ### Task: Document New Architectural Decision
 
 **When**: Major design choice is made
 
 **Process**:
+
 1. Add to `.github/ai-context/knowledge/decisions.md`
 2. Use template: DNNN: [Title], Decision, Context, Trade-offs, Rationale, Impact
 3. Include table of alternatives considered
@@ -117,6 +129,7 @@ Returns description of what it does.
 **When**: Core principle changes or new principle added
 
 **Process**:
+
 1. Update sync impact report at top
 2. Modify/add principle section
 3. Update version number
@@ -129,6 +142,7 @@ Returns description of what it does.
 **When**: Major milestone reached or significant refactor
 
 **Process**:
+
 1. Update `.github/ai-context/knowledge/memory.md`
 2. Add to timeline under appropriate phase
 3. Document what changed and why
@@ -140,6 +154,7 @@ Returns description of what it does.
 **When**: Completing major work session
 
 **Process**:
+
 1. Update `.github/ai-context/knowledge/chatmem.md`
 2. Move completed items from "in progress" to "complete"
 3. Add new "in progress" items if work continues
@@ -159,6 +174,7 @@ Returns description of what it does.
 ### Mermaid Diagrams
 
 **When to use**:
+
 - System architecture
 - Data flows
 - Sequence diagrams
@@ -166,17 +182,19 @@ Returns description of what it does.
 - ER diagrams
 
 **Style**:
+
 ```markdown
 \`\`\`mermaid
 graph TB
-    A[Component A] --> B[Component B]
-    B --> C[Component C]
+A[Component A] --> B[Component B]
+B --> C[Component C]
 \`\`\`
 ```
 
 ### Code Examples
 
 **Requirements**:
+
 - Must be valid, runnable code
 - Include necessary imports
 - Show both success and error cases
@@ -184,6 +202,7 @@ graph TB
 - Use realistic variable names (not `foo`, `bar`)
 
 **Example**:
+
 ```go
 // Good example
 func (h *PeerHandler) Add(w http.ResponseWriter, r *http.Request) {
@@ -209,15 +228,18 @@ func (h *PeerHandler) Add(w http.ResponseWriter, r *http.Request) {
 
 ### Regular Updates
 
-**Weekly**: 
+**Weekly**:
+
 - Review `chatmem.md` — Update active work status
 
 **Per Release**:
+
 - Update version numbers in constitution, API.md
 - Review architecture.md for accuracy
 - Add to project history (memory.md)
 
 **On Major Changes**:
+
 - Update decisions.md with new architectural decisions
 - Update constitution if principles change
 - Update all affected AI context files
@@ -238,7 +260,7 @@ Before committing documentation:
 ### For AI Context Files
 
 - **Be detailed**: AI agents benefit from comprehensive context
-- **Include rationale**: Explain *why*, not just *what*
+- **Include rationale**: Explain _why_, not just _what_
 - **Provide examples**: Show patterns in code snippets
 - **Cross-reference**: Link to related docs
 
@@ -311,8 +333,9 @@ npm run format  # formats all Markdown files
 ## Documentation Anti-Patterns
 
 **Avoid**:
+
 - ❌ Documenting what's obvious from code (e.g., "This function returns a value")
-- ❌ Copy-pasting code without explanation (show *why*, not just *what*)
+- ❌ Copy-pasting code without explanation (show _why_, not just _what_)
 - ❌ Outdated examples (keep in sync with implementation)
 - ❌ Vague descriptions ("The system handles this")
 - ❌ Marketing language ("Our amazing feature...")
@@ -320,7 +343,8 @@ npm run format  # formats all Markdown files
 - ❌ Broken links (use relative paths, verify they work)
 
 **Do**:
-- ✅ Explain *why* architecture is designed this way
+
+- ✅ Explain _why_ architecture is designed this way
 - ✅ Document trade-offs and alternatives considered
 - ✅ Show realistic, runnable examples
 - ✅ Include error cases and edge cases

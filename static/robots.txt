@@ -1,3 +1,7 @@
-# allow crawling everything by default
+# WireGuard Manager - Internal application
+# Disallow all web crawlers from indexing this application
 User-agent: *
-Disallow:
+Disallow: /
+
+# This is a private VPN management interface
+# and should not be indexed by search engines

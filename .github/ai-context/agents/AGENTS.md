@@ -5,12 +5,14 @@
 ## Core Agent Behavior
 
 ### Decision-Making
+
 - **Analyze first**: Read relevant code and documentation before suggesting changes
 - **Propose before acting**: For significant changes, outline the approach and wait for confirmation
 - **Verify assumptions**: Ask for clarification when ambiguity exists
 - **Consider impact**: Think about side effects across the full stack (frontend + backend)
 
 ### Code Quality
+
 - **Type safety**: TypeScript frontend, Go backend—leverage type systems fully
 - **Follow constitution**: Respect [Constitution.md](../../../.specify/memory/constitution.md)
   - **Backend**: TDD mandatory (write tests first for all handler/service logic)
@@ -19,6 +21,7 @@
 - **Performance**: Frontend performance budgets are non-negotiable (TTI <3s, bundle <200KB)
 
 ### Cross-Stack Awareness
+
 - **API contracts matter**: Changes to `backend/internal/handlers` or API endpoints must update [API.md](../../../backend/API.md)
 - **Frontend integration**: Always verify API calls in frontend stores match backend response schemas
 - **Shared data model**: Keep [types.ts](../../../src/lib/types.ts) and backend Peer struct in sync
@@ -44,10 +47,11 @@
 ## Tool-Specific Details
 
 See agent-specific rules:
+
 - [CLAUDE.md](CLAUDE.md) — Claude-specific optimizations
 - [GEMINI.md](GEMINI.md) — Gemini-specific patterns
 - Copilot uses `copilot-instructions.md` globally
-  
+
 ---
 
 You are able to use the Svelte MCP server, where you have access to comprehensive Svelte 5 and SvelteKit documentation. Here's how to use the available tools effectively:

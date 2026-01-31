@@ -73,11 +73,11 @@
 
 ### Implementation for User Story 1
 
-- [ ] T027 [P] [US1] Create StatusBadge component in `src/lib/components/StatusBadge.svelte` (online/offline indicator with pulse animation)
-- [ ] T028 [P] [US1] Create PeerTable component in `src/lib/components/PeerTable.svelte` (table layout with peer rows, action buttons with responsive visibility)
-- [ ] T029 [US1] Create Peers page in `src/routes/peers/+page.svelte` (load peers store, render PeerTable, handle loading state)
-- [ ] T030 [US1] Add status derivation logic in `src/lib/stores/peers.ts` (compute online/offline from lastHandshake timestamp)
-- [ ] T031 [US1] Add responsive action button logic in `src/lib/components/PeerTable.svelte` (implements FR-001a: always-visible with display:flex <1024px, hover-reveal ≥1024px using Tailwind group and group-hover:opacity-100 transition)
+- [X] T027 [P] [US1] Create StatusBadge component in `src/lib/components/StatusBadge.svelte` (online/offline indicator with pulse animation)
+- [X] T028 [P] [US1] Create PeerTable component in `src/lib/components/PeerTable.svelte` (table layout with peer rows, action buttons with responsive visibility)
+- [X] T029 [US1] Create Peers page in `src/routes/peers/+page.svelte` (load peers store, render PeerTable, handle loading state)
+- [X] T030 [US1] Add status derivation logic in `src/lib/stores/peers.ts` (compute online/offline from lastHandshake timestamp)
+- [X] T031 [US1] Add responsive action button logic in `src/lib/components/PeerTable.svelte` (implements FR-001a: always-visible with display:flex <1024px, hover-reveal ≥1024px using Tailwind group and group-hover:opacity-100 transition)
 - [ ] T032 [US1] Manual Test: Peer list rendering with sample data (verify status badges show correct online/offline, byte formatting uses KB/MB/GB, date formatting shows relative time)
 - [ ] T033 [US1] Manual Test: Empty state when no peers exist (display "No peers configured" message with "Add Peer" CTA button)
 
@@ -97,13 +97,13 @@
 
 ### Implementation for User Story 2
 
-- [ ] T034 [P] [US2] Create PeerModal component in `src/lib/components/PeerModal.svelte` (glassmorphism modal with form fields, validation, loading state)
-- [ ] T035 [US2] Add form validation logic in PeerModal (validate name required, validate CIDR notation for each allowed IP)
-- [ ] T036 [US2] Wire PeerModal submit to peers store addPeer method (POST /peers API call)
-- [ ] T037 [US2] Display inline validation errors in PeerModal (show CIDR format examples on error)
-- [ ] T038 [US2] Add success notification after peer creation (use notifications store)
-- [ ] T039 [US2] Add error handling for API failures in PeerModal (400 validation errors, 500 server errors)
-- [ ] T040 [US2] Update Peers page to include "Add Peer" button that opens PeerModal
+- [X] T034 [P] [US2] Create PeerModal component in `src/lib/components/PeerModal.svelte` (glassmorphism modal with form fields, validation, loading state)
+- [X] T035 [US2] Add form validation logic in PeerModal (validate name required, validate CIDR notation for each allowed IP)
+- [X] T036 [US2] Wire PeerModal submit to peers store addPeer method (POST /peers API call)
+- [X] T037 [US2] Display inline validation errors in PeerModal (show CIDR format examples on error)
+- [X] T038 [US2] Add success notification after peer creation (use notifications store)
+- [X] T039 [US2] Add error handling for API failures in PeerModal (400 validation errors, 500 server errors)
+- [X] T040 [US2] Update Peers page to include "Add Peer" button that opens PeerModal
 - [ ] T041 [US2] Manual Test: Form validation with invalid CIDR notation (e.g., "10.0.0.5" without /32, "10.0.0.300/32"; verify inline error messages with examples)
 - [ ] T042 [US2] Manual Test: Successful peer addition flow end-to-end (form submit, API call, list refresh, success notification appears)
 
@@ -123,11 +123,12 @@
 
 ### Implementation for User Story 5
 
-- [ ] T043 [P] [US5] Create QRCodeDisplay component in `src/lib/components/QRCodeDisplay.svelte` (full-screen glassmorphism modal with QR code from svelte-qrcode)
-- [ ] T044 [US5] Add download config function in QRCodeDisplay (create .conf file blob, trigger browser download)
-- [ ] T045 [US5] Update PeerModal to show QRCodeDisplay on successful peer creation (pass config and private key from API response)
-- [ ] T046 [US5] Add security note in QRCodeDisplay (warn that private key is sensitive, won't be shown again after modal close)
+- [X] T043 [P] [US5] Create QRCodeDisplay component in `src/lib/components/QRCodeDisplay.svelte` (full-screen glassmorphism modal with QR code from svelte-qrcode)
+- [X] T044 [US5] Add download config function in QRCodeDisplay (create .conf file blob, trigger browser download)
+- [X] T045 [US5] Update PeerModal to show QRCodeDisplay on successful peer creation (pass config and private key from API response)
+- [X] T046 [US5] Add security note in QRCodeDisplay (warn that private key is sensitive, won't be shown again after modal close)
 - [ ] T047 [US5] Manual Test: QR code generation with real peer config (verify scannable by WireGuard mobile app, QR displays correctly)
+- [ ] T048 [US5] Manual Test: Config file download (verify .conf format, valid WireGuard syntax, file downloads with correct name)
 - [ ] T048 [US5] Manual Test: Config file download (verify .conf format, valid WireGuard syntax, file downloads with correct name)
 
 **Checkpoint**: At this point, User Stories 1, 2, AND 5 should work - view peers, add peers, and download configs
@@ -146,12 +147,12 @@
 
 ### Implementation for User Story 3
 
-- [ ] T049 [P] [US3] Create ConfirmDialog component in `src/lib/components/ConfirmDialog.svelte` (glassmorphism confirmation modal with cancel/confirm buttons)
-- [ ] T050 [US3] Add delete button to PeerTable component (trash icon with responsive visibility logic)
-- [ ] T051 [US3] Wire delete button to open ConfirmDialog with peer name
-- [ ] T052 [US3] Wire ConfirmDialog confirm action to peers store removePeer method (DELETE /peers/{id} API call)
-- [ ] T053 [US3] Add success notification after peer deletion (use notifications store)
-- [ ] T054 [US3] Add error handling for deletion failures (404 peer not found, 500 server error)
+- [X] T049 [P] [US3] Create ConfirmDialog component in `src/lib/components/ConfirmDialog.svelte` (glassmorphism confirmation modal with cancel/confirm buttons)
+- [X] T050 [US3] Add delete button to PeerTable component (trash icon with responsive visibility logic)
+- [X] T051 [US3] Wire delete button to open ConfirmDialog with peer name
+- [X] T052 [US3] Wire ConfirmDialog confirm action to peers store removePeer method (DELETE /peers/{id} API call)
+- [X] T053 [US3] Add success notification after peer deletion (use notifications store)
+- [X] T054 [US3] Add error handling for deletion failures (404 peer not found, 500 server error)
 - [ ] T055 [US3] Manual Test: Deletion flow end-to-end (click delete, confirm dialog appears, click confirm, API call succeeds, list refreshes, success notification shows)
 - [ ] T056 [US3] Manual Test: Cancellation flow (click delete, confirm dialog appears, click cancel, dialog closes, peer remains in list)
 
@@ -171,9 +172,9 @@
 
 ### Implementation for User Story 4
 
-- [ ] T057 [P] [US4] Create StatsCard component in `src/lib/components/StatsCard.svelte` (glassmorphism card with icon, label, value, formatted units)
-- [ ] T058 [US4] Create Stats page in `src/routes/stats/+page.svelte` (load stats store, render multiple StatsCard components)
-- [ ] T059 [US4] Add stats cards to Dashboard page in `src/routes/+page.svelte` (show active peers, total RX, total TX - numeric only per FR-008a)
+- [X] T057 [P] [US4] Create StatsCard component in `src/lib/components/StatsCard.svelte` (glassmorphism card with icon, label, value, formatted units)
+- [X] T058 [US4] Create Stats page in `src/routes/stats/+page.svelte` (load stats store, render multiple StatsCard components)
+- [X] T059 [US4] Add stats cards to Dashboard page in `src/routes/+page.svelte` (show active peers, total RX, total TX - numeric only per FR-008a)
 - [ ] T060 [US4] Manual Test: Stats display with sample data (verify byte formatting uses appropriate units: KB, MB, GB, TB; values are human-readable)
 - [ ] T061 [US4] Manual Test: Stats page with zero peers (show "0" peer count, "0 bytes" transfer stats with appropriate messaging)
 
@@ -189,10 +190,10 @@
 
 ### Implementation for Settings Page
 
-- [ ] T062 [P] [SETTINGS] Create Settings page in `src/routes/settings/+page.svelte` (glassmorphism panels with static mock data)
-- [ ] T063 [SETTINGS] Add mock interface configuration display (listen port: 51820, MTU: 1420, addresses: 10.0.0.1/24, server public key: mock base64 string; all fields read-only/disabled)
-- [ ] T064 [SETTINGS] Add visual indicators for "Coming Soon" features (add badge/chip with "Coming Soon" text, disable service control buttons with tooltip, show placeholder usage quota widget with mock data and "Preview" label)
-- [ ] T065 [SETTINGS] Style Settings page with glassmorphism panels matching design mockups
+- [X] T062 [P] [SETTINGS] Create Settings page in `src/routes/settings/+page.svelte` (glassmorphism panels with static mock data)
+- [X] T063 [SETTINGS] Add mock interface configuration display (listen port: 51820, MTU: 1420, addresses: 10.0.0.1/24, server public key: mock base64 string; all fields read-only/disabled)
+- [X] T064 [SETTINGS] Add visual indicators for "Coming Soon" features (add badge/chip with "Coming Soon" text, disable service control buttons with tooltip, show placeholder usage quota widget with mock data and "Preview" label)
+- [X] T065 [SETTINGS] Style Settings page with glassmorphism panels matching design mockups
 
 **Checkpoint**: Settings page displays with mock data, visual consistency with other pages
 
