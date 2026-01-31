@@ -7,8 +7,11 @@ import (
 
 // Config holds the application configuration.
 type Config struct {
-	ServerPort string `json:"server_port"`
-	// Add other configuration fields here
+	ServerPort     string `json:"server_port"`
+	InterfaceName  string `json:"interface_name"`
+	StoragePath    string `json:"storage_path"`
+	ServerEndpoint string `json:"server_endpoint"` // e.g. "vpn.example.com:51820"
+	ServerPubKey   string `json:"server_pubkey"`
 }
 
 // LoadConfig loads configuration from the specified JSON file.
