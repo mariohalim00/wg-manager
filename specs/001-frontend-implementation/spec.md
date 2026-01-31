@@ -1,6 +1,6 @@
 # Feature Specification: SvelteKit Frontend Implementation
 
-**Feature Branch**: `1-frontend-implementation`  
+**Feature Branch**: `feat/frontend`  
 **Created**: 2026-02-01  
 **Status**: Draft  
 **Input**: User description: "I have a WireGuard manager backend and I want a SvelteKit + Tailwind frontend. The project is already scaffolded, some routes are prepared, and I have a design ready. Auth is not needed for now. Plan a simple, high-level roadmap for the frontend, including: pages (/peers, /stats), API integration to backend endpoints, state management with Svelte stores, forms for add/edit peers and peer config download, logging/validation utilities, testing strategy, and possible future extensions like real-time stats or theming."
@@ -118,15 +118,15 @@ As a WireGuard administrator, I need to download peer configuration files after 
 ### Functional Requirements
 
 - **FR-001**: System MUST display a paginated or scrollable list of all WireGuard peers fetched from GET /peers endpoint
-- **FR-001a**: System MUST display peer action buttons (Download Config, View QR Code, Delete) with responsive visibility: always visible on screens <1024px, hover-reveal (group-hover pattern) on screens ≥1024px
-- **FR-002**: System MUST show real-time peer status (online/offline) based on lastHandshake timestamp (online if within last 2-3 minutes)
+- **FR-001a**: System MUST display peer action buttons (Download Config, View QR Code, Delete) with responsive visibility: always visible on screens <1024px (width: auto, display: flex), hover-reveal using Tailwind group-hover pattern on screens ≥1024px (opacity-0 group-hover:opacity-100 transition-opacity)
+- **FR-002**: System MUST show real-time peer status (online/offline) based on lastHandshake timestamp (online if lastHandshake is within 120 seconds of current time, offline otherwise; status updates on component mount and manual refresh)
 - **FR-003**: System MUST provide a form to add new peers with fields for name (required) and allowed IPs (required, CIDR notation)
 - **FR-004**: System MUST validate CIDR notation client-side before submitting to POST /peers endpoint (reject invalid formats like "10.0.0.5" without prefix)
 - **FR-005**: System MUST call POST /peers API with name and allowedIPs, handle both successful creation (201) and error responses (400/500)
 - **FR-006**: System MUST display peer configuration (WireGuard .conf format) and QR code after successful peer addition for easy client setup
 - **FR-007**: System MUST provide delete/remove functionality for peers via DELETE /peers/{id} endpoint with confirmation dialog
 - **FR-008**: System MUST fetch and display aggregate interface statistics from GET /stats endpoint (interface name, peer count, total RX/TX)
-- **FR-008a**: System MUST display quick stats cards on main dashboard showing active peer count, total received bytes, and total sent bytes (numeric display only, no charts)
+- **FR-008a**: System MUST display quick stats cards on main dashboard showing active peer count, total received bytes, and total sent bytes (numeric display only, no charts; each card has icon, label, and value formatted with formatBytes utility; 3 cards in horizontal grid layout)
 - **FR-009**: System MUST format data transfer statistics in human-readable units (bytes, KB, MB, GB, TB) rather than raw byte counts
 - **FR-010**: System MUST use Svelte stores for state management (peers store, stats store) to share data across components and pages
 - **FR-011**: System MUST implement API client utilities/functions to encapsulate backend communication (base URL configuration, error handling, response parsing)
@@ -137,8 +137,8 @@ As a WireGuard administrator, I need to download peer configuration files after 
 - **FR-016**: System MUST be responsive from mobile (320px) to desktop (1920px+) with breakpoints: mobile (<768px) uses bottom navigation and stacked cards, tablet (768px-1023px) uses simplified sidebar, desktop (1024px+) uses full sidebar with all features
 - **FR-017**: System MUST include persistent sidebar navigation on left side with sections: Dashboard, Peers, Settings (future), Logs (future), and usage widget at bottom
 - **FR-018**: System MUST handle empty states gracefully (no peers configured, no stats available) with clear messaging and calls-to-action
-- **FR-019**: System MUST implement glassmorphism visual design with backdrop blur effects (blur(12-24px)), semi-transparent panels (rgba backgrounds with 0.03-0.4 alpha), and subtle borders (rgba(255,255,255,0.08-0.1))
-- **FR-020**: System MUST use radial gradient backgrounds (e.g., radial-gradient(circle at top left, #1a2a3a, #101922)) and layered depth with varying panel opacities
+- **FR-019**: System MUST implement glassmorphism visual design with: backdrop-filter: blur(16px) for panels, background: rgba(255,255,255,0.1) for primary panels, background: rgba(255,255,255,0.05) for secondary elements, border: 1px solid rgba(255,255,255,0.1), and box-shadow for depth
+- **FR-020**: System MUST use radial gradient backgrounds: background: radial-gradient(circle at 20% 20%, #1a2a3a 0%, #101922 100%) for body, with layered panel opacities (primary: 0.1 alpha, hover: 0.15 alpha, modal: 0.2 alpha)
 - **FR-021**: System MUST implement Settings page UI (read-only/preview mode) displaying static interface configuration (listen port, MTU, addresses, server public key) with visual indicators that functional editing is coming soon
 
 ### Key Entities
@@ -246,11 +246,11 @@ These items may be prioritized in subsequent specifications based on user feedba
 
 This specification aligns with the WireGuard Manager Constitution (v1.0.0) as follows:
 
-- **Principle I (Backend Testing Discipline)**: Backend API (already implemented) follows TDD; frontend consumes tested endpoints
-- **Principle II (Frontend UX First)**: This spec prioritizes UX and performance over automated testing; manual testing strategy documented
-- **Principle III (API Contract Stability)**: Relies on documented backend API endpoints without breaking changes
-- **Principle IV (Configuration & Environment)**: Backend API base URL configurable via environment variables
-- **Principle V (Performance Budgets)**: Explicit performance requirements defined (TTI <3s, FCP <1.5s, bundle <200KB, Lighthouse ≥90)
-- **Principle VI (Observability)**: Frontend will log errors to browser console; backend already has structured logging
+- **Principle I: Backend Testing Discipline (Go)**: ✅ N/A - Backend API (already implemented with TDD); frontend consumes tested endpoints without backend modifications
+- **Principle II: Frontend User Experience First (Svelte)**: ✅ COMPLIANT - Prioritizes UX/performance over test coverage; manual testing strategy documented (no automated frontend tests required); performance budgets explicitly defined
+- **Principle III: API Contract Stability**: ✅ COMPLIANT - Consumes existing backend endpoints (GET/POST /peers, DELETE /peers/{id}, GET /stats) documented in backend/API.md without modifications
+- **Principle IV: Configuration & Environment**: ✅ COMPLIANT - Backend API base URL configurable via VITE_API_BASE_URL environment variable (Twelve-Factor pattern)
+- **Principle V: Performance Budgets**: ✅ COMPLIANT - Frontend budgets: TTI <3s on 3G, FCP <1.5s, bundle <200KB gzipped, Lighthouse ≥90; Backend budgets already met by existing API
+- **Principle VI: Observability & Structured Logging**: ✅ COMPLIANT - Frontend errors logged to browser console, API failures captured with context; backend structured logging already implemented
 
-**No constitution violations identified.**
+**Constitution Compliance**: ✅ PASS - All 6 principles satisfied, no violations identified.
