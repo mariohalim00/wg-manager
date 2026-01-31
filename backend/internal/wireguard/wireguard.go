@@ -38,6 +38,7 @@ type Service interface {
 	AddPeer(name string, publicKey string, allowedIPs []string) (PeerResponse, error)
 	RemovePeer(id string) error
 	GetStats() (Stats, error)
+	Close() error
 }
 
 // mockService is a mock implementation of the WireGuard service for development.
@@ -116,4 +117,10 @@ func (s *mockService) GetStats() (Stats, error) {
 		TotalRX:       1536,
 		TotalTX:       2304,
 	}, nil
+}
+
+// Close is a no-op for mockService.
+func (s *mockService) Close() error {
+	slog.Warn("Using mock WireGuard service for Close (no-op)")
+	return nil
 }

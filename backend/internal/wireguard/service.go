@@ -54,6 +54,7 @@ func (s *realService) Close() error {
 	}
 	return s.client.Close()
 }
+
 // ListPeers returns the current list of peers from the WireGuard interface.
 func (s *realService) ListPeers() ([]Peer, error) {
 	device, err := s.client.Device(s.interfaceName)
