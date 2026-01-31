@@ -24,7 +24,9 @@ func (h *PeerHandler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(peers)
+	if err := json.NewEncoder(w).Encode(peers); err != nil {
+		slog.Error("Failed to encode peers response", "error", err)
+	}
 }
 
 type AddPeerRequest struct {
@@ -44,13 +46,15 @@ func (h *PeerHandler) Add(w http.ResponseWriter, r *http.Request) {
 	peer, err := h.Service.AddPeer(req.Name, req.PublicKey, req.AllowedIPs)
 	if err != nil {
 		slog.Error("Failed to add peer", "error", err)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(peer)
+	if err := json.NewEncoder(w).Encode(peer); err != nil {
+		slog.Error("Failed to encode peer response", "error", err)
+	}
 }
 
 func (h *PeerHandler) Remove(w http.ResponseWriter, r *http.Request) {
@@ -63,7 +67,7 @@ func (h *PeerHandler) Remove(w http.ResponseWriter, r *http.Request) {
 
 	if err := h.Service.RemovePeer(id); err != nil {
 		slog.Error("Failed to remove peer", "error", err, "id", id)
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
 		return
 	}
 
@@ -79,5 +83,7 @@ func (h *PeerHandler) Stats(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(stats)
+	if err := json.NewEncoder(w).Encode(stats); err != nil {
+		slog.Error("Failed to encode stats response", "error", err)
+	}
 }
