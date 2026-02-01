@@ -69,6 +69,9 @@ func main() {
 	mux.HandleFunc("GET /peers/config/{id...}", peerHandler.GetConfig)
 	mux.HandleFunc("GET /peers/qr/{id...}", peerHandler.GetQR)
 	mux.HandleFunc("GET /stats", peerHandler.Stats)
+	mux.HandleFunc("GET /stats/history", peerHandler.GetHistory)
+	mux.HandleFunc("GET /settings", peerHandler.GetSettings)
+	mux.HandleFunc("POST /settings", peerHandler.UpdateSettings)
 
 	// Apply middleware to all routes
 	wrappedMux := middleware.LoggingMiddleware(mux)

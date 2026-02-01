@@ -302,7 +302,7 @@ func TestStatsHandler(t *testing.T) {
 
 	t.Run("ServiceError", func(t *testing.T) {
 		mockWGService := wireguard.NewMockService()
-		_, _ = mockWGService.AddPeer("force-stats-error", "", []string{"10.0.0.1/32"})
+		_, _ = mockWGService.AddPeer(wireguard.AddPeerOptions{Name: "force-stats-error", AllowedIPs: []string{"10.0.0.1/32"}})
 
 		h := handlers.NewPeerHandler(mockWGService)
 		mux := http.NewServeMux()
@@ -322,7 +322,7 @@ func TestStatsHandler(t *testing.T) {
 
 func TestListPeersHandlerError(t *testing.T) {
 	mockWGService := wireguard.NewMockService()
-	_, _ = mockWGService.AddPeer("force-list-error", "", []string{"10.0.0.1/32"})
+	_, _ = mockWGService.AddPeer(wireguard.AddPeerOptions{Name: "force-list-error", AllowedIPs: []string{"10.0.0.1/32"}})
 
 	h := handlers.NewPeerHandler(mockWGService)
 	mux := http.NewServeMux()
@@ -412,7 +412,7 @@ func TestUpdatePeerHandlerForceError(t *testing.T) {
 
 	t.Run("UpdateNameForceError", func(t *testing.T) {
 		// First add a normal peer
-		_, _ = mockWGService.AddPeer("normal", "", []string{"10.0.0.1/32"})
+		_, _ = mockWGService.AddPeer(wireguard.AddPeerOptions{Name: "normal", AllowedIPs: []string{"10.0.0.1/32"}})
 
 		reqBody := `{"name":"force-error"}`
 		req := httptest.NewRequest("PATCH", "/peers/mock-peer-1", strings.NewReader(reqBody))
