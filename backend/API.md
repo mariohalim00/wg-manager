@@ -70,7 +70,47 @@ Removes a peer from the WireGuard interface and deletes its persistent metadata.
   - `id`: The Public Key (ID) of the peer to remove.
 - **Response**: `204 No Content`
 
-### 4. Interface Statistics
+### 4. Update Peer
+
+Allows partial updates to a peer's metadata (name) and configuration (AllowedIPs).
+
+- **URL**: `/peers/{id}`
+- **Method**: `PATCH`
+- **Path Parameters**:
+  - `id`: The Public Key (ID) of the peer to update.
+- **Request Body**:
+  ```json
+  {
+  	"name": "Updated Name",
+  	"allowedIPs": ["10.0.0.4/32"]
+  }
+  ```
+- **Response Body (200 OK)**: `Peer` (the updated peer object)
+- **Error Responses (400 Bad Request)**:
+  - `Invalid AllowedIP CIDR: <value>`: If any item in `allowedIPs` is not a valid CIDR notation.
+  - `Invalid request body`: If the JSON body is malformed.
+
+### 5. Regenerate Keys
+
+Generates a new WireGuard keypair for an existing peer while preserving its name and allowed IPs.
+
+- **URL**: `/peers/{id}/regenerate-keys`
+- **Method**: `POST`
+- **Path Parameters**:
+  - `id`: The Public Key (ID) of the peer to regenerate keys for.
+- **Response Body (200 OK)**: `PeerResponse` (contains the new keypair and config)
+  ```json
+  {
+  	"id": "newPublicKey...",
+  	"publicKey": "newPublicKey...",
+  	"name": "Same Name",
+  	"allowedIPs": ["10.0.0.2/32"],
+  	"config": "[Interface]\nPrivateKey = ...\n...",
+  	"privateKey": "newPrivateKey..."
+  }
+  ```
+
+### 6. Interface Statistics
 
 Returns aggregated real-time statistics for the WireGuard interface.
 
@@ -80,6 +120,9 @@ Returns aggregated real-time statistics for the WireGuard interface.
   ```json
   {
   	"interfaceName": "wg0",
+  	"publicKey": "serverPublicKey...",
+  	"listenPort": 51820,
+  	"subnet": "10.0.0.0/24",
   	"peerCount": 5,
   	"totalRx": 1048576,
   	"totalTx": 2097152
@@ -99,6 +142,7 @@ The backend uses a hybrid configuration system (Twelve-Factor App). It loads def
 | `WG_STORAGE_PATH`      | Path to persistent peer metadata    | `./data/peers.json` |
 | `WG_SERVER_ENDPOINT`   | Public IP/Domain:Port of the server | `1.2.3.4:51820`     |
 | `WG_SERVER_PUBKEY`     | Public Key of the server interface  | (None)              |
+| `WG_VPN_SUBNET`       | VPN subnet CIDR                     | `10.0.0.0/24`       |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated list of origins     | (Reflective/Dev)    |
 
 ## Middleware

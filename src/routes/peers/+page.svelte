@@ -96,7 +96,10 @@
 			<h1 class="mb-2 text-3xl font-bold">WireGuard Peers</h1>
 			<p class="text-gray-400">Manage VPN clients and connections</p>
 		</div>
-		<button onclick={handleAddPeer} class="glass-btn-primary flex items-center gap-2 px-6 py-3 text-lg font-semibold">
+		<button
+			onclick={handleAddPeer}
+			class="glass-btn-primary flex items-center gap-2 px-6 py-3 text-lg font-semibold"
+		>
 			<Plus size={24} />
 			Add Peer
 		</button>

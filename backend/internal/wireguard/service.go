@@ -15,10 +15,11 @@ type realService struct {
 	storage        *Storage
 	serverPubKey   string
 	serverEndpoint string
+	vpnSubnet      string
 }
 
 // NewRealService creates and returns a new native WireGuard service.
-func NewRealService(interfaceName string, storagePath string, serverEndpoint string, serverPubKey string) (Service, error) {
+func NewRealService(interfaceName string, storagePath string, serverEndpoint string, serverPubKey string, vpnSubnet string) (Service, error) {
 	client, err := wgctrl.New()
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize wgctrl: %w", err)
@@ -44,6 +45,7 @@ func NewRealService(interfaceName string, storagePath string, serverEndpoint str
 		storage:        storage,
 		serverPubKey:   serverPubKey,
 		serverEndpoint: serverEndpoint,
+		vpnSubnet:      vpnSubnet,
 	}, nil
 }
 
@@ -209,8 +211,109 @@ func (s *realService) GetStats() (Stats, error) {
 
 	return Stats{
 		InterfaceName: s.interfaceName,
+		PublicKey:     device.PublicKey.String(),
+		ListenPort:    device.ListenPort,
+		Subnet:        s.vpnSubnet,
 		PeerCount:     len(device.Peers),
 		TotalRX:       totalRX,
 		TotalTX:       totalTX,
 	}, nil
+}
+
+// RegeneratePeer regenerates keys for a peer.
+func (s *realService) RegeneratePeer(id string) (PeerResponse, error) {
+	// 1. Fetch existing peer to get metadata and allowed IPs
+	peers, err := s.ListPeers()
+	if err != nil {
+		return PeerResponse{}, fmt.Errorf("failed to list peers: %w", err)
+	}
+
+	var targetPeer *Peer
+	for _, p := range peers {
+		if p.ID == id {
+			targetPeer = &p
+			break
+		}
+	}
+
+	if targetPeer == nil {
+		return PeerResponse{}, fmt.Errorf("peer not found: %s", id)
+	}
+
+	// 2. Remove old peer
+	if err := s.RemovePeer(id); err != nil {
+		return PeerResponse{}, fmt.Errorf("failed to remove old peer: %w", err)
+	}
+
+	// 3. Add back with new keys
+	// AddPeer generates new keys if publicKey is empty
+	response, err := s.AddPeer(targetPeer.Name, "", targetPeer.AllowedIPs)
+	if err != nil {
+		return PeerResponse{}, fmt.Errorf("failed to add peer with new keys: %w", err)
+	}
+
+	return response, nil
+}
+
+// UpdatePeer updates peer metadata or configuration.
+func (s *realService) UpdatePeer(id string, updates PeerUpdate) (Peer, error) {
+	pubKey, err := wgtypes.ParseKey(id)
+	if err != nil {
+		return Peer{}, fmt.Errorf("invalid public key: %w", err)
+	}
+
+	// Fetch existing metadata
+	meta, ok := s.storage.GetMetadata(id)
+	if !ok {
+		return Peer{}, fmt.Errorf("peer metadata not found: %s", id)
+	}
+
+	// Update metadata if name changed
+	if updates.Name != nil {
+		meta.Name = *updates.Name
+		if err := s.storage.SetMetadata(id, meta); err != nil {
+			return Peer{}, fmt.Errorf("failed to update metadata: %w", err)
+		}
+	}
+
+	// Update WireGuard config if AllowedIPs changed
+	if updates.AllowedIPs != nil {
+		var allowedIPConfigs []net.IPNet
+		for _, ipStr := range *updates.AllowedIPs {
+			_, ipNet, err := net.ParseCIDR(ipStr)
+			if err != nil {
+				return Peer{}, fmt.Errorf("invalid allowed IP '%s': %w", ipStr, err)
+			}
+			allowedIPConfigs = append(allowedIPConfigs, *ipNet)
+		}
+
+		peerConfig := wgtypes.PeerConfig{
+			PublicKey:         pubKey,
+			UpdateOnly:        true,
+			ReplaceAllowedIPs: true,
+			AllowedIPs:        allowedIPConfigs,
+		}
+
+		config := wgtypes.Config{
+			Peers: []wgtypes.PeerConfig{peerConfig},
+		}
+
+		if err := s.client.ConfigureDevice(s.interfaceName, config); err != nil {
+			return Peer{}, fmt.Errorf("failed to update WireGuard peer config: %w", err)
+		}
+	}
+
+	// Return updated peer
+	peers, err := s.ListPeers()
+	if err != nil {
+		return Peer{}, fmt.Errorf("failed to list peers after update: %w", err)
+	}
+
+	for _, p := range peers {
+		if p.ID == id {
+			return p, nil
+		}
+	}
+
+	return Peer{}, fmt.Errorf("peer not found after update: %s", id)
 }

@@ -12,7 +12,15 @@
 		color?: 'blue' | 'green' | 'purple' | 'yellow';
 	};
 
-	let { title, value, icon: IconComponent, subtitle, trend, trendValue, color = 'blue' }: Props = $props();
+	let {
+		title,
+		value,
+		icon: IconComponent,
+		subtitle,
+		trend,
+		trendValue,
+		color = 'blue'
+	}: Props = $props();
 
 	// Color classes matching mockup design
 	const glowColors = {
@@ -45,7 +53,11 @@
 
 <div class="glass group relative flex flex-col gap-2 overflow-hidden rounded-2xl p-6">
 	<!-- Glow effect on hover -->
-	<div class="absolute -top-4 -right-4 h-20 w-20 rounded-full {glowColors[color]} blur-2xl transition-all"></div>
+	<div
+		class="absolute -top-4 -right-4 h-20 w-20 rounded-full {glowColors[
+			color
+		]} blur-2xl transition-all"
+	></div>
 
 	<!-- Header with optional icon and trend -->
 	<div class="relative flex items-start justify-between">
@@ -56,7 +68,9 @@
 		{/if}
 		{#if trend && trendValue}
 			{@const TrendIcon = trendComponents[trend]}
-			<div class="flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-bold {trendColors[trend]}">
+			<div
+				class="flex items-center gap-1 rounded-lg px-2 py-1 text-sm font-bold {trendColors[trend]}"
+			>
 				<TrendIcon class="h-3 w-3" />
 				{trendValue}
 			</div>

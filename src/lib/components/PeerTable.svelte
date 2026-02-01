@@ -26,13 +26,22 @@
 	// Get device icon based on peer name (simple heuristic)
 	function getDeviceIcon(name: string) {
 		const lowerName = name.toLowerCase();
-		if (lowerName.includes('iphone') || lowerName.includes('android') || lowerName.includes('pixel') || lowerName.includes('phone')) {
+		if (
+			lowerName.includes('iphone') ||
+			lowerName.includes('android') ||
+			lowerName.includes('pixel') ||
+			lowerName.includes('phone')
+		) {
 			return Smartphone;
 		}
 		if (lowerName.includes('mac') || lowerName.includes('laptop') || lowerName.includes('book')) {
 			return Laptop;
 		}
-		if (lowerName.includes('router') || lowerName.includes('gateway') || lowerName.includes('openwrt')) {
+		if (
+			lowerName.includes('router') ||
+			lowerName.includes('gateway') ||
+			lowerName.includes('openwrt')
+		) {
 			return Router;
 		}
 		return Monitor;
@@ -44,10 +53,14 @@
 	<div class="flex items-center justify-between border-b border-white/5 p-6">
 		<h3 class="text-lg font-bold">Active Peers ({peers.length})</h3>
 		<div class="flex gap-2">
-			<button class="rounded-xl bg-white/5 px-4 py-2 text-sm font-medium transition-all hover:bg-white/10">
+			<button
+				class="rounded-xl bg-white/5 px-4 py-2 text-sm font-medium transition-all hover:bg-white/10"
+			>
 				Filter
 			</button>
-			<button class="rounded-xl bg-white/5 px-4 py-2 text-sm font-medium transition-all hover:bg-white/10">
+			<button
+				class="rounded-xl bg-white/5 px-4 py-2 text-sm font-medium transition-all hover:bg-white/10"
+			>
 				Export
 			</button>
 		</div>
@@ -57,7 +70,7 @@
 	<div class="overflow-x-auto">
 		<table class="w-full text-left">
 			<thead>
-				<tr class="text-[11px] font-bold uppercase tracking-widest text-slate-500">
+				<tr class="text-[11px] font-bold tracking-widest text-slate-500 uppercase">
 					<th class="px-6 py-4">Status</th>
 					<th class="px-6 py-4">Peer Name</th>
 					<th class="px-6 py-4">Internal IP</th>
@@ -76,10 +89,14 @@
 							<div class="flex items-center gap-2">
 								{#if isOnline}
 									<div class="pulse-online h-2 w-2 rounded-full bg-green-500"></div>
-									<span class="text-xs font-bold uppercase tracking-tighter text-green-500">Online</span>
+									<span class="text-xs font-bold tracking-tighter text-green-500 uppercase"
+										>Online</span
+									>
 								{:else}
 									<div class="h-2 w-2 rounded-full bg-slate-600"></div>
-									<span class="text-xs font-bold uppercase tracking-tighter text-slate-500">Offline</span>
+									<span class="text-xs font-bold tracking-tighter text-slate-500 uppercase"
+										>Offline</span
+									>
 								{/if}
 							</div>
 						</td>
@@ -87,7 +104,11 @@
 						<!-- Peer Name with Icon -->
 						<td class="px-6 py-5">
 							<div class="flex items-center gap-3">
-								<div class="flex h-8 w-8 items-center justify-center rounded-lg {isOnline ? 'bg-[#137fec]/20 text-[#137fec]' : 'bg-white/10 text-slate-400'}">
+								<div
+									class="flex h-8 w-8 items-center justify-center rounded-lg {isOnline
+										? 'bg-[#137fec]/20 text-[#137fec]'
+										: 'bg-white/10 text-slate-400'}"
+								>
 									<DeviceIcon size={18} />
 								</div>
 								<div>
@@ -111,11 +132,19 @@
 						<!-- Transfer -->
 						<td class="px-6 py-5">
 							<div class="flex flex-col gap-1">
-								<div class="flex items-center gap-1.5 text-xs {isOnline ? 'font-medium text-green-500' : 'text-slate-500'}">
+								<div
+									class="flex items-center gap-1.5 text-xs {isOnline
+										? 'font-medium text-green-500'
+										: 'text-slate-500'}"
+								>
 									<ArrowUp size={14} />
 									<span>{formatBytes(peer.transmitBytes)}</span>
 								</div>
-								<div class="flex items-center gap-1.5 text-xs {isOnline ? 'font-medium text-[#137fec]' : 'text-slate-500'}">
+								<div
+									class="flex items-center gap-1.5 text-xs {isOnline
+										? 'font-medium text-[#137fec]'
+										: 'text-slate-500'}"
+								>
 									<ArrowDown size={14} />
 									<span>{formatBytes(peer.receiveBytes)}</span>
 								</div>
@@ -129,7 +158,9 @@
 
 						<!-- Actions -->
 						<td class="px-6 py-5">
-							<div class="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+							<div
+								class="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100"
+							>
 								<button
 									onclick={() => onDownloadConfig(peer)}
 									class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
@@ -178,7 +209,10 @@
 	<!-- Footer -->
 	{#if peers.length > 0}
 		<div class="flex items-center justify-center border-t border-white/5 p-4">
-			<a href="/peers" class="px-6 py-2 text-sm font-bold text-slate-400 transition-colors hover:text-white">
+			<a
+				href="/peers"
+				class="px-6 py-2 text-sm font-bold text-slate-400 transition-colors hover:text-white"
+			>
 				View All Peers
 			</a>
 		</div>

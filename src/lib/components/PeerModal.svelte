@@ -116,9 +116,7 @@
 		role="document"
 	>
 		<!-- Header -->
-		<div
-			class="flex items-center justify-between border-b border-white/5 bg-white/5 px-6 py-4"
-		>
+		<div class="flex items-center justify-between border-b border-white/5 bg-white/5 px-6 py-4">
 			<h2 id="modal-title" class="text-xl font-bold tracking-tight text-white">Add New Peer</h2>
 			<button
 				onclick={onClose}
@@ -184,21 +182,13 @@
 
 			<!-- Actions -->
 			<div class="flex items-center justify-end gap-3 pt-2">
-				<button
-					type="button"
-					onclick={onClose}
-					class="glass-btn-secondary"
-					disabled={loading}
-				>
+				<button type="button" onclick={onClose} class="glass-btn-secondary" disabled={loading}>
 					Cancel
 				</button>
-				<button
-					type="submit"
-					class="glass-btn-primary flex items-center gap-2"
-					disabled={loading}
-				>
+				<button type="submit" class="glass-btn-primary flex items-center gap-2" disabled={loading}>
 					{#if loading}
-						<span class="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white"></span>
+						<span class="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white"
+						></span>
 						Adding...
 					{:else}
 						<Shield size={18} />

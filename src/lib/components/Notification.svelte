@@ -39,7 +39,7 @@
 	role="alert"
 >
 	<!-- Icon -->
-	<div class="shrink-0 mt-0.5">
+	<div class="mt-0.5 shrink-0">
 		<Icon size={20} />
 	</div>
 

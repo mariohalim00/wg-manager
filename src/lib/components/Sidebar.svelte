@@ -14,13 +14,6 @@
 	// Mobile menu state
 	let mobileMenuOpen = $state(false);
 
-	// Props for Add Peer action
-	type Props = {
-		onAddPeer?: () => void;
-	};
-
-	let { onAddPeer }: Props = $props();
-
 	// Navigation items matching mockup design
 	const navItems = [
 		{ path: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -38,10 +31,15 @@
 
 	// Calculate usage percentage (mock for now, can be replaced with real data)
 	let usagePercentage = $derived(
-		$stats ? Math.min(100, Math.round(($stats.totalRx + $stats.totalTx) / (10 * 1024 * 1024 * 1024) * 100)) : 0
+		$stats
+			? Math.min(
+					100,
+					Math.round((($stats.totalRx + $stats.totalTx) / (10 * 1024 * 1024 * 1024)) * 100)
+				)
+			: 0
 	);
 	let usageGB = $derived(
-		$stats ? ((($stats.totalRx + $stats.totalTx) / (1024 * 1024 * 1024)).toFixed(1)) : '0'
+		$stats ? (($stats.totalRx + $stats.totalTx) / (1024 * 1024 * 1024)).toFixed(1) : '0'
 	);
 </script>
 
@@ -72,7 +70,7 @@
 			</div>
 			<div>
 				<h1 class="text-lg font-bold tracking-tight">WireGuard</h1>
-				<p class="text-xs font-medium uppercase tracking-wider text-[#137fec]">v2.4.0 Active</p>
+				<p class="text-xs font-medium tracking-wider text-[#137fec] uppercase">v2.4.0 Active</p>
 			</div>
 		</div>
 
@@ -99,7 +97,7 @@
 	<div class="mt-auto flex flex-col gap-4 p-6">
 		<!-- Usage Limit Widget -->
 		<div class="glass rounded-xl p-4">
-			<p class="mb-2 text-[10px] font-bold uppercase text-slate-500">Usage Limit</p>
+			<p class="mb-2 text-[10px] font-bold text-slate-500 uppercase">Usage Limit</p>
 			<div class="h-1.5 w-full overflow-hidden rounded-full bg-white/10">
 				<div
 					class="h-full bg-[#137fec] transition-all duration-500"

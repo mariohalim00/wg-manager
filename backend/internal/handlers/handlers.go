@@ -96,6 +96,73 @@ func (h *PeerHandler) Remove(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNoContent)
 }
 
+func (h *PeerHandler) Regenerate(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	if id == "" {
+		http.Error(w, "Missing peer ID in path", http.StatusBadRequest)
+		return
+	}
+
+	peer, err := h.Service.RegeneratePeer(id)
+	if err != nil {
+		slog.Error("Failed to regenerate peer keys", "error", err, "id", id)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(peer); err != nil {
+		slog.Error("Failed to encode peer response", "error", err)
+	}
+}
+
+type UpdatePeerRequest struct {
+	Name       *string   `json:"name"`
+	AllowedIPs *[]string `json:"allowedIPs"`
+}
+
+func (h *PeerHandler) Update(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	if id == "" {
+		http.Error(w, "Missing peer ID in path", http.StatusBadRequest)
+		return
+	}
+
+	var req UpdatePeerRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		slog.Error("Failed to decode update peer request", "error", err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	// Validation
+	if req.AllowedIPs != nil {
+		for _, ip := range *req.AllowedIPs {
+			if _, _, err := net.ParseCIDR(ip); err != nil {
+				http.Error(w, fmt.Sprintf("Invalid AllowedIP CIDR: %s", ip), http.StatusBadRequest)
+				return
+			}
+		}
+	}
+
+	updates := wireguard.PeerUpdate{
+		Name:       req.Name,
+		AllowedIPs: req.AllowedIPs,
+	}
+
+	peer, err := h.Service.UpdatePeer(id, updates)
+	if err != nil {
+		slog.Error("Failed to update peer", "error", err, "id", id)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(peer); err != nil {
+		slog.Error("Failed to encode peer response", "error", err)
+	}
+}
+
 func (h *PeerHandler) Stats(w http.ResponseWriter, r *http.Request) {
 	stats, err := h.Service.GetStats()
 	if err != nil {

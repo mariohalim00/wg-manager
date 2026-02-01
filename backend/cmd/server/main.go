@@ -45,6 +45,7 @@ func main() {
 		cfg.StoragePath,
 		cfg.ServerEndpoint,
 		cfg.ServerPubKey,
+		cfg.VPNSubnet,
 	)
 	if err != nil {
 		slog.Warn("Failed to initialize native WireGuard service, falling back to mock", "error", err)
@@ -63,6 +64,8 @@ func main() {
 	mux.HandleFunc("GET /peers", peerHandler.List)
 	mux.HandleFunc("POST /peers", peerHandler.Add)
 	mux.HandleFunc("DELETE /peers/{id}", peerHandler.Remove)
+	mux.HandleFunc("PATCH /peers/{id}", peerHandler.Update)
+	mux.HandleFunc("POST /peers/{id}/regenerate-keys", peerHandler.Regenerate)
 	mux.HandleFunc("GET /stats", peerHandler.Stats)
 
 	// Apply middleware to all routes

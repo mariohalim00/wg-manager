@@ -14,6 +14,9 @@
 - Q: Mobile responsiveness priority (desktop only, tablet+basic mobile, full mobile parity, tablet only) → A: Tablet + Basic Mobile (responsive down to 320px with simplified mobile layout: bottom nav, stacked cards, no complex touch gestures)
 - Q: Dashboard stats display format (full charts, stats cards only, separate page only, mock placeholders) → A: Dashboard stats cards (no charts) - show numeric stats cards (peer count, total RX/TX) without visual graphs, charts deferred to future
 - Q: Peer table hover actions (always visible, responsive visibility, swipe gestures, tap to expand) → A: Always-visible icons (mobile), hover (desktop) - action icons always show on <1024px, hover-reveal on ≥1024px
+- Q: API error handling strategy (specific per code, generic handler, timeout-specific, context-aware) → A: Context-aware error handling (add peer fails → keep form open for retry, delete fails → keep peer in list, timeout → show retry button, 500 errors → generic message)
+- Q: Optimistic UI updates (optimistic, pessimistic, hybrid, loading-only) → A: Optimistic updates (add/delete update UI immediately, assume success, rollback if API fails; provides instant feedback and better UX)
+- Q: Form modal behavior after success (auto-close, stay open, auto-close after delay, manual close) → A: Stay open for multiple peers (form resets and stays open, config/QR code shown in separate modal/panel, allows admin to add multiple peers in sequence)
 
 ## User Scenarios & Testing
 
@@ -123,15 +126,18 @@ As a WireGuard administrator, I need to download peer configuration files after 
 - **FR-003**: System MUST provide a form to add new peers with fields for name (required) and allowed IPs (required, CIDR notation)
 - **FR-004**: System MUST validate CIDR notation client-side before submitting to POST /peers endpoint (reject invalid formats like "10.0.0.5" without prefix)
 - **FR-005**: System MUST call POST /peers API with name and allowedIPs, handle both successful creation (201) and error responses (400/500)
-- **FR-006**: System MUST display peer configuration (WireGuard .conf format) and QR code after successful peer addition for easy client setup
+- **FR-006**: System MUST display peer configuration (WireGuard .conf format) and QR code in a separate modal/panel after successful peer addition for easy client setup (modal opens automatically after success, does not block add peer form)
+- **FR-006a**: System MUST implement configuration modal behavior: (1) Add peer form remains open and resets after successful submission, (2) Config/QR code displayed in separate modal window (overlay or side panel), (3) User can close config modal and immediately add another peer without closing add form, (4) Config contains peer's private key and server details in proper WireGuard client format
 - **FR-007**: System MUST provide delete/remove functionality for peers via DELETE /peers/{id} endpoint with confirmation dialog
 - **FR-008**: System MUST fetch and display aggregate interface statistics from GET /stats endpoint (interface name, peer count, total RX/TX)
 - **FR-008a**: System MUST display quick stats cards on main dashboard showing active peer count, total received bytes, and total sent bytes (numeric display only, no charts; each card has icon, label, and value formatted with formatBytes utility; 3 cards in horizontal grid layout)
 - **FR-009**: System MUST format data transfer statistics in human-readable units (bytes, KB, MB, GB, TB) rather than raw byte counts
 - **FR-010**: System MUST use Svelte stores for state management (peers store, stats store) to share data across components and pages
 - **FR-011**: System MUST implement API client utilities/functions to encapsulate backend communication (base URL configuration, error handling, response parsing)
-- **FR-012**: System MUST display user-friendly error notifications for API failures (network errors, 400/500 responses) without exposing technical details
+- **FR-012**: System MUST display context-aware error handling for API failures: (1) Form submission fails (400/validation) → keep form open with error message, (2) Delete peer fails (404/500) → keep peer in list and show error notification, (3) Fetch operations fail → show error message with retry button, (4) Timeout (>10s) → show "Request timed out" with retry option. All errors display user-friendly messages without exposing technical details or error codes
+- **FR-012a**: System MUST implement error recovery: add peer form maintains user input on validation failure, delete peer action is idempotent (retry succeeds if peer already deleted), fetch operations have retry button that re-triggers API call
 - **FR-013**: System MUST provide loading states (spinners, skeleton screens) during API requests to improve perceived performance
+- **FR-013a**: System MUST implement optimistic updates for peer operations: (1) Add peer → immediately add peer to Svelte store and update PeerTable UI before API response succeeds, (2) Delete peer → immediately remove from store and UI, (3) If API fails → rollback changes to previous state and display error message. Optimistic updates provide instant feedback and perceived responsiveness (meeting SC-005)
 - **FR-014**: System MUST implement input validation utilities for common patterns (CIDR notation, required fields, string sanitization)
 - **FR-015**: System MUST use TailwindCSS utility classes for styling and maintain consistent design system (spacing, colors, typography)
 - **FR-016**: System MUST be responsive from mobile (320px) to desktop (1920px+) with breakpoints: mobile (<768px) uses bottom navigation and stacked cards, tablet (768px-1023px) uses simplified sidebar, desktop (1024px+) uses full sidebar with all features
@@ -156,7 +162,7 @@ As a WireGuard administrator, I need to download peer configuration files after 
 - **SC-002**: Administrator can add a new peer in under 1 minute (including form fill, submission, and viewing QR code/config)
 - **SC-003**: 95% of add peer operations complete successfully on first attempt (minimal validation errors, clear form labels)
 - **SC-004**: All API error scenarios display user-friendly notifications without crashing the application
-- **SC-005**: Peer list refreshes within 1 second after adding or removing a peer (optimistic updates or fast API response)
+- **SC-005**: Peer list updates immediately upon user action (optimistic updates): add peer → UI updates before API response (rollback if fails), delete peer → removed from list before API response (restored if fails). Overall peer list refresh within 1 second including network latency
 - **SC-006**: Statistics page loads and displays aggregate data within 2 seconds
 
 ### Performance Requirements
