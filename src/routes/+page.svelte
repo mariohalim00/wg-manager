@@ -41,7 +41,7 @@
 		class="sticky top-0 z-10 mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-white/5 bg-[#101922]/40 px-0 py-5 backdrop-blur-md md:-mx-8 md:px-8"
 	>
 		<div class="flex flex-col gap-1">
-			<p class="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+			<p class="text-xs font-semibold tracking-[0.2em] text-slate-500 uppercase">
 				WireGuard Interface
 			</p>
 			<h2 class="text-2xl font-semibold tracking-tight">
@@ -51,10 +51,7 @@
 		</div>
 		<div class="hidden items-center gap-4 md:flex">
 			<div class="relative">
-				<Search
-					class="absolute top-1/2 left-3 -translate-y-1/2 text-xl text-slate-400"
-					size={20}
-				/>
+				<Search class="absolute top-1/2 left-3 -translate-y-1/2 text-xl text-slate-400" size={20} />
 				<input
 					class="focus-ring w-60 rounded-xl border border-white/10 bg-white/5 py-2 pr-4 pl-10 text-sm text-white"
 					placeholder="Search peers..."
@@ -88,11 +85,13 @@
 				<!-- Status Card -->
 				<div class="metric-card relative overflow-hidden">
 					<div
-						class="absolute -right-8 -top-8 h-28 w-28 rounded-full bg-green-500/10 blur-3xl"
+						class="absolute -top-8 -right-8 h-28 w-28 rounded-full bg-green-500/10 blur-3xl"
 					></div>
 					<p class="metric-label">Status</p>
 					<div class="relative z-10 mt-3 flex items-center gap-2.5">
-						<div class="pulse-online h-3 w-3 rounded-full bg-green-500 shadow-lg shadow-green-500/50"></div>
+						<div
+							class="pulse-online h-3 w-3 rounded-full bg-green-500 shadow-lg shadow-green-500/50"
+						></div>
 						<p class="metric-value text-2xl">Active</p>
 					</div>
 					<p class="metric-subtext mt-2">
@@ -104,7 +103,7 @@
 				<div class="metric-card">
 					<p class="metric-label">Public Key</p>
 					<div class="mt-3 flex items-center gap-2">
-						<p class="metric-value break-all font-mono text-lg leading-tight">
+						<p class="metric-value font-mono text-lg leading-tight break-all">
 							{$stats.publicKey
 								? `${$stats.publicKey.slice(0, 8)}...${$stats.publicKey.slice(-5)}`
 								: placeholderValue}
@@ -124,7 +123,7 @@
 				<!-- Listening Port Card -->
 				<div class="metric-card">
 					<p class="metric-label">Listening Port</p>
-					<p class="metric-value mt-3 text-3xl text-tabular">
+					<p class="metric-value text-tabular mt-3 text-3xl">
 						{$stats.listenPort && $stats.listenPort > 0 ? $stats.listenPort : placeholderValue}
 					</p>
 					<p class="metric-subtext mt-2">UDP port</p>
@@ -133,7 +132,7 @@
 				<!-- Subnet Card -->
 				<div class="metric-card">
 					<p class="metric-label">Subnet</p>
-					<p class="metric-value mt-3 font-mono text-2xl text-tabular">
+					<p class="metric-value text-tabular mt-3 font-mono text-2xl">
 						{$stats.subnet ? $stats.subnet : placeholderValue}
 					</p>
 					<p class="metric-subtext mt-2">VPN address pool</p>
@@ -147,10 +146,10 @@
 					<div class="p-6 pb-4">
 						<div class="mb-2 flex items-start justify-between">
 							<div>
-								<p class="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-500">
+								<p class="mb-1 text-xs font-semibold tracking-wider text-slate-500 uppercase">
 									Total Received
 								</p>
-								<h3 class="text-4xl font-black tracking-tighter text-tabular">
+								<h3 class="text-tabular text-4xl font-black tracking-tighter">
 									{formatBytes($stats.totalRx)}
 								</h3>
 								<p class="mt-1 text-sm text-slate-400">
@@ -195,10 +194,10 @@
 					<div class="p-6 pb-4">
 						<div class="mb-2 flex items-start justify-between">
 							<div>
-								<p class="mb-1 text-xs font-semibold uppercase tracking-wider text-slate-500">
+								<p class="mb-1 text-xs font-semibold tracking-wider text-slate-500 uppercase">
 									Total Sent
 								</p>
-								<h3 class="text-4xl font-black tracking-tighter text-tabular">
+								<h3 class="text-tabular text-4xl font-black tracking-tighter">
 									{formatBytes($stats.totalTx)}
 								</h3>
 								<p class="mt-1 text-sm text-slate-400">

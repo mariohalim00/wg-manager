@@ -59,12 +59,12 @@
 		</div>
 		<div class="flex gap-3">
 			<button
-				class="focus-ring rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/10 hover:border-white/20"
+				class="focus-ring rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold transition-all hover:border-white/20 hover:bg-white/10"
 			>
 				Filter
 			</button>
 			<button
-				class="focus-ring rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/10 hover:border-white/20"
+				class="focus-ring rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold transition-all hover:border-white/20 hover:bg-white/10"
 			>
 				Export
 			</button>
@@ -126,7 +126,9 @@
 						<!-- Internal IP -->
 						<td class="px-6 py-5">
 							{#if peer.allowedIPs.length > 0}
-								<span class="text-tabular rounded bg-white/5 px-2 py-1 font-mono text-xs text-slate-300">
+								<span
+									class="text-tabular rounded bg-white/5 px-2 py-1 font-mono text-xs text-slate-300"
+								>
 									{peer.allowedIPs[0].replace('/32', '')}
 								</span>
 							{:else}
