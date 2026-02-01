@@ -20,11 +20,11 @@
 	let onlinePeersCount = $derived($peers.filter((p) => p.status === 'online').length);
 
 	// Placeholder handlers for peer table
-	function handleDownloadConfig(peer: any) {
+	function handleDownloadConfig(peer: (typeof $peers)[0]) {
 		console.log('Download config for', peer.name);
 	}
 
-	function handleRemovePeer(peer: any) {
+	function handleRemovePeer(peer: (typeof $peers)[0]) {
 		console.log('Remove peer', peer.name);
 	}
 </script>
@@ -35,7 +35,9 @@
 
 <div class="relative">
 	<!-- Header/Top Nav matching mockup -->
-	<header class="sticky top-0 z-10 mb-8 flex items-center justify-between border-b border-white/5 bg-[#101922]/40 px-0 py-6 backdrop-blur-md md:-mx-8 md:px-8">
+	<header
+		class="sticky top-0 z-10 mb-8 flex items-center justify-between border-b border-white/5 bg-[#101922]/40 px-0 py-6 backdrop-blur-md md:-mx-8 md:px-8"
+	>
 		<div class="flex items-center gap-4">
 			<h2 class="text-2xl font-black tracking-tight">
 				Interface: <span class="text-[#137fec]">{$stats?.interfaceName || 'wg0'}</span>
@@ -75,7 +77,9 @@
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
 				<!-- Status Card -->
 				<div class="glass group relative flex flex-col gap-2 overflow-hidden rounded-2xl p-6">
-					<div class="absolute -top-4 -right-4 h-20 w-20 rounded-full bg-green-500/10 blur-2xl transition-all group-hover:bg-green-500/20"></div>
+					<div
+						class="absolute -top-4 -right-4 h-20 w-20 rounded-full bg-green-500/10 blur-2xl transition-all group-hover:bg-green-500/20"
+					></div>
 					<p class="text-sm font-medium text-slate-400">Status</p>
 					<div class="flex items-center gap-2">
 						<div class="pulse-online h-2.5 w-2.5 rounded-full bg-green-500"></div>
@@ -91,7 +95,9 @@
 
 				<!-- Peer Count Card -->
 				<div class="glass group relative flex flex-col gap-2 overflow-hidden rounded-2xl p-6">
-					<div class="absolute -top-4 -right-4 h-20 w-20 rounded-full bg-[#137fec]/10 blur-2xl transition-all group-hover:bg-[#137fec]/20"></div>
+					<div
+						class="absolute -top-4 -right-4 h-20 w-20 rounded-full bg-[#137fec]/10 blur-2xl transition-all group-hover:bg-[#137fec]/20"
+					></div>
 					<p class="text-sm font-medium text-slate-400">Total Peers</p>
 					<div class="flex items-center gap-3">
 						<p class="text-2xl font-bold tracking-tight">{$stats.peerCount}</p>
@@ -120,7 +126,9 @@
 								{formatBytes($stats.totalRx)}
 							</h3>
 						</div>
-						<div class="flex items-center gap-1 rounded-lg bg-green-400/10 px-2 py-1 text-sm font-bold text-green-400">
+						<div
+							class="flex items-center gap-1 rounded-lg bg-green-400/10 px-2 py-1 text-sm font-bold text-green-400"
+						>
 							<TrendingUp size={14} />
 							12%
 						</div>
@@ -159,7 +167,9 @@
 								{formatBytes($stats.totalTx)}
 							</h3>
 						</div>
-						<div class="flex items-center gap-1 rounded-lg bg-green-400/10 px-2 py-1 text-sm font-bold text-green-400">
+						<div
+							class="flex items-center gap-1 rounded-lg bg-green-400/10 px-2 py-1 text-sm font-bold text-green-400"
+						>
 							<TrendingUp size={14} />
 							5%
 						</div>
@@ -205,5 +215,9 @@
 </div>
 
 <!-- Background Decorative Elements (matching mockup) -->
-<div class="pointer-events-none fixed top-[-10%] left-[-10%] z-[-1] h-[40%] w-[40%] rounded-full bg-[#137fec]/20 blur-[120px]"></div>
-<div class="pointer-events-none fixed right-[-10%] bottom-[-10%] z-[-1] h-[30%] w-[30%] rounded-full bg-blue-900/10 blur-[100px]"></div>
+<div
+	class="pointer-events-none fixed top-[-10%] left-[-10%] z-[-1] h-[40%] w-[40%] rounded-full bg-[#137fec]/20 blur-[120px]"
+></div>
+<div
+	class="pointer-events-none fixed right-[-10%] bottom-[-10%] z-[-1] h-[30%] w-[30%] rounded-full bg-blue-900/10 blur-[100px]"
+></div>

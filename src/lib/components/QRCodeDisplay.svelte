@@ -12,7 +12,15 @@
 		onDownload: () => void;
 	};
 
-	let { config, peerName, allowedIPs = [], endpoint = '', publicKey = '', onClose, onDownload }: Props = $props();
+	let {
+		config,
+		peerName,
+		allowedIPs = [],
+		endpoint = '',
+		publicKey = '',
+		onClose,
+		onDownload
+	}: Props = $props();
 
 	// Handle overlay click to close
 	function handleOverlayClick(event: MouseEvent) {
@@ -56,8 +64,11 @@
 		<div class="flex items-center justify-between px-10 pt-10 pb-4">
 			<div class="flex flex-col">
 				<div class="flex items-center gap-2">
-					<h1 id="qr-modal-title" class="text-2xl font-bold tracking-tight text-white">{peerName}</h1>
-					<span class="flex h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"></span>
+					<h1 id="qr-modal-title" class="text-2xl font-bold tracking-tight text-white">
+						{peerName}
+					</h1>
+					<span class="flex h-2 w-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]"
+					></span>
 				</div>
 				<p class="text-sm font-normal text-[#92adc9]/60">Peer connection details and setup</p>
 			</div>
@@ -73,14 +84,19 @@
 		<!-- QR Code Section -->
 		<div class="flex flex-col items-center px-10 py-6">
 			<div class="relative rounded-2xl border border-[#137fec]/40 p-1">
-				<div class="qr-gradient-container relative flex h-80 w-80 items-center justify-center overflow-hidden rounded-xl">
+				<div
+					class="qr-gradient-container relative flex h-80 w-80 items-center justify-center overflow-hidden rounded-xl"
+				>
 					<div class="relative z-10 rounded-lg bg-white p-6 shadow-[0_20px_30px_rgba(0,0,0,0.4)]">
 						<QRCode value={config} size={192} />
 					</div>
 				</div>
 			</div>
-			<p class="mt-8 max-w-[360px] text-center text-[13px] font-normal leading-relaxed text-[#92adc9]/70">
-				Scan this QR code with the WireGuard app on your mobile device to import the configuration instantly.
+			<p
+				class="mt-8 max-w-[360px] text-center text-[13px] leading-relaxed font-normal text-[#92adc9]/70"
+			>
+				Scan this QR code with the WireGuard app on your mobile device to import the configuration
+				instantly.
 			</p>
 		</div>
 
@@ -107,18 +123,28 @@
 			<div class="space-y-5 rounded-xl border border-white/5 bg-black/30 p-6">
 				<!-- Allowed IPs -->
 				<div class="flex flex-col gap-1.5">
-					<span class="text-[10px] font-bold uppercase tracking-[0.1em] text-[#92adc9]/50">Allowed IPs</span>
-					<code class="font-mono text-[14px] text-[#137fec]">{allowedIPs.join(', ') || '0.0.0.0/0, ::/0'}</code>
+					<span class="text-[10px] font-bold tracking-[0.1em] text-[#92adc9]/50 uppercase"
+						>Allowed IPs</span
+					>
+					<code class="font-mono text-[14px] text-[#137fec]"
+						>{allowedIPs.join(', ') || '0.0.0.0/0, ::/0'}</code
+					>
 				</div>
 
 				<!-- Endpoint & Keepalive -->
 				<div class="grid grid-cols-2 gap-8">
 					<div class="flex flex-col gap-1.5">
-						<span class="text-[10px] font-bold uppercase tracking-[0.1em] text-[#92adc9]/50">Endpoint</span>
-						<code class="font-mono text-[13px] text-white/90">{endpoint || 'vpn.example.com:51820'}</code>
+						<span class="text-[10px] font-bold tracking-[0.1em] text-[#92adc9]/50 uppercase"
+							>Endpoint</span
+						>
+						<code class="font-mono text-[13px] text-white/90"
+							>{endpoint || 'vpn.example.com:51820'}</code
+						>
 					</div>
 					<div class="flex flex-col gap-1.5">
-						<span class="text-[10px] font-bold uppercase tracking-[0.1em] text-[#92adc9]/50">Keepalive</span>
+						<span class="text-[10px] font-bold tracking-[0.1em] text-[#92adc9]/50 uppercase"
+							>Keepalive</span
+						>
 						<code class="font-mono text-[13px] text-white/90">25 seconds</code>
 					</div>
 				</div>
@@ -127,19 +153,28 @@
 				{#if publicKey}
 					<div class="flex flex-col gap-1.5 pt-1">
 						<div class="flex items-center justify-between">
-							<span class="text-[10px] font-bold uppercase tracking-[0.1em] text-[#92adc9]/50">Public Key</span>
-							<button onclick={copyPublicKey} class="text-[16px] text-white/30 transition-colors hover:text-white">
+							<span class="text-[10px] font-bold tracking-[0.1em] text-[#92adc9]/50 uppercase"
+								>Public Key</span
+							>
+							<button
+								onclick={copyPublicKey}
+								class="text-[16px] text-white/30 transition-colors hover:text-white"
+							>
 								<Copy size={16} />
 							</button>
 						</div>
-						<code class="truncate font-mono text-[12px] tracking-tight text-white/50">{publicKey}</code>
+						<code class="truncate font-mono text-[12px] tracking-tight text-white/50"
+							>{publicKey}</code
+						>
 					</div>
 				{/if}
 			</div>
 
 			<!-- Regenerate Keys Button -->
 			<div class="mt-8 flex justify-center">
-				<button class="flex items-center gap-2 rounded-lg px-4 py-2 text-[11px] font-bold uppercase tracking-[0.15em] text-red-400/60 transition-all hover:bg-red-400/5 hover:text-red-400">
+				<button
+					class="flex items-center gap-2 rounded-lg px-4 py-2 text-[11px] font-bold tracking-[0.15em] text-red-400/60 uppercase transition-all hover:bg-red-400/5 hover:text-red-400"
+				>
 					<RefreshCw size={18} />
 					Regenerate Keys
 				</button>
@@ -150,7 +185,7 @@
 
 <!-- Footer hint -->
 <div class="fixed bottom-8 left-1/2 z-50 -translate-x-1/2">
-	<p class="text-[10px] font-bold uppercase tracking-[0.3em] text-white/30">
+	<p class="text-[10px] font-bold tracking-[0.3em] text-white/30 uppercase">
 		Esc to Close • WireGuard Secure Tunnel
 	</p>
 </div>
