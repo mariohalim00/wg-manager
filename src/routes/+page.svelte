@@ -30,17 +30,16 @@
 		console.log('Remove peer', peer.name);
 	}
 
-
 	// Copied state
 	let copied = $state(false);
 
 	// Copy public key to clipboard
 	function handleCopyPublicKey() {
-		if (!$stats?.publicKey) return; 
+		if (!$stats?.publicKey) return;
 		try {
 			navigator.clipboard.writeText($stats.publicKey);
-			copied = true;		
-			
+			copied = true;
+
 			setTimeout(() => {
 				copied = false;
 			}, 2000);
@@ -135,11 +134,11 @@
 								aria-label="Copy public key"
 								onclick={handleCopyPublicKey}
 							>
-							{#if copied}
-								<Check size={14} />
-							{:else}
-								<Copy size={14} />
-							{/if}
+								{#if copied}
+									<Check size={14} />
+								{:else}
+									<Copy size={14} />
+								{/if}
 							</button>
 						{/if}
 					</div>
