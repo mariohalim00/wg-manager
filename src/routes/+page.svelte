@@ -65,11 +65,12 @@
 				<Bell size={20} />
 			</button>
 			<div class="h-10 w-10 overflow-hidden rounded-full ring-2 ring-[#137fec]/20">
-				<img
-					src="https://ui-avatars.com/api/?name=Admin&background=137fec&color=fff"
-					alt="User profile"
-					class="h-full w-full object-cover"
-				/>
+				<div
+					class="flex h-full w-full items-center justify-center bg-[#137fec] text-sm font-semibold text-white"
+					aria-label="User profile"
+				>
+					AD
+				</div>
 			</div>
 		</div>
 	</header>
