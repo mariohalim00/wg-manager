@@ -28,6 +28,12 @@ type Stats struct {
 	TotalTX       int64  `json:"totalTx"`
 }
 
+// PeerUpdate represents optional updates for a peer.
+type PeerUpdate struct {
+	Name       *string   `json:"name,omitempty"`
+	AllowedIPs *[]string `json:"allowedIPs,omitempty"`
+}
+
 // PeerResponse represents a peer along with optional configuration details.
 type PeerResponse struct {
 	Peer
@@ -40,6 +46,8 @@ type Service interface {
 	ListPeers() ([]Peer, error)
 	AddPeer(name string, publicKey string, allowedIPs []string) (PeerResponse, error)
 	RemovePeer(id string) error
+	RegeneratePeer(id string) (PeerResponse, error)
+	UpdatePeer(id string, updates PeerUpdate) (Peer, error)
 	GetStats() (Stats, error)
 	Close() error
 }
@@ -109,6 +117,43 @@ func (s *mockService) RemovePeer(id string) error {
 		}
 	}
 	return fmt.Errorf("mock peer with ID %s not found", id)
+}
+
+// RegeneratePeer regenerates keys for a mock WireGuard peer.
+func (s *mockService) RegeneratePeer(id string) (PeerResponse, error) {
+	slog.Warn("Using mock WireGuard service for RegeneratePeer")
+	for i, p := range s.peers {
+		if p.ID == id {
+			// In a real implementation we'd generate new keys
+			// For mock, just append "-new" to the public key to simulate change
+			p.PublicKey = p.PublicKey + "-new"
+			p.ID = p.PublicKey
+			s.peers[i] = p
+			return PeerResponse{
+				Peer:   p,
+				Config: "[Interface]\nPrivateKey = MOCK_REGENERATED_KEY\n...",
+			}, nil
+		}
+	}
+	return PeerResponse{}, fmt.Errorf("mock peer with ID %s not found", id)
+}
+
+// UpdatePeer updates a mock WireGuard peer.
+func (s *mockService) UpdatePeer(id string, updates PeerUpdate) (Peer, error) {
+	slog.Warn("Using mock WireGuard service for UpdatePeer")
+	for i, p := range s.peers {
+		if p.ID == id {
+			if updates.Name != nil {
+				p.Name = *updates.Name
+			}
+			if updates.AllowedIPs != nil {
+				p.AllowedIPs = *updates.AllowedIPs
+			}
+			s.peers[i] = p
+			return p, nil
+		}
+	}
+	return Peer{}, fmt.Errorf("mock peer with ID %s not found", id)
 }
 
 // GetStats returns mock interface-level statistics.

@@ -112,6 +112,96 @@ func TestAddPeerHandler(t *testing.T) {
 	})
 }
 
+func TestRegeneratePeerHandler(t *testing.T) {
+	mockWGService := wireguard.NewMockService()
+	h := handlers.NewPeerHandler(mockWGService)
+	mux := http.NewServeMux()
+	mux.HandleFunc("POST /peers/{id}/regenerate-keys", h.Regenerate)
+
+	req := httptest.NewRequest("POST", "/peers/mock-peer-1/regenerate-keys", nil)
+	rr := httptest.NewRecorder()
+
+	mux.ServeHTTP(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Errorf("handler returned wrong status code: got %v want %v",
+			status, http.StatusOK)
+	}
+
+	var resp wireguard.PeerResponse
+	if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
+		t.Fatalf("could not unmarshal response: %v", err)
+	}
+
+	if !strings.HasSuffix(resp.PublicKey, "-new") {
+		t.Errorf("expected public key to be regenerated (suffix -new), got %s", resp.PublicKey)
+	}
+}
+
+func TestUpdatePeerHandler(t *testing.T) {
+	mockWGService := wireguard.NewMockService()
+	h := handlers.NewPeerHandler(mockWGService)
+	mux := http.NewServeMux()
+	mux.HandleFunc("PATCH /peers/{id}", h.Update)
+
+	t.Run("UpdateName", func(t *testing.T) {
+		reqBody := `{"name":"Updated Name"}`
+		req := httptest.NewRequest("PATCH", "/peers/mock-peer-1", strings.NewReader(reqBody))
+		rr := httptest.NewRecorder()
+
+		mux.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusOK)
+		}
+
+		var resp wireguard.Peer
+		if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("could not unmarshal response: %v", err)
+		}
+
+		if resp.Name != "Updated Name" {
+			t.Errorf("expected name 'Updated Name', got '%s'", resp.Name)
+		}
+	})
+
+	t.Run("UpdateAllowedIPs", func(t *testing.T) {
+		reqBody := `{"allowedIPs":["10.0.0.10/32"]}`
+		req := httptest.NewRequest("PATCH", "/peers/mock-peer-1", strings.NewReader(reqBody))
+		rr := httptest.NewRecorder()
+
+		mux.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusOK {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusOK)
+		}
+
+		var resp wireguard.Peer
+		if err := json.Unmarshal(rr.Body.Bytes(), &resp); err != nil {
+			t.Fatalf("could not unmarshal response: %v", err)
+		}
+
+		if len(resp.AllowedIPs) != 1 || resp.AllowedIPs[0] != "10.0.0.10/32" {
+			t.Errorf("expected AllowedIPs ['10.0.0.10/32'], got %v", resp.AllowedIPs)
+		}
+	})
+
+	t.Run("InvalidCIDR", func(t *testing.T) {
+		reqBody := `{"allowedIPs":["invalid"]}`
+		req := httptest.NewRequest("PATCH", "/peers/mock-peer-1", strings.NewReader(reqBody))
+		rr := httptest.NewRecorder()
+
+		mux.ServeHTTP(rr, req)
+
+		if status := rr.Code; status != http.StatusBadRequest {
+			t.Errorf("handler returned wrong status code: got %v want %v",
+				status, http.StatusBadRequest)
+		}
+	})
+}
+
 func TestStatsHandler(t *testing.T) {
 	mockWGService := wireguard.NewMockService()
 	h := handlers.NewPeerHandler(mockWGService)
