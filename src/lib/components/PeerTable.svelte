@@ -48,18 +48,23 @@
 	}
 </script>
 
-<div class="glass mb-12 overflow-hidden rounded-2xl">
+<div class="dashboard-surface mb-12 overflow-hidden rounded-2xl">
 	<!-- Header -->
-	<div class="flex items-center justify-between border-b border-white/5 p-6">
-		<h3 class="text-lg font-bold">Active Peers ({peers.length})</h3>
-		<div class="flex gap-2">
+	<div class="flex items-center justify-between border-b border-white/5 px-6 py-5">
+		<div class="flex items-center gap-2">
+			<h3 class="text-xl font-bold tracking-tight">Active Peers</h3>
+			<span class="rounded-full bg-[#137fec]/10 px-2.5 py-0.5 text-sm font-bold text-[#137fec]">
+				{peers.length}
+			</span>
+		</div>
+		<div class="flex gap-3">
 			<button
-				class="rounded-xl bg-white/5 px-4 py-2 text-sm font-medium transition-all hover:bg-white/10"
+				class="focus-ring rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/10 hover:border-white/20"
 			>
 				Filter
 			</button>
 			<button
-				class="rounded-xl bg-white/5 px-4 py-2 text-sm font-medium transition-all hover:bg-white/10"
+				class="focus-ring rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold transition-all hover:bg-white/10 hover:border-white/20"
 			>
 				Export
 			</button>
@@ -121,7 +126,7 @@
 						<!-- Internal IP -->
 						<td class="px-6 py-5">
 							{#if peer.allowedIPs.length > 0}
-								<span class="rounded bg-white/5 px-2 py-1 font-mono text-xs text-slate-300">
+								<span class="text-tabular rounded bg-white/5 px-2 py-1 font-mono text-xs text-slate-300">
 									{peer.allowedIPs[0].replace('/32', '')}
 								</span>
 							{:else}
@@ -138,7 +143,7 @@
 										: 'text-slate-500'}"
 								>
 									<ArrowUp size={14} />
-									<span>{formatBytes(peer.transmitBytes)}</span>
+									<span class="text-tabular">{formatBytes(peer.transmitBytes)}</span>
 								</div>
 								<div
 									class="flex items-center gap-1.5 text-xs {isOnline
@@ -146,7 +151,7 @@
 										: 'text-slate-500'}"
 								>
 									<ArrowDown size={14} />
-									<span>{formatBytes(peer.receiveBytes)}</span>
+									<span class="text-tabular">{formatBytes(peer.receiveBytes)}</span>
 								</div>
 							</div>
 						</td>
@@ -163,7 +168,7 @@
 							>
 								<button
 									onclick={() => onDownloadConfig(peer)}
-									class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+									class="focus-ring rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
 									title="Download Config"
 								>
 									<Download size={18} />
@@ -171,7 +176,7 @@
 								{#if onShowQR}
 									<button
 										onclick={() => onShowQR(peer)}
-										class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+										class="focus-ring rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
 										title="View QR Code"
 									>
 										<QrCode size={18} />
@@ -179,7 +184,7 @@
 								{/if}
 								<button
 									onclick={() => onRemove(peer)}
-									class="rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-400/5 hover:text-red-400"
+									class="focus-ring rounded-lg p-2 text-slate-400 transition-colors hover:bg-red-400/5 hover:text-red-400"
 									title="Delete Peer"
 								>
 									<Trash2 size={18} />

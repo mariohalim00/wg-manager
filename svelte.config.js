@@ -3,9 +3,12 @@ import adapter from '@sveltejs/adapter-static';
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	kit: {
-		// adapter-static configuration for SPA mode
+		// adapter-static with SSR prerendering enabled
 		adapter: adapter({
-			fallback: 'index.html', // Enable SPA mode
+			pages: 'build',
+			assets: 'build',
+			fallback: undefined,
+			precompress: false,
 			strict: true
 		})
 	}
