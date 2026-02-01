@@ -35,7 +35,7 @@
 	<title>Dashboard - WireGuard Manager</title>
 </svelte:head>
 
-<div class="relative">
+<div class="relative p-6">
 	<!-- Header/Top Nav matching mockup -->
 	<header
 		class="sticky top-0 z-10 mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-white/5 bg-[#101922]/40 px-0 py-5 backdrop-blur-md md:-mx-8 md:px-8"
@@ -56,7 +56,7 @@
 					size={20}
 				/>
 				<input
-					class="focus-ring w-[240px] rounded-xl border border-white/10 bg-white/5 py-2 pr-4 pl-10 text-sm text-white"
+					class="focus-ring w-60 rounded-xl border border-white/10 bg-white/5 py-2 pr-4 pl-10 text-sm text-white"
 					placeholder="Search peers..."
 					type="text"
 				/>

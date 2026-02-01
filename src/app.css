@@ -1,5 +1,4 @@
-@import 'tailwindcss/preflight';
-@tailwind utilities;
+@import "tailwindcss";
 
 /* Design system colors from mockup */
 @layer base {
