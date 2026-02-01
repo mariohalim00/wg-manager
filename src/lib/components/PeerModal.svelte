@@ -1,20 +1,24 @@
 <script lang="ts">
 	import { peers } from '$lib/stores/peers';
 	import { validateCIDRList } from '$lib/utils/validation';
-	import type { PeerFormData, PeerCreateResponse } from '$lib/types/peer';
+	import type { Peer, PeerFormData, PeerCreateResponse, PeerUpdateRequest } from '$lib/types/peer';
 	import { X, User, Server, Shield } from 'lucide-svelte';
 
 	type Props = {
+		mode?: 'add' | 'edit';
+		peer?: Peer;
 		onClose: () => void;
-		onSuccess?: (response: PeerCreateResponse) => void;
+		onSuccess?: (response: PeerCreateResponse | Peer) => void;
 	};
 
-	let { onClose, onSuccess }: Props = $props();
+	let { mode = 'add', peer, onClose, onSuccess }: Props = $props();
 
 	// Form state
-	let name = $state('');
-	let allowedIPsInput = $state('');
+	let name = $state(peer?.name || '');
+	let allowedIPsInput = $state(peer?.allowedIPs.join('\n') || '');
 	let loading = $state(false);
+
+	const isEdit = mode === 'edit';
 
 	// Validation errors
 	let nameError = $state('');
@@ -58,21 +62,36 @@
 			.map((s) => s.trim())
 			.filter((s) => s.length > 0);
 
-		const formData: PeerFormData = {
-			name: name.trim(),
-			allowedIPs
-		};
-
-		const response = await peers.add(formData);
-
-		loading = false;
-
-		if (response) {
-			// Success - call onSuccess callback if provided, then close
-			if (onSuccess) {
-				onSuccess(response);
+		if (isEdit && peer) {
+			const updateData: PeerUpdateRequest = {
+				name: name.trim(),
+				allowedIPs
+			};
+			const success = await peers.update(peer.id, updateData);
+			loading = false;
+			if (success) {
+				if (onSuccess) {
+					// For update, we might not have a full PeerCreateResponse but we have the updated info
+					onSuccess({ ...peer, ...updateData });
+				}
+				onClose();
 			}
-			onClose();
+		} else {
+			const formData: PeerFormData = {
+				name: name.trim(),
+				allowedIPs
+			};
+
+			const response = await peers.add(formData);
+			loading = false;
+
+			if (response) {
+				// Success - call onSuccess callback if provided, then close
+				if (onSuccess) {
+					onSuccess(response);
+				}
+				onClose();
+			}
 		}
 		// Error notification is handled by peers store
 	}
@@ -117,7 +136,9 @@
 	>
 		<!-- Header -->
 		<div class="flex items-center justify-between border-b border-white/5 bg-white/5 px-6 py-4">
-			<h2 id="modal-title" class="text-xl font-bold tracking-tight text-white">Add New Peer</h2>
+			<h2 id="modal-title" class="text-xl font-bold tracking-tight text-white">
+				{isEdit ? 'Edit Peer' : 'Add New Peer'}
+			</h2>
 			<button
 				onclick={onClose}
 				class="rounded-lg p-1 text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
@@ -189,10 +210,10 @@
 					{#if loading}
 						<span class="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white"
 						></span>
-						Adding...
+						{isEdit ? 'Saving...' : 'Adding...'}
 					{:else}
 						<Shield size={18} />
-						Add Peer
+						{isEdit ? 'Save Changes' : 'Add Peer'}
 					{/if}
 				</button>
 			</div>

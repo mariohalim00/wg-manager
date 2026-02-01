@@ -11,7 +11,8 @@
 		Smartphone,
 		Router,
 		Monitor,
-		Search
+		Search,
+		Settings
 	} from 'lucide-svelte';
 
 	type Props = {
@@ -19,9 +20,10 @@
 		onDownloadConfig: (peer: Peer) => void;
 		onRemove: (peer: Peer) => void;
 		onShowQR?: (peer: Peer) => void;
+		onEdit?: (peer: Peer) => void;
 	};
 
-	let { peers, onDownloadConfig, onRemove, onShowQR }: Props = $props();
+	let { peers, onDownloadConfig, onRemove, onShowQR, onEdit }: Props = $props();
 
 	// Get device icon based on peer name (simple heuristic)
 	function getDeviceIcon(name: string) {
@@ -168,6 +170,15 @@
 							<div
 								class="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100"
 							>
+								{#if onEdit}
+									<button
+										onclick={() => onEdit(peer)}
+										class="focus-ring rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+										title="Edit Peer"
+									>
+										<Settings size={18} />
+									</button>
+								{/if}
 								<button
 									onclick={() => onDownloadConfig(peer)}
 									class="focus-ring rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
@@ -180,7 +191,7 @@
 									<button
 										onclick={() => onShowQR(peer)}
 										class="focus-ring rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
-										title="View QR Code"
+										title="View Details"
 									>
 										<QrCode size={18} />
 									</button>
