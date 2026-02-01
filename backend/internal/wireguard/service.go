@@ -15,10 +15,11 @@ type realService struct {
 	storage        *Storage
 	serverPubKey   string
 	serverEndpoint string
+	vpnSubnet      string
 }
 
 // NewRealService creates and returns a new native WireGuard service.
-func NewRealService(interfaceName string, storagePath string, serverEndpoint string, serverPubKey string) (Service, error) {
+func NewRealService(interfaceName string, storagePath string, serverEndpoint string, serverPubKey string, vpnSubnet string) (Service, error) {
 	client, err := wgctrl.New()
 	if err != nil {
 		return nil, fmt.Errorf("failed to initialize wgctrl: %w", err)
@@ -44,6 +45,7 @@ func NewRealService(interfaceName string, storagePath string, serverEndpoint str
 		storage:        storage,
 		serverPubKey:   serverPubKey,
 		serverEndpoint: serverEndpoint,
+		vpnSubnet:      vpnSubnet,
 	}, nil
 }
 
@@ -209,6 +211,9 @@ func (s *realService) GetStats() (Stats, error) {
 
 	return Stats{
 		InterfaceName: s.interfaceName,
+		PublicKey:     device.PublicKey.String(),
+		ListenPort:    device.ListenPort,
+		Subnet:        s.vpnSubnet,
 		PeerCount:     len(device.Peers),
 		TotalRX:       totalRX,
 		TotalTX:       totalTX,

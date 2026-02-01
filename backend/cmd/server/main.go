@@ -45,6 +45,7 @@ func main() {
 		cfg.StoragePath,
 		cfg.ServerEndpoint,
 		cfg.ServerPubKey,
+		cfg.VPNSubnet,
 	)
 	if err != nil {
 		slog.Warn("Failed to initialize native WireGuard service, falling back to mock", "error", err)

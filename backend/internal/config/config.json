@@ -4,5 +4,6 @@
 	"storage_path": "./data/peers.json",
 	"server_endpoint": "1.2.3.4:51820",
 	"server_pubkey": "SERVER_PUB_KEY_HERE",
+	"vpn_subnet": "10.0.0.0/24",
 	"cors_allowed_origins": ""
 }

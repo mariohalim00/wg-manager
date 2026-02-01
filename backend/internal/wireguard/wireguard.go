@@ -20,6 +20,9 @@ type Peer struct {
 // Stats represents interface-level statistics.
 type Stats struct {
 	InterfaceName string `json:"interfaceName"`
+	PublicKey     string `json:"publicKey"`
+	ListenPort    int    `json:"listenPort"`
+	Subnet        string `json:"subnet"`
 	PeerCount     int    `json:"peerCount"`
 	TotalRX       int64  `json:"totalRx"`
 	TotalTX       int64  `json:"totalTx"`
@@ -113,6 +116,9 @@ func (s *mockService) GetStats() (Stats, error) {
 	slog.Warn("Using mock WireGuard service for GetStats")
 	return Stats{
 		InterfaceName: "mock-wg0",
+		PublicKey:     "MOCK_SERVER_PUBKEY",
+		ListenPort:    51820,
+		Subnet:        "10.0.0.0/24",
 		PeerCount:     len(s.peers),
 		TotalRX:       1536,
 		TotalTX:       2304,

@@ -12,6 +12,7 @@ type Config struct {
 	StoragePath        string `json:"storage_path"`
 	ServerEndpoint     string `json:"server_endpoint"` // e.g. "vpn.example.com:51820"
 	ServerPubKey       string `json:"server_pubkey"`
+	VPNSubnet          string `json:"vpn_subnet"`
 	CORSAllowedOrigins string `json:"cors_allowed_origins"`
 }
 
@@ -42,6 +43,9 @@ func LoadConfig(path string) (*Config, error) {
 	}
 	if envPubKey := os.Getenv("WG_SERVER_PUBKEY"); envPubKey != "" {
 		cfg.ServerPubKey = envPubKey
+	}
+	if envSubnet := os.Getenv("WG_VPN_SUBNET"); envSubnet != "" {
+		cfg.VPNSubnet = envSubnet
 	}
 	if envOrigins := os.Getenv("CORS_ALLOWED_ORIGINS"); envOrigins != "" {
 		cfg.CORSAllowedOrigins = envOrigins

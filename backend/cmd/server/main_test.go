@@ -137,6 +137,18 @@ func TestStatsHandler(t *testing.T) {
 		t.Errorf("handler returned unexpected peer count: got %d want %d",
 			stats.PeerCount, 2)
 	}
+
+	if stats.PublicKey != "MOCK_SERVER_PUBKEY" {
+		t.Errorf("expected PublicKey 'MOCK_SERVER_PUBKEY', got '%s'", stats.PublicKey)
+	}
+
+	if stats.ListenPort != 51820 {
+		t.Errorf("expected ListenPort 51820, got %d", stats.ListenPort)
+	}
+
+	if stats.Subnet != "10.0.0.0/24" {
+		t.Errorf("expected Subnet '10.0.0.0/24', got '%s'", stats.Subnet)
+	}
 }
 
 func TestLoadConfig(t *testing.T) {

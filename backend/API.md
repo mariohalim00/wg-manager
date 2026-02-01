@@ -80,6 +80,9 @@ Returns aggregated real-time statistics for the WireGuard interface.
   ```json
   {
   	"interfaceName": "wg0",
+  	"publicKey": "serverPublicKey...",
+  	"listenPort": 51820,
+  	"subnet": "10.0.0.0/24",
   	"peerCount": 5,
   	"totalRx": 1048576,
   	"totalTx": 2097152
@@ -99,6 +102,7 @@ The backend uses a hybrid configuration system (Twelve-Factor App). It loads def
 | `WG_STORAGE_PATH`      | Path to persistent peer metadata    | `./data/peers.json` |
 | `WG_SERVER_ENDPOINT`   | Public IP/Domain:Port of the server | `1.2.3.4:51820`     |
 | `WG_SERVER_PUBKEY`     | Public Key of the server interface  | (None)              |
+| `WG_VPN_SUBNET`       | VPN subnet CIDR                     | `10.0.0.0/24`       |
 | `CORS_ALLOWED_ORIGINS` | Comma-separated list of origins     | (Reflective/Dev)    |
 
 ## Middleware
