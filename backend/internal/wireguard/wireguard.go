@@ -7,14 +7,15 @@ import (
 
 // Peer represents a WireGuard peer.
 type Peer struct {
-	ID            string   `json:"id"`
-	PublicKey     string   `json:"publicKey"`
-	Name          string   `json:"name"`
-	Endpoint      string   `json:"endpoint"`
-	AllowedIPs    []string `json:"allowedIPs"`
-	LastHandshake string   `json:"lastHandshake"`
-	ReceiveBytes  int64    `json:"receiveBytes"`
-	TransmitBytes int64    `json:"transmitBytes"`
+	ID               string   `json:"id"`
+	PublicKey        string   `json:"publicKey"`
+	Name             string   `json:"name"`
+	Endpoint         string   `json:"endpoint"`
+	AllowedIPs       []string `json:"allowedIPs"`
+	LastHandshake    string   `json:"lastHandshake"`
+	ReceiveBytes     int64    `json:"receiveBytes"`
+	TransmitBytes    int64    `json:"transmitBytes"`
+	InterfaceAddress string   `json:"interfaceAddress,omitempty"`
 }
 
 // Stats represents interface-level statistics.
@@ -35,6 +36,7 @@ type PeerUpdate struct {
 	DNS                 *string   `json:"dns,omitempty"`
 	MTU                 *int      `json:"mtu,omitempty"`
 	PersistentKeepalive *int      `json:"persistentKeepalive,omitempty"`
+	InterfaceAddress    *string   `json:"interfaceAddress,omitempty"`
 }
 
 // StatsHistoryItem represents a single data point in traffic history.
@@ -61,6 +63,7 @@ type AddPeerOptions struct {
 	MTU                 int      `json:"mtu,omitempty"`
 	PersistentKeepalive int      `json:"persistentKeepalive,omitempty"`
 	PreSharedKey        bool     `json:"preSharedKey,omitempty"`
+	InterfaceAddress    string   `json:"interfaceAddress,omitempty"`
 }
 
 // Service defines the interface for WireGuard operations.

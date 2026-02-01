@@ -42,6 +42,7 @@ type AddPeerRequest struct {
 	MTU                 int      `json:"mtu"`
 	PersistentKeepalive int      `json:"persistentKeepalive"`
 	PreSharedKey        bool     `json:"preSharedKey"`
+	InterfaceAddress    string   `json:"interfaceAddress"`
 }
 
 func (h *PeerHandler) Add(w http.ResponseWriter, r *http.Request) {
@@ -79,6 +80,7 @@ func (h *PeerHandler) Add(w http.ResponseWriter, r *http.Request) {
 		MTU:                 req.MTU,
 		PersistentKeepalive: req.PersistentKeepalive,
 		PreSharedKey:        req.PreSharedKey,
+		InterfaceAddress:    req.InterfaceAddress,
 	}
 
 	peer, err := h.Service.AddPeer(opts)
@@ -138,6 +140,7 @@ type UpdatePeerRequest struct {
 	DNS                 *string   `json:"dns"`
 	MTU                 *int      `json:"mtu"`
 	PersistentKeepalive *int      `json:"persistentKeepalive"`
+	InterfaceAddress    *string   `json:"interfaceAddress"`
 }
 
 func (h *PeerHandler) Update(w http.ResponseWriter, r *http.Request) {
@@ -170,6 +173,7 @@ func (h *PeerHandler) Update(w http.ResponseWriter, r *http.Request) {
 		DNS:                 req.DNS,
 		MTU:                 req.MTU,
 		PersistentKeepalive: req.PersistentKeepalive,
+		InterfaceAddress:    req.InterfaceAddress,
 	}
 
 	peer, err := h.Service.UpdatePeer(id, updates)

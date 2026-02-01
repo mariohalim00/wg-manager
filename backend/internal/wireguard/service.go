@@ -185,6 +185,7 @@ func (s *realService) AddPeer(opts AddPeerOptions) (PeerResponse, error) {
 		DNS:                 opts.DNS,
 		MTU:                 opts.MTU,
 		PersistentKeepalive: opts.PersistentKeepalive,
+		InterfaceAddress:    opts.InterfaceAddress,
 	}
 
 	// Generate config if we have a private key
@@ -214,9 +215,14 @@ func (s *realService) AddPeer(opts AddPeerOptions) (PeerResponse, error) {
 			}
 		}
 
+		address := opts.AllowedIPs
+		if opts.InterfaceAddress != "" {
+			address = []string{opts.InterfaceAddress}
+		}
+
 		meta.Config = GenerateConfigString(PeerConfigInfo{
 			PrivateKey:          privateKey,
-			Address:             opts.AllowedIPs,
+			Address:             address,
 			DNS:                 dnsSplit,
 			MTU:                 mtu,
 			PersistentKeepalive: keepalive,
@@ -332,6 +338,7 @@ func (s *realService) RegeneratePeer(id string) (PeerResponse, error) {
 		MTU:                 meta.MTU,
 		PersistentKeepalive: meta.PersistentKeepalive,
 		PreSharedKey:        meta.PresharedKey != "",
+		InterfaceAddress:    meta.InterfaceAddress,
 	}
 
 	response, err := s.AddPeer(opts)
@@ -371,6 +378,10 @@ func (s *realService) UpdatePeer(id string, updates PeerUpdate) (Peer, error) {
 	}
 	if updates.PersistentKeepalive != nil {
 		meta.PersistentKeepalive = *updates.PersistentKeepalive
+		metaChanged = true
+	}
+	if updates.InterfaceAddress != nil {
+		meta.InterfaceAddress = *updates.InterfaceAddress
 		metaChanged = true
 	}
 

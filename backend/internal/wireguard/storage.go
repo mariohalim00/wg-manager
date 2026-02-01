@@ -16,6 +16,7 @@ type PeerMetadata struct {
 	DNS                 string   `json:"dns,omitempty"`
 	MTU                 int      `json:"mtu,omitempty"`
 	PersistentKeepalive int      `json:"persistentKeepalive,omitempty"`
+	InterfaceAddress    string   `json:"interfaceAddress,omitempty"`
 	Config              string   `json:"config,omitempty"`
 }
 
