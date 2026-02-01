@@ -35,9 +35,13 @@ func (h *PeerHandler) List(w http.ResponseWriter, r *http.Request) {
 }
 
 type AddPeerRequest struct {
-	Name       string   `json:"name"`
-	PublicKey  string   `json:"publicKey"`
-	AllowedIPs []string `json:"allowedIPs"`
+	Name                string   `json:"name"`
+	PublicKey           string   `json:"publicKey"`
+	AllowedIPs          []string `json:"allowedIPs"`
+	DNS                 string   `json:"dns"`
+	MTU                 int      `json:"mtu"`
+	PersistentKeepalive int      `json:"persistentKeepalive"`
+	PreSharedKey        bool     `json:"preSharedKey"`
 }
 
 func (h *PeerHandler) Add(w http.ResponseWriter, r *http.Request) {
@@ -67,7 +71,17 @@ func (h *PeerHandler) Add(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	peer, err := h.Service.AddPeer(req.Name, req.PublicKey, req.AllowedIPs)
+	opts := wireguard.AddPeerOptions{
+		Name:                req.Name,
+		PublicKey:           req.PublicKey,
+		AllowedIPs:          req.AllowedIPs,
+		DNS:                 req.DNS,
+		MTU:                 req.MTU,
+		PersistentKeepalive: req.PersistentKeepalive,
+		PreSharedKey:        req.PreSharedKey,
+	}
+
+	peer, err := h.Service.AddPeer(opts)
 	if err != nil {
 		slog.Error("Failed to add peer", "error", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
@@ -119,8 +133,11 @@ func (h *PeerHandler) Regenerate(w http.ResponseWriter, r *http.Request) {
 }
 
 type UpdatePeerRequest struct {
-	Name       *string   `json:"name"`
-	AllowedIPs *[]string `json:"allowedIPs"`
+	Name                *string   `json:"name"`
+	AllowedIPs          *[]string `json:"allowedIPs"`
+	DNS                 *string   `json:"dns"`
+	MTU                 *int      `json:"mtu"`
+	PersistentKeepalive *int      `json:"persistentKeepalive"`
 }
 
 func (h *PeerHandler) Update(w http.ResponseWriter, r *http.Request) {
@@ -148,8 +165,11 @@ func (h *PeerHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updates := wireguard.PeerUpdate{
-		Name:       req.Name,
-		AllowedIPs: req.AllowedIPs,
+		Name:                req.Name,
+		AllowedIPs:          req.AllowedIPs,
+		DNS:                 req.DNS,
+		MTU:                 req.MTU,
+		PersistentKeepalive: req.PersistentKeepalive,
 	}
 
 	peer, err := h.Service.UpdatePeer(id, updates)
@@ -221,4 +241,49 @@ func (h *PeerHandler) GetQR(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "image/png")
 	w.Write(png)
+}
+
+func (h *PeerHandler) GetHistory(w http.ResponseWriter, r *http.Request) {
+	history, err := h.Service.GetStatsHistory()
+	if err != nil {
+		slog.Error("Failed to get stats history", "error", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(history); err != nil {
+		slog.Error("Failed to encode history response", "error", err)
+	}
+}
+
+func (h *PeerHandler) GetSettings(w http.ResponseWriter, r *http.Request) {
+	settings, err := h.Service.GetSettings()
+	if err != nil {
+		slog.Error("Failed to get settings", "error", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	if err := json.NewEncoder(w).Encode(settings); err != nil {
+		slog.Error("Failed to encode settings response", "error", err)
+	}
+}
+
+func (h *PeerHandler) UpdateSettings(w http.ResponseWriter, r *http.Request) {
+	var settings wireguard.GlobalSettings
+	if err := json.NewDecoder(r.Body).Decode(&settings); err != nil {
+		slog.Error("Failed to decode update settings request", "error", err)
+		http.Error(w, "Invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if err := h.Service.UpdateSettings(settings); err != nil {
+		slog.Error("Failed to update settings", "error", err)
+		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)
+		return
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }

@@ -22,3 +22,12 @@ func GenerateKeyPair() (Keys, error) {
 		PublicKey:  key.PublicKey().String(),
 	}, nil
 }
+
+// GeneratePresharedKey generates a new WireGuard preshared key.
+func GeneratePresharedKey() (string, error) {
+	key, err := wgtypes.GenerateKey()
+	if err != nil {
+		return "", err
+	}
+	return key.String(), nil
+}

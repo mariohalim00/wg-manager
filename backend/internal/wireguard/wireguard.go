@@ -30,21 +30,43 @@ type Stats struct {
 
 // PeerUpdate represents optional updates for a peer.
 type PeerUpdate struct {
-	Name       *string   `json:"name,omitempty"`
-	AllowedIPs *[]string `json:"allowedIPs,omitempty"`
+	Name                *string   `json:"name,omitempty"`
+	AllowedIPs          *[]string `json:"allowedIPs,omitempty"`
+	DNS                 *string   `json:"dns,omitempty"`
+	MTU                 *int      `json:"mtu,omitempty"`
+	PersistentKeepalive *int      `json:"persistentKeepalive,omitempty"`
+}
+
+// StatsHistoryItem represents a single data point in traffic history.
+type StatsHistoryItem struct {
+	Timestamp int64 `json:"timestamp"`
+	TotalRX   int64 `json:"totalRx"`
+	TotalTX   int64 `json:"totalTx"`
 }
 
 // PeerResponse represents a peer along with optional configuration details.
 type PeerResponse struct {
 	Peer
-	Config     string `json:"config,omitempty"`
-	PrivateKey string `json:"privateKey,omitempty"`
+	Config       string `json:"config,omitempty"`
+	PrivateKey   string `json:"privateKey,omitempty"`
+	PresharedKey string `json:"presharedKey,omitempty"`
+}
+
+// AddPeerOptions represents the options for creating a new peer.
+type AddPeerOptions struct {
+	Name                string   `json:"name"`
+	PublicKey           string   `json:"publicKey,omitempty"`
+	AllowedIPs          []string `json:"allowedIPs"`
+	DNS                 string   `json:"dns,omitempty"`
+	MTU                 int      `json:"mtu,omitempty"`
+	PersistentKeepalive int      `json:"persistentKeepalive,omitempty"`
+	PreSharedKey        bool     `json:"preSharedKey,omitempty"`
 }
 
 // Service defines the interface for WireGuard operations.
 type Service interface {
 	ListPeers() ([]Peer, error)
-	AddPeer(name string, publicKey string, allowedIPs []string) (PeerResponse, error)
+	AddPeer(options AddPeerOptions) (PeerResponse, error)
 	RemovePeer(id string) error
 	RegeneratePeer(id string) (PeerResponse, error)
 	UpdatePeer(id string, updates PeerUpdate) (Peer, error)
@@ -52,6 +74,9 @@ type Service interface {
 	GetPeerConfig(id string) (string, error)
 	GetPeerMetadata(id string) (PeerMetadata, bool)
 	GetStats() (Stats, error)
+	GetStatsHistory() ([]StatsHistoryItem, error)
+	GetSettings() (GlobalSettings, error)
+	UpdateSettings(settings GlobalSettings) error
 	Close() error
 }
 
@@ -100,16 +125,19 @@ func (s *mockService) ListPeers() ([]Peer, error) {
 }
 
 // AddPeer adds a mock WireGuard peer.
-func (s *mockService) AddPeer(name string, publicKey string, allowedIPs []string) (PeerResponse, error) {
+func (s *mockService) AddPeer(opts AddPeerOptions) (PeerResponse, error) {
 	slog.Warn("Using mock WireGuard service for AddPeer")
-	if name == "force-add-error" {
+	if opts.Name == "force-add-error" {
 		return PeerResponse{}, fmt.Errorf("forced error")
 	}
 	peer := Peer{
 		ID:         fmt.Sprintf("mock-peer-%d", len(s.peers)+1),
-		PublicKey:  publicKey,
-		Name:       name,
-		AllowedIPs: allowedIPs,
+		PublicKey:  opts.PublicKey,
+		Name:       opts.Name,
+		AllowedIPs: opts.AllowedIPs,
+	}
+	if peer.PublicKey == "" {
+		peer.PublicKey = "MOCK_PUBKEY_" + peer.ID
 	}
 	s.peers = append(s.peers, peer)
 	return PeerResponse{
@@ -200,6 +228,34 @@ func (s *mockService) GetPeerMetadata(id string) (PeerMetadata, bool) {
 		}
 	}
 	return PeerMetadata{}, false
+}
+
+// GetStatsHistory returns mock stats history.
+func (s *mockService) GetStatsHistory() ([]StatsHistoryItem, error) {
+	slog.Warn("Using mock WireGuard service for GetStatsHistory")
+	return []StatsHistoryItem{
+		{Timestamp: 1706745600, TotalRX: 1000, TotalTX: 500},
+		{Timestamp: 1706745660, TotalRX: 1100, TotalTX: 550},
+		{Timestamp: 1706745720, TotalRX: 1250, TotalTX: 600},
+	}, nil
+}
+
+// GetSettings returns mock settings.
+func (s *mockService) GetSettings() (GlobalSettings, error) {
+	slog.Warn("Using mock WireGuard service for GetSettings")
+	return GlobalSettings{
+		ServerAddress: "10.0.0.1/24",
+		DNS:           "1.1.1.1, 8.8.8.8",
+		MTU:           1420,
+		Keepalive:     25,
+		Endpoint:      "vpn.example.com",
+	}, nil
+}
+
+// UpdateSettings updates mock settings.
+func (s *mockService) UpdateSettings(settings GlobalSettings) error {
+	slog.Warn("Using mock WireGuard service for UpdateSettings")
+	return nil
 }
 
 // GetStats returns mock interface-level statistics.
