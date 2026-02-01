@@ -1,42 +1,102 @@
-# sv
+# WireGuard Manager
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+A full-stack WireGuard peer management system with a SvelteKit dashboard and a Go backend. Manage peers, view stats, and generate client configs with a fast, modern UI. Suitable for server planning to run native wireguard but wants an easy way to create and manage profiles.
 
-## Creating a project
+## Features
 
-If you're seeing this, you've probably already done this step. Congrats!
+- Peer management: list, add, remove
+- Real-time statistics (handshakes, RX/TX totals)
+- QR/config display for client setup
+- Responsive dashboard UI 
+- Structured logging and robust API layer
 
-```sh
-# create a new project
-npx sv create my-app
+## Architecture
+
+Frontend (SvelteKit) → Backend API (Go/net\http) → WireGuard kernel
+
+Metadata is stored in JSON, while real-time stats are read from the WireGuard interface. The backend uses a mock service when WireGuard is unavailable for local development.
+
+## Tech Stack
+
+- Frontend: SvelteKit 2.x, Svelte 5.x, TypeScript 5.x
+- Backend: Go 1.25.6, net\http, slog
+- Styling: TailwindCSS 4.x + DaisyUI
+- WireGuard: wgctrl
+
+## Requirements
+
+- Node.js 20+ (frontend)
+- Go 1.25.6+ (backend)
+- WireGuard kernel module (for real service)
+
+## Getting Started
+
+### Backend
+
+```bash
+cd backend
+go test ./...
+go run ./cmd/server (run with sudo)
 ```
 
-To recreate this project with the same configuration:
+The backend runs on :8080 by default.
 
-```sh
-# recreate this project
-npx sv create --template minimal --types ts --add eslint prettier tailwindcss="plugins:typography,forms" --no-download-check --install npm .
-```
+### Frontend
 
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
-
-```sh
+```bash
+npm install
 npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
 ```
 
-## Building
+The frontend runs on http://localhost:5173.
 
-To create a production version of your app:
+## Configuration
 
-```sh
-npm run build
-```
+Backend configuration uses defaults in config.json with environment overrides.
 
-You can preview the production build with `npm run preview`.
+Common environment variables:
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+- WG_SERVER_PORT (default :8080)
+- WG_INTERFACE_NAME (default wg0)
+- WG_STORAGE_PATH (default ./data/peers.json)
+- WG_SERVER_ENDPOINT (public endpoint for clients)
+- WG_SERVER_PUBKEY (server public key)
+- CORS_ALLOWED_ORIGINS (comma-separated)
+
+## API Endpoints
+
+- GET /peers
+- POST /peers
+- DELETE /peers/{publicKey}
+- GET /stats
+
+See backend/API.md for full request and response schemas.
+
+## Scripts
+
+Frontend:
+
+- npm run dev
+- npm run build
+- npm run preview
+- npm run lint
+- npm run check
+
+Backend:
+
+- go test ./...
+- sudo go run ./cmd/server (run with elevated permissions, you will need it)
+
+## Deployment
+
+The frontend builds as a static SPA via adapter-static. Serve the build output with any static host and proxy API requests to the Go backend.
+
+Example flow:
+
+1. npm run build
+2. Serve build/ with Nginx/Caddy
+3. Run backend on :8080 (or configured port)
+
+## License
+
+MIT
