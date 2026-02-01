@@ -5,7 +5,7 @@
 	import { stats } from '$lib/stores/stats';
 	import { peers } from '$lib/stores/peers';
 	import { formatBytes } from '$lib/utils/formatting';
-	import { Search, Bell, TrendingUp, Copy } from 'lucide-svelte';
+	import { Search, Bell, TrendingUp, Copy, Check } from 'lucide-svelte';
 
 	// Loading state
 	let loading = $state(true);
@@ -28,6 +28,25 @@
 
 	function handleRemovePeer(peer: (typeof $peers)[0]) {
 		console.log('Remove peer', peer.name);
+	}
+
+
+	// Copied state
+	let copied = $state(false);
+
+	// Copy public key to clipboard
+	function handleCopyPublicKey() {
+		if (!$stats?.publicKey) return; 
+		try {
+			navigator.clipboard.writeText($stats.publicKey);
+			copied = true;		
+			
+			setTimeout(() => {
+				copied = false;
+			}, 2000);
+		} catch (error) {
+			console.error('Failed to copy public key:', error);
+		}
 	}
 </script>
 
@@ -114,8 +133,13 @@
 							<button
 								class="focus-ring shrink-0 rounded-lg border border-white/10 bg-white/5 p-1.5 text-slate-400 transition-colors hover:bg-white/10 hover:text-white"
 								aria-label="Copy public key"
+								onclick={handleCopyPublicKey}
 							>
+							{#if copied}
+								<Check size={14} />
+							{:else}
 								<Copy size={14} />
+							{/if}
 							</button>
 						{/if}
 					</div>

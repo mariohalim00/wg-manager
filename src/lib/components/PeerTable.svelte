@@ -172,6 +172,7 @@
 									onclick={() => onDownloadConfig(peer)}
 									class="focus-ring rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
 									title="Download Config"
+									aria-label="Download Config"
 								>
 									<Download size={18} />
 								</button>
