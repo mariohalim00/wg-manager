@@ -242,22 +242,41 @@ go run . | jq .  # pretty-print JSON logs
 - Tests verify code matches API.md
 - Frontend builds against API.md spec (not code-reading)
 
-## D010: SvelteKit adapter-static for SPA Mode (2026-02-01)
+## D010: SvelteKit adapter-static with SSR Prerendering (2026-02-01) - CORRECTED
 
-**Decision**: Use `@sveltejs/adapter-static` instead of `adapter-auto` for production builds.
+**Decision**: Use `@sveltejs/adapter-static` for production builds WITH SSR and prerendering enabled (not SPA mode).
 
 **Context**:
 
 - `adapter-auto` failed to detect a supported production environment
 - Build was failing with "Could not detect a supported production environment"
-- Frontend is a Single Page Application (SPA), not a traditional SSR site
+- SvelteKit's SSR capability is a core requirement ("non-negotiable per project requirements")
+- Need to produce static site but with server-side rendering during build
 
 **Trade-offs**:
 
-| Adapter             | Pros                              | Cons                                   |
-| ------------------- | --------------------------------- | -------------------------------------- |
-| **Static (chosen)** | Reliable builds, SPA support      | No SSR, requires fallback config       |
-| Auto                | Automatic detection               | Failed in our environment              |
+| Adapter + Config           | Pros                              | Cons                                   |
+| -------------------------- | --------------------------------- | -------------------------------------- |
+| **Static + SSR (chosen)**  | SSR works, static output, reliable| Requires proper prerender/fallback config |
+| Static SPA mode            | Simple, pure client-side          | No SSR (violates core requirement)     |
+| Auto                       | Automatic detection               | Failed in our environment              |
+| Node adapter               | Full SSR support                  | Requires Node.js server (not static)   |
+
+**Rationale**: 
+
+Constitution Principle II prioritizes frontend UX/performance but doesn't preclude SSR. In fact, SvelteKit was chosen specifically for its SSR capability (as user stated: "SSR is non-negotiable (this is why i picked svelte kit)"). With `adapter-static`, we can:
+- Pre-render routes at build time using `export const prerender = true;`
+- Serve as a static site for fast deployment
+- Still leverage SvelteKit's SSR benefits
+- Support client-side hydration for interactivity
+
+**Impact on code**:
+
+- `src/routes/+layout.ts`: `export const prerender = true;`
+- `svelte.config.js`: `adapter-static` with `fallback: 'index.html'` for SPA-like behavior
+- Build output is static files in `build/` directory
+- All routes pre-rendered at build time
+- Client-side navigation works via SvelteKit's router
 | Node                | SSR support                       | Requires Node.js server in production  |
 | Vercel/Netlify      | Platform-optimized                | Vendor lock-in                         |
 

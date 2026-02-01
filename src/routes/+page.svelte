@@ -56,6 +56,7 @@
 					class="focus-ring w-60 rounded-xl border border-white/10 bg-white/5 py-2 pr-4 pl-10 text-sm text-white"
 					placeholder="Search peers..."
 					type="text"
+					aria-label="Search peers"
 				/>
 			</div>
 			<button
