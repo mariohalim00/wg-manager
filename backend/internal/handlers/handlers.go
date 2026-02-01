@@ -8,6 +8,8 @@ import (
 	"net/http"
 	"strings"
 	"wg-manager/backend/internal/wireguard"
+
+	"github.com/skip2/go-qrcode"
 )
 
 type PeerHandler struct {
@@ -175,4 +177,48 @@ func (h *PeerHandler) Stats(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewEncoder(w).Encode(stats); err != nil {
 		slog.Error("Failed to encode stats response", "error", err)
 	}
+}
+
+func (h *PeerHandler) GetConfig(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	if id == "" {
+		http.Error(w, "Missing peer ID in path", http.StatusBadRequest)
+		return
+	}
+
+	config, err := h.Service.GetPeerConfig(id)
+	if err != nil {
+		slog.Error("Failed to get peer config", "error", err, "id", id)
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	w.Header().Set("Content-Type", "text/plain")
+	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.conf\"", id))
+	w.Write([]byte(config))
+}
+
+func (h *PeerHandler) GetQR(w http.ResponseWriter, r *http.Request) {
+	id := r.PathValue("id")
+	if id == "" {
+		http.Error(w, "Missing peer ID in path", http.StatusBadRequest)
+		return
+	}
+
+	config, err := h.Service.GetPeerConfig(id)
+	if err != nil {
+		slog.Error("Failed to get peer config for QR", "error", err, "id", id)
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	}
+
+	png, err := qrcode.Encode(config, qrcode.High, 256)
+	if err != nil {
+		slog.Error("Failed to generate QR code", "error", err)
+		http.Error(w, "Failed to generate QR code", http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "image/png")
+	w.Write(png)
 }

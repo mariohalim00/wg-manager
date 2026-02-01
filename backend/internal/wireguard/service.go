@@ -2,6 +2,7 @@ package wireguard
 
 import (
 	"fmt"
+	"log/slog"
 
 	"net"
 
@@ -39,14 +40,22 @@ func NewRealService(interfaceName string, storagePath string, serverEndpoint str
 		return nil, fmt.Errorf("failed to access device %s: %w", interfaceName, err)
 	}
 
-	return &realService{
+	srv := &realService{
 		client:         client,
 		interfaceName:  interfaceName,
 		storage:        storage,
 		serverPubKey:   serverPubKey,
 		serverEndpoint: serverEndpoint,
 		vpnSubnet:      vpnSubnet,
-	}, nil
+	}
+
+	if err := srv.Sync(); err != nil {
+		slog.Error("Failed to sync peers on startup", "error", err)
+		// We don't necessarily want to fail startup if sync fails (e.g. device busy),
+		// but it's good to log it.
+	}
+
+	return srv, nil
 }
 
 // Close releases resources held by the realService.
@@ -141,7 +150,25 @@ func (s *realService) AddPeer(name string, publicKey string, allowedIPs []string
 	}
 
 	// Save metadata
-	if err := s.storage.SetMetadata(publicKey, PeerMetadata{Name: name}); err != nil {
+	meta := PeerMetadata{
+		PublicKey:  publicKey,
+		PrivateKey: privateKey,
+		Name:       name,
+		AllowedIPs: allowedIPs,
+	}
+
+	// Generate config if we have a private key
+	if privateKey != "" {
+		meta.Config = GenerateConfigString(PeerConfigInfo{
+			PrivateKey: privateKey,
+			Address:    allowedIPs, // Defaulting client address to its allowed IPs on server-side
+			PublicKey:  s.serverPubKey,
+			Endpoint:   s.serverEndpoint,
+			AllowedIPs: []string{"0.0.0.0/0", "::/0"},
+		})
+	}
+
+	if err := s.storage.SetMetadata(publicKey, meta); err != nil {
 		return PeerResponse{}, fmt.Errorf("failed to save metadata: %w", err)
 	}
 
@@ -152,18 +179,8 @@ func (s *realService) AddPeer(name string, publicKey string, allowedIPs []string
 			Name:       name,
 			AllowedIPs: allowedIPs,
 		},
-	}
-
-	// Generate config if we have a private key
-	if privateKey != "" {
-		response.PrivateKey = privateKey
-		response.Config = GenerateConfigString(PeerConfigInfo{
-			PrivateKey: privateKey,
-			Address:    allowedIPs, // Defaulting client address to its allowed IPs on server-side
-			PublicKey:  s.serverPubKey,
-			Endpoint:   s.serverEndpoint,
-			AllowedIPs: []string{"0.0.0.0/0", "::/0"},
-		})
+		PrivateKey: meta.PrivateKey,
+		Config:     meta.Config,
 	}
 
 	return response, nil
@@ -316,4 +333,68 @@ func (s *realService) UpdatePeer(id string, updates PeerUpdate) (Peer, error) {
 	}
 
 	return Peer{}, fmt.Errorf("peer not found after update: %s", id)
+}
+
+// Sync restores all peers from storage to the WireGuard interface.
+func (s *realService) Sync() error {
+	slog.Info("Syncing peers from storage to interface", "interface", s.interfaceName)
+	s.storage.mu.RLock()
+	defer s.storage.mu.RUnlock()
+
+	var peerConfigs []wgtypes.PeerConfig
+	for pubKeyStr, meta := range s.storage.data {
+		pubKey, err := wgtypes.ParseKey(pubKeyStr)
+		if err != nil {
+			slog.Error("Invalid public key in storage", "key", pubKeyStr, "error", err)
+			continue
+		}
+
+		var allowedIPConfigs []net.IPNet
+		for _, ipStr := range meta.AllowedIPs {
+			_, ipNet, err := net.ParseCIDR(ipStr)
+			if err != nil {
+				slog.Error("Invalid allowed IP in storage", "ip", ipStr, "error", err)
+				continue
+			}
+			allowedIPConfigs = append(allowedIPConfigs, *ipNet)
+		}
+
+		peerConfigs = append(peerConfigs, wgtypes.PeerConfig{
+			PublicKey:         pubKey,
+			ReplaceAllowedIPs: true,
+			AllowedIPs:        allowedIPConfigs,
+		})
+	}
+
+	if len(peerConfigs) == 0 {
+		return nil
+	}
+
+	config := wgtypes.Config{
+		ReplacePeers: false, // We only want to ADD/UPDATE peers from our storage
+		Peers:        peerConfigs,
+	}
+
+	if err := s.client.ConfigureDevice(s.interfaceName, config); err != nil {
+		return fmt.Errorf("failed to sync peers to device: %w", err)
+	}
+
+	return nil
+}
+
+// GetPeerConfig returns the configuration string for a peer.
+func (s *realService) GetPeerConfig(id string) (string, error) {
+	meta, ok := s.storage.GetMetadata(id)
+	if !ok {
+		return "", fmt.Errorf("peer not found: %s", id)
+	}
+	if meta.Config == "" {
+		return "", fmt.Errorf("config not available for peer (might need key regeneration): %s", id)
+	}
+	return meta.Config, nil
+}
+
+// GetPeerMetadata returns metadata for a peer.
+func (s *realService) GetPeerMetadata(id string) (PeerMetadata, bool) {
+	return s.storage.GetMetadata(id)
 }

@@ -48,6 +48,9 @@ type Service interface {
 	RemovePeer(id string) error
 	RegeneratePeer(id string) (PeerResponse, error)
 	UpdatePeer(id string, updates PeerUpdate) (Peer, error)
+	Sync() error
+	GetPeerConfig(id string) (string, error)
+	GetPeerMetadata(id string) (PeerMetadata, bool)
 	GetStats() (Stats, error)
 	Close() error
 }
@@ -174,6 +177,29 @@ func (s *mockService) UpdatePeer(id string, updates PeerUpdate) (Peer, error) {
 		}
 	}
 	return Peer{}, fmt.Errorf("mock peer with ID %s not found", id)
+}
+
+// Sync is a no-op for mockService.
+func (s *mockService) Sync() error {
+	slog.Warn("Using mock WireGuard service for Sync (no-op)")
+	return nil
+}
+
+// GetPeerConfig returns a mock config.
+func (s *mockService) GetPeerConfig(id string) (string, error) {
+	slog.Warn("Using mock WireGuard service for GetPeerConfig")
+	return "[Interface]\nPrivateKey = MOCK_KEY\n...", nil
+}
+
+// GetPeerMetadata returns mock metadata.
+func (s *mockService) GetPeerMetadata(id string) (PeerMetadata, bool) {
+	slog.Warn("Using mock WireGuard service for GetPeerMetadata")
+	for _, p := range s.peers {
+		if p.ID == id {
+			return PeerMetadata{Name: p.Name, PublicKey: p.PublicKey, AllowedIPs: p.AllowedIPs}, true
+		}
+	}
+	return PeerMetadata{}, false
 }
 
 // GetStats returns mock interface-level statistics.

@@ -66,6 +66,8 @@ func main() {
 	mux.HandleFunc("DELETE /peers/{id...}", peerHandler.Remove)
 	mux.HandleFunc("PATCH /peers/{id...}", peerHandler.Update)
 	mux.HandleFunc("POST /peers/regenerate-keys/{id...}", peerHandler.Regenerate)
+	mux.HandleFunc("GET /peers/config/{id...}", peerHandler.GetConfig)
+	mux.HandleFunc("GET /peers/qr/{id...}", peerHandler.GetQR)
 	mux.HandleFunc("GET /stats", peerHandler.Stats)
 
 	// Apply middleware to all routes

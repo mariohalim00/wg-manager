@@ -6,10 +6,13 @@ import (
 	"sync"
 )
 
-// PeerMetadata stores non-WireGuard information about a peer.
+// PeerMetadata stores persistent information about a peer.
 type PeerMetadata struct {
-	Name string `json:"name"`
-	// Additional metadata like "CreatedBy", "Notes" can be added here
+	PublicKey  string   `json:"publicKey"`
+	PrivateKey string   `json:"privateKey,omitempty"`
+	Name       string   `json:"name"`
+	AllowedIPs []string `json:"allowedIPs"`
+	Config     string   `json:"config,omitempty"`
 }
 
 // Storage handles persistent storage of peer metadata.
