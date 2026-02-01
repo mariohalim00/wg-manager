@@ -1,7 +1,21 @@
 // Peer API client
-import { get, post, del, patch } from './client';
+import { get, post, del, patch, API_BASE_URL } from './client';
 import type { APIResponse } from '../types/api';
 import type { Peer, PeerFormData, PeerCreateResponse, PeerUpdateRequest } from '../types/peer';
+
+/**
+ * Get the URL for a peer's configuration file
+ */
+export function getConfigUrl(peerId: string): string {
+	return `${API_BASE_URL}/peers/config/${encodeURIComponent(peerId)}`;
+}
+
+/**
+ * Get the URL for a peer's QR code image
+ */
+export function getQrUrl(peerId: string): string {
+	return `${API_BASE_URL}/peers/qr/${encodeURIComponent(peerId)}`;
+}
 
 /**
  * List all peers

@@ -13,6 +13,7 @@ export function generateWireGuardConfig(response: PeerCreateResponse): string {
 		return response.config;
 	}
 
+	console.log(response)
 	// Fallback: generate config manually (should not normally happen)
 	// This assumes the API provides the full config in the response
 	console.warn('No config in API response, generating fallback config');
@@ -23,7 +24,7 @@ Address = ${response.allowedIPs.join(', ')}
 DNS = 1.1.1.1
 
 [Peer]
-PublicKey = <SERVER_PUBLIC_KEY>
+PublicKey = ${response.publicKey}
 Endpoint = <SERVER_ENDPOINT>:51820
 AllowedIPs = 0.0.0.0/0, ::/0
 PersistentKeepalive = 25`;

@@ -142,16 +142,37 @@ function createPeersStore() {
 			if (response.data) {
 				addNotification({
 					type: 'success',
-					message: `Keys regenerated successfully!`,
-					duration: 3000
+					message: `Keys regenerated for peer. Please save the new configuration.`,
+					duration: 5000
 				});
-
-				// Reload to ensure all stats/IDs are fresh
-				await this.load();
+				await this.load(); // Reload to ensure all stats/IDs are fresh
 				return response.data;
 			}
 
 			return null;
+		},
+
+		async getConfig(peerId: string): Promise<string | null> {
+			try {
+				const response = await fetch(peersAPI.getConfigUrl(peerId));
+				if (!response.ok) {
+					const errorText = await response.text();
+					addNotification({
+						type: 'error',
+						message: `Failed to fetch config: ${errorText || response.statusText}`,
+						duration: 5000
+					});
+					return null;
+				}
+				return await response.text();
+			} catch (err) {
+				addNotification({
+					type: 'error',
+					message: `Network error while fetching config`,
+					duration: 5000
+				});
+				return null;
+			}
 		},
 
 		/**

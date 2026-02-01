@@ -1,6 +1,18 @@
 <script lang="ts">
-	import QRCode from 'svelte-qrcode';
-	import { Download, X, Copy, RefreshCw } from 'lucide-svelte';
+	import { peers } from '$lib/stores/peers';
+	import { getQrUrl } from '$lib/api/peers';
+	import {
+		X,
+		Copy,
+		Download,
+		Globe,
+		Server,
+		Shield,
+		Check,
+		RefreshCw,
+		ExternalLink
+	} from 'lucide-svelte';
+	import { fade, scale, fly } from 'svelte/transition';
 
 	type Props = {
 		config: string;
@@ -10,6 +22,7 @@
 		publicKey?: string;
 		onClose: () => void;
 		onDownload: () => void;
+		onRegenerate?: () => void;
 	};
 
 	let {
@@ -19,8 +32,24 @@
 		endpoint = '',
 		publicKey = '',
 		onClose,
-		onDownload
+		onDownload,
+		onRegenerate
 	}: Props = $props();
+
+	let copying = $state(false);
+	let regenerating = $state(false);
+	let qrTimestamp = $state(Date.now());
+
+	async function handleRegenerate() {
+		if (!onRegenerate) return;
+		regenerating = true;
+		try {
+			await onRegenerate();
+			qrTimestamp = Date.now();
+		} finally {
+			regenerating = false;
+		}
+	}
 
 	// Handle overlay click to close
 	function handleOverlayClick(event: MouseEvent) {
@@ -88,7 +117,7 @@
 					class="qr-gradient-container relative flex h-80 w-80 items-center justify-center overflow-hidden rounded-xl"
 				>
 					<div class="relative z-10 rounded-lg bg-white p-6 shadow-[0_20px_30px_rgba(0,0,0,0.4)]">
-						<QRCode value={config} size={192} />
+						<img src="{getQrUrl(publicKey)}?t={qrTimestamp}" alt="WireGuard QR Code" class="h-[200px] w-[200px]" />
 					</div>
 				</div>
 			</div>
@@ -173,10 +202,12 @@
 			<!-- Regenerate Keys Button -->
 			<div class="mt-8 flex justify-center">
 				<button
-					class="flex items-center gap-2 rounded-lg px-4 py-2 text-[11px] font-bold tracking-[0.15em] text-red-400/60 uppercase transition-all hover:bg-red-400/5 hover:text-red-400"
+					onclick={handleRegenerate}
+					disabled={regenerating}
+					class="flex items-center gap-2 rounded-lg px-4 py-2 text-[11px] font-bold tracking-[0.15em] text-red-400/60 uppercase transition-all hover:bg-red-400/5 hover:text-red-400 disabled:opacity-50"
 				>
-					<RefreshCw size={18} />
-					Regenerate Keys
+					<RefreshCw size={18} class={regenerating ? 'animate-spin' : ''} />
+					{regenerating ? 'Regenerating...' : 'Regenerate Keys'}
 				</button>
 			</div>
 		</div>
