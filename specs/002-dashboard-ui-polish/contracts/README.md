@@ -5,4 +5,4 @@ No API changes are required for Dashboard UI Polish. Existing endpoints and resp
 - GET /peers
 - GET /stats
 
-See [backend/API.md](backend/API.md) for current contracts.
+See [backend/API.md](../../../backend/API.md) for current contracts.
