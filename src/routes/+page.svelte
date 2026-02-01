@@ -202,7 +202,7 @@
 									{formatBytes($stats.totalTx)}
 								</h3>
 								<p class="mt-1 text-sm text-slate-400">
-									{$stats.totalTx > 0 ? 'GB' : 'No data'}
+									{$stats.totalTx > 0 ? formatBytes($stats.totalTx) : 'No data'}
 								</p>
 							</div>
 							<div
