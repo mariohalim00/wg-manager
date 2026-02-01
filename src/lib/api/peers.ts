@@ -1,7 +1,7 @@
 // Peer API client
-import { get, post, del } from './client';
+import { get, post, del, patch } from './client';
 import type { APIResponse } from '../types/api';
-import type { Peer, PeerFormData, PeerCreateResponse } from '../types/peer';
+import type { Peer, PeerFormData, PeerCreateResponse, PeerUpdateRequest } from '../types/peer';
 
 /**
  * List all peers
@@ -25,4 +25,23 @@ export async function addPeer(data: PeerFormData): Promise<APIResponse<PeerCreat
  */
 export async function removePeer(peerId: string): Promise<APIResponse<void>> {
 	return del<void>(`/peers/${encodeURIComponent(peerId)}`);
+}
+
+/**
+ * Update a peer's metadata or config
+ * PATCH /peers/{id}
+ */
+export async function updatePeer(
+	peerId: string,
+	data: PeerUpdateRequest
+): Promise<APIResponse<Peer>> {
+	return patch<Peer>(`/peers/${encodeURIComponent(peerId)}`, data);
+}
+
+/**
+ * Regenerate keys for a peer
+ * POST /peers/regenerate-keys/{id}
+ */
+export async function regenerateKeys(peerId: string): Promise<APIResponse<PeerCreateResponse>> {
+	return post<PeerCreateResponse>(`/peers/regenerate-keys/${encodeURIComponent(peerId)}`, {});
 }

@@ -26,3 +26,8 @@ export interface PeerCreateResponse {
 	config: string; // WireGuard .conf file content
 	privateKey?: string; // Only if backend generated keypair
 }
+
+export interface PeerUpdateRequest {
+	name?: string;
+	allowedIPs?: string[];
+}
