@@ -40,6 +40,8 @@
 		"vite": "^7.3.1"
 	},
 	"dependencies": {
+		"@tailwindcss/forms": "^0.5.11",
+		"@tailwindcss/typography": "^0.5.19",
 		"lucide-svelte": "^0.563.0",
 		"svelte-qrcode": "^1.0.1"
 	}
