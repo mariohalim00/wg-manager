@@ -7,7 +7,7 @@ A full-stack WireGuard peer management system with a SvelteKit dashboard and a G
 - Peer management: list, add, remove
 - Real-time statistics (handshakes, RX/TX totals)
 - QR/config display for client setup
-- Responsive dashboard UI 
+- Responsive dashboard UI
 - Structured logging and robust API layer
 
 ## Architecture

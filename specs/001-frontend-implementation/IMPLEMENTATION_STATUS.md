@@ -72,10 +72,10 @@ ok      wg-manager/backend/cmd/server   (cached)
 **Status**: ✅ COMPLETE  
 **Work Done**:
 - Ran `npm run build`
-- Build completed successfully
+- Build completed successfully with SSR + prerendering
 - Bundle size: 67.5 KB gzipped (target: <200KB) ✅
-- SPA fallback `build/index.html` exists ✅
-- Output directory: `build/` with all static assets
+- Static output: `build/` with all pre-rendered HTML + assets ✅
+- Fallback: `build/index.html` for client-side routing
 
 **Build Output**:
 ```
@@ -92,7 +92,7 @@ Wrote site to "build"
 
 **Routes** (5/5 complete):
 - ✅ `src/routes/+layout.svelte` - Root layout with sidebar
-- ✅ `src/routes/+layout.ts` - Root load function (SPA mode)
+- ✅ `src/routes/+layout.ts` - Root load function (SSR + prerendering enabled)
 - ✅ `src/routes/+page.svelte` - Dashboard page
 - ✅ `src/routes/peers/+page.svelte` - Peer management page
 - ✅ `src/routes/stats/+page.svelte` - Statistics page
@@ -260,9 +260,9 @@ Wrote site to "build"
 | **Backend Tests** | ✅ PASS | `go test -v ./cmd/server` - All tests pass |
 | **Frontend Type Check** | ✅ PASS | `npm run check` - 0 errors, 0 warnings |
 | **Frontend Linting** | ✅ PASS | `npm run lint` - Prettier + ESLint pass |
-| **Frontend Build** | ✅ PASS | `npm run build` - Built successfully |
+| **Frontend Build** | ✅ PASS | `npm run build` - Built successfully with SSR |
 | **Bundle Size** | ✅ PASS | 67.5 KB gzipped (budget: 200KB) |
-| **SPA Fallback** | ✅ PASS | `build/index.html` exists |
+| **SSR + Prerendering** | ✅ PASS | `export const prerender = true;` enabled |
 | **CI Workflow** | ✅ ENABLED | Pushed to GitHub, CI jobs ready |
 
 ---

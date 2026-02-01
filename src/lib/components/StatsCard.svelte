@@ -51,7 +51,7 @@
 	};
 </script>
 
-<div class="glass group relative flex flex-col gap-2 overflow-hidden rounded-2xl p-6">
+<div class="metric-card group relative overflow-hidden">
 	<!-- Glow effect on hover -->
 	<div
 		class="absolute -top-4 -right-4 h-20 w-20 rounded-full {glowColors[
@@ -79,10 +79,10 @@
 
 	<!-- Content -->
 	<div class="relative mt-2">
-		<p class="text-sm font-medium text-slate-400">{title}</p>
-		<p class="text-2xl font-bold tracking-tight">{value}</p>
+		<p class="metric-label">{title}</p>
+		<p class="metric-value text-tabular">{value}</p>
 		{#if subtitle}
-			<p class="mt-1 text-xs text-slate-500">{subtitle}</p>
+			<p class="metric-subtext mt-1">{subtitle}</p>
 		{/if}
 	</div>
 </div>
