@@ -117,7 +117,11 @@
 					class="qr-gradient-container relative flex h-80 w-80 items-center justify-center overflow-hidden rounded-xl"
 				>
 					<div class="relative z-10 rounded-lg bg-white p-6 shadow-[0_20px_30px_rgba(0,0,0,0.4)]">
-						<img src="{getQrUrl(publicKey)}?t={qrTimestamp}" alt="WireGuard QR Code" class="h-[200px] w-[200px]" />
+						<img
+							src="{getQrUrl(publicKey)}?t={qrTimestamp}"
+							alt="WireGuard QR Code"
+							class="h-[200px] w-[200px]"
+						/>
 					</div>
 				</div>
 			</div>

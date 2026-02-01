@@ -16,6 +16,10 @@
 	// Form state
 	let name = $state(peer?.name || '');
 	let allowedIPsInput = $state(peer?.allowedIPs.join('\n') || '');
+	let dns = $state(''); // Loaded from settings if empty
+	let mtu = $state(1420);
+	let keepalive = $state(25);
+	let preSharedKey = $state(false);
 	let loading = $state(false);
 
 	const isEdit = mode === 'edit';
@@ -79,7 +83,11 @@
 		} else {
 			const formData: PeerFormData = {
 				name: name.trim(),
-				allowedIPs
+				allowedIPs,
+				dns: dns.trim() || undefined,
+				mtu: mtu > 0 ? mtu : undefined,
+				persistentKeepalive: keepalive > 0 ? keepalive : undefined,
+				preSharedKey
 			};
 
 			const response = await peers.add(formData);
@@ -194,11 +202,99 @@
 				</p>
 				{#if allowedIPsError}
 					<p class="mt-1 text-sm text-red-400">{allowedIPsError}</p>
-				{:else}
-					<p class="mt-1 text-xs text-slate-500">
-						Example: <code class="rounded bg-white/5 px-1 py-0.5 text-blue-400">10.0.0.5/32</code>
-					</p>
 				{/if}
+			</div>
+
+			<!-- Advanced settings toggle -->
+			<div class="mb-4">
+				<details class="group">
+					<summary
+						class="flex cursor-pointer list-none items-center gap-2 text-sm font-medium text-slate-400 transition-colors hover:text-slate-300"
+					>
+						<span
+							class="flex h-5 w-5 items-center justify-center rounded bg-white/5 transition-transform group-open:rotate-90"
+						>
+							<svg
+								xmlns="http://www.w3.org/2000/svg"
+								width="12"
+								height="12"
+								viewBox="0 0 24 24"
+								fill="none"
+								stroke="currentColor"
+								stroke-width="3"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							>
+								<path d="m9 18 6-6-6-6" />
+							</svg>
+						</span>
+						Advanced Configuration
+					</summary>
+					<div class="mt-4 space-y-4 rounded-lg bg-white/5 p-4">
+						<!-- DNS -->
+						<div>
+							<label for="dns" class="mb-1 block text-xs font-semibold text-slate-500 uppercase">
+								DNS Servers
+							</label>
+							<input
+								id="dns"
+								type="text"
+								bind:value={dns}
+								placeholder="8.8.8.8, 1.1.1.1"
+								class="glass-input text-sm"
+								disabled={loading}
+							/>
+						</div>
+
+						<div class="grid grid-cols-2 gap-4">
+							<!-- MTU -->
+							<div>
+								<label for="mtu" class="mb-1 block text-xs font-semibold text-slate-500 uppercase">
+									MTU
+								</label>
+								<input
+									id="mtu"
+									type="number"
+									bind:value={mtu}
+									placeholder="1420"
+									class="glass-input text-sm"
+									disabled={loading}
+								/>
+							</div>
+							<!-- Keepalive -->
+							<div>
+								<label
+									for="keepalive"
+									class="mb-1 block text-xs font-semibold text-slate-500 uppercase"
+								>
+									Keepalive
+								</label>
+								<input
+									id="keepalive"
+									type="number"
+									bind:value={keepalive}
+									placeholder="25"
+									class="glass-input text-sm"
+									disabled={loading}
+								/>
+							</div>
+						</div>
+
+						{#if !isEdit}
+							<!-- PresharedKey -->
+							<div class="flex items-center gap-3">
+								<input
+									id="psk"
+									type="checkbox"
+									bind:checked={preSharedKey}
+									class="h-4 w-4 rounded border-white/10 bg-white/10 text-blue-500 focus:ring-0 focus:ring-offset-0"
+									disabled={loading}
+								/>
+								<label for="psk" class="text-sm text-slate-300"> Generate Preshared Key </label>
+							</div>
+						{/if}
+					</div>
+				</details>
 			</div>
 
 			<!-- Actions -->

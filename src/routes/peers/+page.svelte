@@ -68,10 +68,10 @@
 		qrAllowedIPs = peer.allowedIPs;
 		qrEndpoint = peer.endpoint || '';
 		qrPublicKey = peer.publicKey;
-		
+
 		const config = await peers.getConfig(peer.id);
 		qrConfig = config || '';
-		
+
 		showQRModal = true;
 	}
 
@@ -191,8 +191,8 @@
 	<PeerModal
 		mode="edit"
 		peer={peerToEdit}
-		onClose={() => (showEditModal = false, peerToEdit = null)}
-		onSuccess={() => (showEditModal = false, peerToEdit = null)}
+		onClose={() => ((showEditModal = false), (peerToEdit = null))}
+		onSuccess={() => ((showEditModal = false), (peerToEdit = null))}
 	/>
 {/if}
 
