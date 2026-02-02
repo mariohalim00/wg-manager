@@ -14,11 +14,16 @@
 	let { mode = 'add', peer, onClose, onSuccess }: Props = $props();
 
 	// Form state
-	let name = $state(peer?.name || '');
+	// Note: disabled warning because we want the form to be initialized with a value for the first ime only
+	// svelte-ignore state_referenced_locally
+		let name = $state(peer?.name || '');
+	// svelte-ignore state_referenced_locally
 	let allowedIPsInput = $state(peer?.allowedIPs.join('\n') || '');
 	let dns = $state(''); // Loaded from settings if empty
 	let mtu = $state(1420);
 	let keepalive = $state(25);
+	// svelte-ignore state_referenced_locally
+	let interfaceAddress = $state(peer?.interfaceAddress || '');
 	let preSharedKey = $state(false);
 	let loading = $state(false);
 
@@ -69,7 +74,8 @@
 		if (isEdit && peer) {
 			const updateData: PeerUpdateRequest = {
 				name: name.trim(),
-				allowedIPs
+				allowedIPs,
+				interfaceAddress: interfaceAddress.trim() || undefined
 			};
 			const success = await peers.update(peer.id, updateData);
 			loading = false;
@@ -87,7 +93,8 @@
 				dns: dns.trim() || undefined,
 				mtu: mtu > 0 ? mtu : undefined,
 				persistentKeepalive: keepalive > 0 ? keepalive : undefined,
-				preSharedKey
+				preSharedKey,
+				interfaceAddress: interfaceAddress.trim() || undefined
 			};
 
 			const response = await peers.add(formData);
@@ -278,6 +285,27 @@
 									disabled={loading}
 								/>
 							</div>
+						</div>
+
+						<!-- Interface Address -->
+						<div>
+							<label
+								for="interface-address"
+								class="mb-1 block text-xs font-semibold text-slate-500 uppercase"
+							>
+								Interface Address (Optional)
+							</label>
+							<input
+								id="interface-address"
+								type="text"
+								bind:value={interfaceAddress}
+								placeholder="e.g. 10.0.0.5/32"
+								class="glass-input text-sm"
+								disabled={loading}
+							/>
+							<p class="mt-1 text-[10px] text-slate-500">
+								Manually set the [Interface] Address field in the client config.
+							</p>
 						</div>
 
 						{#if !isEdit}

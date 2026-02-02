@@ -15,6 +15,7 @@ export interface Peer {
 	mtu?: number;
 	persistentKeepalive?: number;
 	preSharedKey?: boolean;
+	interfaceAddress?: string;
 }
 
 export interface PeerFormData {
@@ -25,6 +26,7 @@ export interface PeerFormData {
 	mtu?: number;
 	persistentKeepalive?: number;
 	preSharedKey?: boolean;
+	interfaceAddress?: string;
 }
 
 export interface PeerCreateResponse {
@@ -43,4 +45,5 @@ export interface PeerUpdateRequest {
 	dns?: string;
 	mtu?: number;
 	persistentKeepalive?: number;
+	interfaceAddress?: string;
 }

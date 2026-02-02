@@ -18,7 +18,9 @@
 		ArrowUpRight,
 		ArrowDownLeft,
 		Search,
-		X
+		X,
+		Copy,
+		Check
 	} from 'lucide-svelte';
 	import Chart from 'chart.js/auto';
 
@@ -35,6 +37,15 @@
 	let txChartCanvas: HTMLCanvasElement | undefined = $state();
 	let rxChart: Chart | undefined;
 	let txChart: Chart | undefined;
+
+	let copied = $state(false);
+	function copyPublicKey() {
+		if ($stats?.publicKey) {
+			navigator.clipboard.writeText($stats.publicKey);
+			copied = true;
+			setTimeout(() => (copied = false), 2000);
+		}
+	}
 
 	onMount(async () => {
 		await Promise.all([stats.load(), peers.load(), stats.loadHistory()]);
@@ -271,57 +282,31 @@
 	<div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
 		<!-- Main Content - Peers Table -->
 		<div class="lg:col-span-2">
-			<div class="glass-card mb-8 overflow-hidden">
-				<div
-					class="flex flex-col gap-4 border-b border-white/5 bg-white/5 px-6 py-4 md:flex-row md:items-center md:justify-between"
-				>
-					<h2 class="text-xl font-bold text-white">WireGuard Peers</h2>
-					<div class="flex items-center gap-3">
-						<div class="relative">
-							<Search class="absolute top-1/2 left-3 -translate-y-1/2 text-slate-400" size={16} />
-							<input
-								type="text"
-								bind:value={searchQuery}
-								placeholder="Search peers..."
-								class="glass-input w-48 pl-10 text-sm"
-							/>
-						</div>
+			<PeerTable
+				peers={filteredPeers}
+				bind:searchQuery
+				onAdd={() => {
+					selectedPeer = null;
+					showAddModal = true;
+				}}
+				onEdit={handleEditPeer}
+				onRemove={handleRemovePeer}
+				onDownloadConfig={handleDownloadConfig}
+				onShowQR={handleShowDetails}
+			/>
+			{#if filteredPeers.length === 0}
+				<div class="flex flex-col items-center justify-center py-12 text-slate-500">
+					<p class="mb-2">No peers found</p>
+					{#if searchQuery}
 						<button
-							onclick={() => {
-								selectedPeer = null;
-								showAddModal = true;
-							}}
-							class="glass-btn-primary flex h-10 items-center gap-2 px-4 text-sm"
+							onclick={() => (searchQuery = '')}
+							class="text-sm text-blue-400 hover:underline"
 						>
-							<Plus size={18} />
-							Add Peer
+							Clear search
 						</button>
-					</div>
-				</div>
-
-				<div class="p-0">
-					<PeerTable
-						peers={filteredPeers}
-						onEdit={handleEditPeer}
-						onRemove={handleRemovePeer}
-						onDownloadConfig={handleDownloadConfig}
-						onShowQR={handleShowDetails}
-					/>
-					{#if filteredPeers.length === 0}
-						<div class="flex flex-col items-center justify-center py-12 text-slate-500">
-							<p class="mb-2">No peers found</p>
-							{#if searchQuery}
-								<button
-									onclick={() => (searchQuery = '')}
-									class="text-sm text-blue-400 hover:underline"
-								>
-									Clear search
-								</button>
-							{/if}
-						</div>
 					{/if}
 				</div>
-			</div>
+			{/if}
 		</div>
 
 		<!-- Sidebar - Interface Stats & Charts -->
@@ -336,9 +321,22 @@
 						<span class="text-xs font-semibold tracking-wider text-slate-500 uppercase"
 							>Public Key</span
 						>
-						<span class="truncate rounded bg-white/5 p-2 font-mono text-xs text-slate-300">
-							{$stats?.publicKey || 'Loading...'}
-						</span>
+						<div class="flex items-center gap-2">
+							<span class="truncate rounded bg-white/5 p-2 font-mono text-xs text-slate-300">
+								{$stats?.publicKey || 'Loading...'}
+							</span>
+							<button
+								onclick={copyPublicKey}
+								class="rounded bg-white/5 p-2 text-slate-400 hover:bg-white/10 hover:text-white"
+								title="Copy Public Key"
+							>
+								{#if copied}
+									<Check size={14} class="text-green-400" />
+								{:else}
+									<Copy size={14} />
+								{/if}
+							</button>
+						</div>
 					</div>
 					<div class="grid grid-cols-2 gap-4">
 						<div class="flex flex-col gap-1">

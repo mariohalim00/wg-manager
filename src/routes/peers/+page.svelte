@@ -32,6 +32,18 @@
 	let peerToEdit: Peer | null = $state(null);
 	let peerToDelete: Peer | null = $state(null);
 
+	// Search state
+	let searchQuery = $state('');
+
+	const filteredPeers = $derived(
+		$peers.filter(
+			(p) =>
+				p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				p.publicKey.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				p.allowedIPs.some((ip) => ip.includes(searchQuery))
+		)
+	);
+
 	// Load peers on mount and start polling
 	onMount(() => {
 		(async () => {
@@ -156,13 +168,6 @@
 			<h1 class="mb-2 text-3xl font-bold">WireGuard Peers</h1>
 			<p class="text-gray-400">Manage VPN clients and connections</p>
 		</div>
-		<button
-			onclick={handleAddPeer}
-			class="glass-btn-primary flex items-center gap-2 px-6 py-3 text-lg font-semibold"
-		>
-			<Plus size={24} />
-			Add Peer
-		</button>
 	</div>
 
 	<!-- Peer table or loading state -->
@@ -172,7 +177,9 @@
 		</div>
 	{:else}
 		<PeerTable
-			peers={$peers}
+			peers={filteredPeers}
+			bind:searchQuery
+			onAdd={handleAddPeer}
 			onDownloadConfig={handleDownloadConfig}
 			onRemove={handleRemove}
 			onShowQR={handleShowDetails}
