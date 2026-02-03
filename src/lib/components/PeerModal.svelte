@@ -253,7 +253,7 @@
 							/>
 						</div>
 
-						<div class="grid grid-cols-2 gap-4">
+						<div class="grid grid-rows-2 gap-4">
 							<!-- MTU -->
 							<div>
 								<label for="mtu" class="mb-1 block text-xs font-semibold text-slate-500 uppercase">
