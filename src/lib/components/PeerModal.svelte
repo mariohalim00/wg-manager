@@ -16,7 +16,7 @@
 	// Form state
 	// Note: disabled warning because we want the form to be initialized with a value for the first ime only
 	// svelte-ignore state_referenced_locally
-		let name = $state(peer?.name || '');
+	let name = $state(peer?.name || '');
 	// svelte-ignore state_referenced_locally
 	let allowedIPsInput = $state(peer?.allowedIPs.join('\n') || '');
 	let dns = $state(''); // Loaded from settings if empty
