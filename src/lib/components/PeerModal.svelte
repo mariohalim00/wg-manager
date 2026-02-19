@@ -27,7 +27,7 @@
 	let preSharedKey = $state(false);
 	let loading = $state(false);
 
-	const isEdit = mode === 'edit';
+	let isEdit = $derived(mode === 'edit');
 
 	// Validation errors
 	let nameError = $state('');
