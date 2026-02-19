@@ -9,7 +9,6 @@
 	import { addNotification } from '$lib/stores/notifications';
 	import { generateWireGuardConfig, downloadConfigFile } from '$lib/utils/config';
 	import type { Peer, PeerCreateResponse } from '$lib/types/peer';
-	import { Plus } from 'lucide-svelte';
 
 	// Loading state
 	let loading = $state(true);

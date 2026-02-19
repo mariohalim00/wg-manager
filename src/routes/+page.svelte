@@ -10,19 +10,9 @@
 	import { getConfigUrl } from '$lib/api/peers';
 	import type { Peer, PeerCreateResponse } from '$lib/types/peer';
 	import type { StatsHistoryItem } from '$lib/types/stats';
-	import {
-		Users,
-		Zap,
-		Activity,
-		Plus,
-		ArrowUpRight,
-		ArrowDownLeft,
-		Search,
-		X,
-		Copy,
-		Check
-	} from 'lucide-svelte';
+	import { Users, Zap, Activity, ArrowUpRight, ArrowDownLeft, X, Copy, Check } from 'lucide-svelte';
 	import Chart from 'chart.js/auto';
+	import type { ChartOptions } from 'chart.js';
 
 	let pollingInterval: number;
 	let showAddModal = $state(false);
@@ -76,7 +66,7 @@
 		const rxData = historyData.map((h: StatsHistoryItem) => h.totalRx / (1024 * 1024)); // MB
 		const txData = historyData.map((h: StatsHistoryItem) => h.totalTx / (1024 * 1024)); // MB
 
-		const chartOptions = {
+		const chartOptions: ChartOptions<'line'> = {
 			responsive: true,
 			maintainAspectRatio: false,
 			plugins: { legend: { display: false } },
@@ -109,7 +99,7 @@
 						}
 					]
 				},
-				options: chartOptions as any
+				options: chartOptions
 			});
 		}
 
@@ -128,7 +118,7 @@
 						}
 					]
 				},
-				options: chartOptions as any
+				options: chartOptions
 			});
 		}
 	}
@@ -215,8 +205,27 @@
 
 	function handleAddSuccess(response: PeerCreateResponse | Peer) {
 		if ('config' in response) {
-			selectedPeer = response as any;
+			selectedPeer =
+				'lastHandshake' in response
+					? response
+					: {
+							id: response.id,
+							publicKey: response.publicKey,
+							name: response.name,
+							allowedIPs: response.allowedIPs,
+							lastHandshake: '0',
+							receiveBytes: 0,
+							transmitBytes: 0,
+							status: 'offline',
+							config: response.config
+						};
 			showDetailsModal = true;
+		}
+	}
+
+	function handleDetailsOverlayClick(event: MouseEvent) {
+		if (event.target === event.currentTarget) {
+			showDetailsModal = false;
 		}
 	}
 </script>
@@ -395,17 +404,13 @@
 {#if showDetailsModal && selectedPeer}
 	<div
 		class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
-		onclick={() => (showDetailsModal = false)}
+		onclick={handleDetailsOverlayClick}
 		onkeydown={(e) => e.key === 'Escape' && (showDetailsModal = false)}
 		role="dialog"
 		aria-modal="true"
 		tabindex="-1"
 	>
-		<div
-			class="glass-card w-full max-w-lg overflow-hidden"
-			onclick={(e) => e.stopPropagation()}
-			role="document"
-		>
+		<div class="glass-card w-full max-w-lg overflow-hidden" role="document">
 			<div class="flex items-center justify-between border-b border-white/5 bg-white/5 px-6 py-4">
 				<h3 class="text-xl font-bold text-white">Peer Configuration</h3>
 				<button
@@ -437,7 +442,7 @@
 {/if}
 
 <!-- Notifications -->
-<div class="fixed right-6 bottom-6 z-[100] flex flex-col gap-3">
+<div class="fixed right-6 bottom-6 z-100 flex flex-col gap-3">
 	{#each $notifications as notification (notification.id)}
 		<Notification {notification} />
 	{/each}

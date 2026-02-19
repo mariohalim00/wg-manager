@@ -1,19 +1,6 @@
 <script lang="ts">
-	import { peers } from '$lib/stores/peers';
 	import { getQrUrl } from '$lib/api/peers';
-	import {
-		X,
-		Copy,
-		Download,
-		Globe,
-		Server,
-		Shield,
-		Check,
-		RefreshCw,
-		ExternalLink
-	} from 'lucide-svelte';
-	import { fade, scale, fly } from 'svelte/transition';
-
+	import { X, Copy, Download, RefreshCw } from 'lucide-svelte';
 	type Props = {
 		config: string;
 		peerName: string;
@@ -36,7 +23,6 @@
 		onRegenerate
 	}: Props = $props();
 
-	let copying = $state(false);
 	let regenerating = $state(false);
 	let qrTimestamp = $state(Date.now());
 
@@ -84,7 +70,7 @@
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 	<!-- Modal content - glass-panel style matching mockup -->
 	<div
-		class="glass-panel animate-slide-up flex w-full max-w-[540px] flex-col overflow-hidden rounded-2xl border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)]"
+		class="glass-panel animate-slide-up flex w-full max-w-135 flex-col overflow-hidden rounded-2xl border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)]"
 		onclick={(e) => e.stopPropagation()}
 		onkeydown={() => {}}
 		role="document"
@@ -120,13 +106,13 @@
 						<img
 							src="{getQrUrl(publicKey)}?t={qrTimestamp}"
 							alt="WireGuard QR Code"
-							class="h-[200px] w-[200px]"
+							class="h-50 w-50"
 						/>
 					</div>
 				</div>
 			</div>
 			<p
-				class="mt-8 max-w-[360px] text-center text-[13px] leading-relaxed font-normal text-[#92adc9]/70"
+				class="mt-8 max-w-90 text-center text-[13px] leading-relaxed font-normal text-[#92adc9]/70"
 			>
 				Scan this QR code with the WireGuard app on your mobile device to import the configuration
 				instantly.
@@ -156,7 +142,7 @@
 			<div class="space-y-5 rounded-xl border border-white/5 bg-black/30 p-6">
 				<!-- Allowed IPs -->
 				<div class="flex flex-col gap-1.5">
-					<span class="text-[10px] font-bold tracking-[0.1em] text-[#92adc9]/50 uppercase"
+					<span class="text-[10px] font-bold tracking-widest text-[#92adc9]/50 uppercase"
 						>Allowed IPs</span
 					>
 					<code class="font-mono text-[14px] text-[#137fec]"
@@ -167,7 +153,7 @@
 				<!-- Endpoint & Keepalive -->
 				<div class="grid grid-cols-2 gap-8">
 					<div class="flex flex-col gap-1.5">
-						<span class="text-[10px] font-bold tracking-[0.1em] text-[#92adc9]/50 uppercase"
+						<span class="text-[10px] font-bold tracking-widest text-[#92adc9]/50 uppercase"
 							>Endpoint</span
 						>
 						<code class="font-mono text-[13px] text-white/90"
@@ -175,7 +161,7 @@
 						>
 					</div>
 					<div class="flex flex-col gap-1.5">
-						<span class="text-[10px] font-bold tracking-[0.1em] text-[#92adc9]/50 uppercase"
+						<span class="text-[10px] font-bold tracking-widest text-[#92adc9]/50 uppercase"
 							>Keepalive</span
 						>
 						<code class="font-mono text-[13px] text-white/90">25 seconds</code>
@@ -186,7 +172,7 @@
 				{#if publicKey}
 					<div class="flex flex-col gap-1.5 pt-1">
 						<div class="flex items-center justify-between">
-							<span class="text-[10px] font-bold tracking-[0.1em] text-[#92adc9]/50 uppercase"
+							<span class="text-[10px] font-bold tracking-widest text-[#92adc9]/50 uppercase"
 								>Public Key</span
 							>
 							<button

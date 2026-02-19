@@ -1,4 +1,4 @@
-import { writable, get as getStoreValue } from 'svelte/store';
+import { writable } from 'svelte/store';
 import type { Peer, PeerFormData, PeerCreateResponse, PeerUpdateRequest } from '../types/peer';
 import * as peersAPI from '../api/peers';
 import { addNotification } from './notifications';
@@ -166,6 +166,7 @@ function createPeersStore() {
 				}
 				return await response.text();
 			} catch (err) {
+				console.error('Error fetching config:', err);
 				addNotification({
 					type: 'error',
 					message: `Network error while fetching config`,
