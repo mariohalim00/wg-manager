@@ -65,8 +65,13 @@ func main() {
 	mux.HandleFunc("POST /peers", peerHandler.Add)
 	mux.HandleFunc("DELETE /peers/{id}", peerHandler.Remove)
 	mux.HandleFunc("PATCH /peers/{id}", peerHandler.Update)
-	mux.HandleFunc("POST /peers/{id}/regenerate-keys", peerHandler.Regenerate)
+	mux.HandleFunc("POST /peers/regenerate-keys/{id}", peerHandler.Regenerate)
+	mux.HandleFunc("GET /peers/config/{id}", peerHandler.GetConfig)
+	mux.HandleFunc("GET /peers/qr/{id}", peerHandler.GetQR)
 	mux.HandleFunc("GET /stats", peerHandler.Stats)
+	mux.HandleFunc("GET /stats/history", peerHandler.GetHistory)
+	mux.HandleFunc("GET /settings", peerHandler.GetSettings)
+	mux.HandleFunc("POST /settings", peerHandler.UpdateSettings)
 
 	// Apply middleware to all routes
 	wrappedMux := middleware.LoggingMiddleware(mux)

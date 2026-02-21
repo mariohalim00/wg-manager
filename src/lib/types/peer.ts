@@ -10,12 +10,23 @@ export interface Peer {
 	receiveBytes: number; // Total bytes received
 	transmitBytes: number; // Total bytes transmitted
 	status: 'online' | 'offline'; // Derived from lastHandshake (client-side)
+	config?: string;
+	dns?: string;
+	mtu?: number;
+	persistentKeepalive?: number;
+	preSharedKey?: boolean;
+	interfaceAddress?: string;
 }
 
 export interface PeerFormData {
 	name: string; // Required user-friendly name
 	allowedIPs: string[]; // CIDR strings (validated before submit)
 	publicKey?: string; // Optional (backend generates if omitted)
+	dns?: string;
+	mtu?: number;
+	persistentKeepalive?: number;
+	preSharedKey?: boolean;
+	interfaceAddress?: string;
 }
 
 export interface PeerCreateResponse {
@@ -25,4 +36,14 @@ export interface PeerCreateResponse {
 	allowedIPs: string[];
 	config: string; // WireGuard .conf file content
 	privateKey?: string; // Only if backend generated keypair
+	presharedKey?: string;
+}
+
+export interface PeerUpdateRequest {
+	name?: string;
+	allowedIPs?: string[];
+	dns?: string;
+	mtu?: number;
+	persistentKeepalive?: number;
+	interfaceAddress?: string;
 }

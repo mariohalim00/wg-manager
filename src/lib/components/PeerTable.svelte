@@ -11,7 +11,9 @@
 		Smartphone,
 		Router,
 		Monitor,
-		Search
+		Search,
+		Settings,
+		Plus
 	} from 'lucide-svelte';
 
 	type Props = {
@@ -19,9 +21,20 @@
 		onDownloadConfig: (peer: Peer) => void;
 		onRemove: (peer: Peer) => void;
 		onShowQR?: (peer: Peer) => void;
+		onEdit?: (peer: Peer) => void;
+		searchQuery: string;
+		onAdd: () => void;
 	};
 
-	let { peers, onDownloadConfig, onRemove, onShowQR }: Props = $props();
+	let {
+		peers,
+		onDownloadConfig,
+		onRemove,
+		onShowQR,
+		onEdit,
+		searchQuery = $bindable(),
+		onAdd
+	}: Props = $props();
 
 	// Get device icon based on peer name (simple heuristic)
 	function getDeviceIcon(name: string) {
@@ -50,7 +63,9 @@
 
 <div class="dashboard-surface mb-12 overflow-hidden rounded-2xl">
 	<!-- Header -->
-	<div class="flex items-center justify-between border-b border-white/5 px-6 py-5">
+	<div
+		class="flex flex-col gap-4 border-b border-white/5 px-6 py-5 md:flex-row md:items-center md:justify-between"
+	>
 		<div class="flex items-center gap-2">
 			<h3 class="text-xl font-bold tracking-tight">Active Peers</h3>
 			<span class="rounded-full bg-[#137fec]/10 px-2.5 py-0.5 text-sm font-bold text-[#137fec]">
@@ -58,15 +73,21 @@
 			</span>
 		</div>
 		<div class="flex gap-3">
+			<div class="relative">
+				<Search class="absolute top-1/2 left-3 -translate-y-1/2 text-slate-400" size={16} />
+				<input
+					type="text"
+					bind:value={searchQuery}
+					placeholder="Search..."
+					class="glass-input w-48 pl-10 text-sm"
+				/>
+			</div>
 			<button
-				class="focus-ring rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold transition-all hover:border-white/20 hover:bg-white/10"
+				onclick={onAdd}
+				class="glass-btn-primary flex items-center gap-2 px-4 text-sm font-semibold"
 			>
-				Filter
-			</button>
-			<button
-				class="focus-ring rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-sm font-semibold transition-all hover:border-white/20 hover:bg-white/10"
-			>
-				Export
+				<Plus size={16} />
+				Add Peer
 			</button>
 		</div>
 	</div>
@@ -168,6 +189,15 @@
 							<div
 								class="flex items-center justify-end gap-2 opacity-0 transition-opacity group-hover:opacity-100"
 							>
+								{#if onEdit}
+									<button
+										onclick={() => onEdit(peer)}
+										class="focus-ring rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
+										title="Edit Peer"
+									>
+										<Settings size={18} />
+									</button>
+								{/if}
 								<button
 									onclick={() => onDownloadConfig(peer)}
 									class="focus-ring rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
@@ -180,7 +210,7 @@
 									<button
 										onclick={() => onShowQR(peer)}
 										class="focus-ring rounded-lg p-2 text-slate-400 transition-colors hover:bg-white/5 hover:text-white"
-										title="View QR Code"
+										title="View Details"
 									>
 										<QrCode size={18} />
 									</button>

@@ -9,36 +9,87 @@
 	import { addNotification } from '$lib/stores/notifications';
 	import { generateWireGuardConfig, downloadConfigFile } from '$lib/utils/config';
 	import type { Peer, PeerCreateResponse } from '$lib/types/peer';
-	import { Plus } from 'lucide-svelte';
 
 	// Loading state
 	let loading = $state(true);
 
 	// Modal state
 	let showAddModal = $state(false);
+	let showEditModal = $state(false);
 	let showQRModal = $state(false);
 	let showConfirmDelete = $state(false);
 
 	// QR modal data
 	let qrConfig = $state('');
 	let qrPeerName = $state('');
+	let qrAllowedIPs = $state<string[]>([]);
+	let qrEndpoint = $state('');
+	let qrPublicKey = $state('');
+	let currentPeerForQR = $state<Peer | null>(null);
 
-	// Delete confirmation data
+	// Edit/Delete confirmation data
+	let peerToEdit: Peer | null = $state(null);
 	let peerToDelete: Peer | null = $state(null);
 
-	// Load peers on mount
-	onMount(async () => {
-		await peers.load();
-		loading = false;
+	// Search state
+	let searchQuery = $state('');
+
+	const filteredPeers = $derived(
+		$peers.filter(
+			(p) =>
+				p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				p.publicKey.toLowerCase().includes(searchQuery.toLowerCase()) ||
+				p.allowedIPs.some((ip) => ip.includes(searchQuery))
+		)
+	);
+
+	// Load peers on mount and start polling
+	onMount(() => {
+		(async () => {
+			await peers.load();
+			peers.startPolling();
+			loading = false;
+		})();
+
+		return () => {
+			peers.stopPolling();
+		};
 	});
 
-	// Handle download config (for existing peers - not yet supported by API)
-	function handleDownloadConfig() {
+	// Handle download config
+	async function handleDownloadConfig(peer: Peer) {
+		const config = await peers.getConfig(peer.id);
+
+		if (!config) {
+			return; // Error already handled by store
+		}
+
+		downloadConfigFile(config, peer.name);
 		addNotification({
-			type: 'warning',
-			message: `Config download for existing peers not yet supported. Please save the config when adding a new peer.`,
-			duration: 5000
+			type: 'success',
+			message: `Configuration file downloaded for ${peer.name}`,
+			duration: 3000
 		});
+	}
+
+	// Handle show details/QR
+	async function handleShowDetails(peer: Peer) {
+		currentPeerForQR = peer;
+		qrPeerName = peer.name;
+		qrAllowedIPs = peer.allowedIPs;
+		qrEndpoint = peer.endpoint || '';
+		qrPublicKey = peer.publicKey;
+
+		const config = await peers.getConfig(peer.id);
+		qrConfig = config || '';
+
+		showQRModal = true;
+	}
+
+	// Handle edit peer
+	function handleEdit(peer: Peer) {
+		peerToEdit = peer;
+		showEditModal = true;
 	}
 
 	// Handle remove peer - show confirmation dialog
@@ -68,10 +119,30 @@
 	}
 
 	// Handle peer added successfully - show QR code modal
-	function handlePeerAdded(response: PeerCreateResponse) {
-		qrConfig = generateWireGuardConfig(response);
+	function handlePeerAdded(response: PeerCreateResponse | Peer) {
+		if ('config' in response && response.config) {
+			qrConfig = response.config;
+		} else {
+			qrConfig = generateWireGuardConfig(response as PeerCreateResponse);
+		}
 		qrPeerName = response.name;
+		qrAllowedIPs = response.allowedIPs;
+		qrPublicKey = response.publicKey;
 		showQRModal = true;
+	}
+
+	// Handle key regeneration
+	async function handleRegenerate() {
+		if (!currentPeerForQR) return;
+
+		const response = await peers.regenerateKeys(currentPeerForQR.id);
+		if (response) {
+			qrConfig = response.config || generateWireGuardConfig(response);
+			qrPublicKey = response.publicKey;
+			// Update current peer reference if needed
+			const updated = $peers.find((p) => p.id === response.id);
+			if (updated) currentPeerForQR = updated;
+		}
 	}
 
 	// Handle config download from QR modal
@@ -96,13 +167,6 @@
 			<h1 class="mb-2 text-3xl font-bold">WireGuard Peers</h1>
 			<p class="text-gray-400">Manage VPN clients and connections</p>
 		</div>
-		<button
-			onclick={handleAddPeer}
-			class="glass-btn-primary flex items-center gap-2 px-6 py-3 text-lg font-semibold"
-		>
-			<Plus size={24} />
-			Add Peer
-		</button>
 	</div>
 
 	<!-- Peer table or loading state -->
@@ -111,7 +175,15 @@
 			<LoadingSpinner size="lg" />
 		</div>
 	{:else}
-		<PeerTable peers={$peers} onDownloadConfig={handleDownloadConfig} onRemove={handleRemove} />
+		<PeerTable
+			peers={filteredPeers}
+			bind:searchQuery
+			onAdd={handleAddPeer}
+			onDownloadConfig={handleDownloadConfig}
+			onRemove={handleRemove}
+			onShowQR={handleShowDetails}
+			onEdit={handleEdit}
+		/>
 	{/if}
 </div>
 
@@ -120,13 +192,27 @@
 	<PeerModal onClose={() => (showAddModal = false)} onSuccess={handlePeerAdded} />
 {/if}
 
-<!-- QR Code Modal -->
+<!-- Edit Peer Modal -->
+{#if showEditModal && peerToEdit}
+	<PeerModal
+		mode="edit"
+		peer={peerToEdit}
+		onClose={() => ((showEditModal = false), (peerToEdit = null))}
+		onSuccess={() => ((showEditModal = false), (peerToEdit = null))}
+	/>
+{/if}
+
+<!-- QR Code Modal / Details -->
 {#if showQRModal}
 	<QRCodeDisplay
 		config={qrConfig}
 		peerName={qrPeerName}
+		allowedIPs={qrAllowedIPs}
+		endpoint={qrEndpoint}
+		publicKey={qrPublicKey}
 		onClose={() => (showQRModal = false)}
 		onDownload={handleConfigDownload}
+		onRegenerate={handleRegenerate}
 	/>
 {/if}
 

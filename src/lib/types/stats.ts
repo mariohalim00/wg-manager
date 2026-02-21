@@ -9,3 +9,9 @@ export interface InterfaceStats {
 	totalRx: number; // Total bytes received
 	totalTx: number; // Total bytes transmitted
 }
+
+export interface StatsHistoryItem {
+	timestamp: number;
+	totalRx: number;
+	totalTx: number;
+}

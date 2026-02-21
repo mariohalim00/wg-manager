@@ -1,7 +1,6 @@
 <script lang="ts">
-	import QRCode from 'svelte-qrcode';
-	import { Download, X, Copy, RefreshCw } from 'lucide-svelte';
-
+	import { getQrUrl } from '$lib/api/peers';
+	import { X, Copy, Download, RefreshCw } from 'lucide-svelte';
 	type Props = {
 		config: string;
 		peerName: string;
@@ -10,6 +9,7 @@
 		publicKey?: string;
 		onClose: () => void;
 		onDownload: () => void;
+		onRegenerate?: () => void;
 	};
 
 	let {
@@ -19,8 +19,23 @@
 		endpoint = '',
 		publicKey = '',
 		onClose,
-		onDownload
+		onDownload,
+		onRegenerate
 	}: Props = $props();
+
+	let regenerating = $state(false);
+	let qrTimestamp = $state(Date.now());
+
+	async function handleRegenerate() {
+		if (!onRegenerate) return;
+		regenerating = true;
+		try {
+			await onRegenerate();
+			qrTimestamp = Date.now();
+		} finally {
+			regenerating = false;
+		}
+	}
 
 	// Handle overlay click to close
 	function handleOverlayClick(event: MouseEvent) {
@@ -55,7 +70,7 @@
 	<!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
 	<!-- Modal content - glass-panel style matching mockup -->
 	<div
-		class="glass-panel animate-slide-up flex w-full max-w-[540px] flex-col overflow-hidden rounded-2xl border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)]"
+		class="glass-panel animate-slide-up flex w-full max-w-135 flex-col overflow-hidden rounded-2xl border border-white/10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.6)]"
 		onclick={(e) => e.stopPropagation()}
 		onkeydown={() => {}}
 		role="document"
@@ -88,12 +103,16 @@
 					class="qr-gradient-container relative flex h-80 w-80 items-center justify-center overflow-hidden rounded-xl"
 				>
 					<div class="relative z-10 rounded-lg bg-white p-6 shadow-[0_20px_30px_rgba(0,0,0,0.4)]">
-						<QRCode value={config} size={192} />
+						<img
+							src="{getQrUrl(publicKey)}?t={qrTimestamp}"
+							alt="WireGuard QR Code"
+							class="h-50 w-50"
+						/>
 					</div>
 				</div>
 			</div>
 			<p
-				class="mt-8 max-w-[360px] text-center text-[13px] leading-relaxed font-normal text-[#92adc9]/70"
+				class="mt-8 max-w-90 text-center text-[13px] leading-relaxed font-normal text-[#92adc9]/70"
 			>
 				Scan this QR code with the WireGuard app on your mobile device to import the configuration
 				instantly.
@@ -123,7 +142,7 @@
 			<div class="space-y-5 rounded-xl border border-white/5 bg-black/30 p-6">
 				<!-- Allowed IPs -->
 				<div class="flex flex-col gap-1.5">
-					<span class="text-[10px] font-bold tracking-[0.1em] text-[#92adc9]/50 uppercase"
+					<span class="text-[10px] font-bold tracking-widest text-[#92adc9]/50 uppercase"
 						>Allowed IPs</span
 					>
 					<code class="font-mono text-[14px] text-[#137fec]"
@@ -134,7 +153,7 @@
 				<!-- Endpoint & Keepalive -->
 				<div class="grid grid-cols-2 gap-8">
 					<div class="flex flex-col gap-1.5">
-						<span class="text-[10px] font-bold tracking-[0.1em] text-[#92adc9]/50 uppercase"
+						<span class="text-[10px] font-bold tracking-widest text-[#92adc9]/50 uppercase"
 							>Endpoint</span
 						>
 						<code class="font-mono text-[13px] text-white/90"
@@ -142,7 +161,7 @@
 						>
 					</div>
 					<div class="flex flex-col gap-1.5">
-						<span class="text-[10px] font-bold tracking-[0.1em] text-[#92adc9]/50 uppercase"
+						<span class="text-[10px] font-bold tracking-widest text-[#92adc9]/50 uppercase"
 							>Keepalive</span
 						>
 						<code class="font-mono text-[13px] text-white/90">25 seconds</code>
@@ -153,7 +172,7 @@
 				{#if publicKey}
 					<div class="flex flex-col gap-1.5 pt-1">
 						<div class="flex items-center justify-between">
-							<span class="text-[10px] font-bold tracking-[0.1em] text-[#92adc9]/50 uppercase"
+							<span class="text-[10px] font-bold tracking-widest text-[#92adc9]/50 uppercase"
 								>Public Key</span
 							>
 							<button
@@ -173,10 +192,12 @@
 			<!-- Regenerate Keys Button -->
 			<div class="mt-8 flex justify-center">
 				<button
-					class="flex items-center gap-2 rounded-lg px-4 py-2 text-[11px] font-bold tracking-[0.15em] text-red-400/60 uppercase transition-all hover:bg-red-400/5 hover:text-red-400"
+					onclick={handleRegenerate}
+					disabled={regenerating}
+					class="flex items-center gap-2 rounded-lg px-4 py-2 text-[11px] font-bold tracking-[0.15em] text-red-400/60 uppercase transition-all hover:bg-red-400/5 hover:text-red-400 disabled:opacity-50"
 				>
-					<RefreshCw size={18} />
-					Regenerate Keys
+					<RefreshCw size={18} class={regenerating ? 'animate-spin' : ''} />
+					{regenerating ? 'Regenerating...' : 'Regenerate Keys'}
 				</button>
 			</div>
 		</div>

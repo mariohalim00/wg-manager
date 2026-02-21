@@ -1,7 +1,7 @@
 // Base HTTP client for API communication
 import type { APIResponse, APIError } from '../types/api';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
 
 /**
  * Base fetch wrapper with error handling
@@ -79,4 +79,14 @@ export async function post<T>(endpoint: string, body: unknown): Promise<APIRespo
  */
 export async function del<T>(endpoint: string): Promise<APIResponse<T>> {
 	return request<T>(endpoint, { method: 'DELETE' });
+}
+
+/**
+ * PATCH request
+ */
+export async function patch<T>(endpoint: string, body: unknown): Promise<APIResponse<T>> {
+	return request<T>(endpoint, {
+		method: 'PATCH',
+		body: JSON.stringify(body)
+	});
 }

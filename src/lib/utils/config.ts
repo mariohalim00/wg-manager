@@ -23,7 +23,7 @@ Address = ${response.allowedIPs.join(', ')}
 DNS = 1.1.1.1
 
 [Peer]
-PublicKey = <SERVER_PUBLIC_KEY>
+PublicKey = ${response.publicKey}
 Endpoint = <SERVER_ENDPOINT>:51820
 AllowedIPs = 0.0.0.0/0, ::/0
 PersistentKeepalive = 25`;

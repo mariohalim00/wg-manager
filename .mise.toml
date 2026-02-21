@@ -2,101 +2,24 @@
 node = "lts"
 go = "latest"
 
-# Frontend tasks
-[tasks."fe:dev"]
-description = "Start frontend development server"
-run = "npm run dev"
-
-[tasks."fe:build"]
-description = "Build frontend for production"
-run = "npm run build"
-
-[tasks."fe:preview"]
-description = "Preview production build"
-run = "npm run preview"
-
-[tasks."fe:check"]
-description = "Run Svelte type checking"
-run = "npm run check"
-
-[tasks."fe:lint"]
-description = "Lint frontend code"
-run = "npm run lint"
-
-[tasks."fe:format"]
-description = "Format frontend code"
-run = "npm run format"
-
-# Backend tasks
-[tasks."be:build"]
-description = "Build backend binary"
-dir = "backend"
-run = "go build -o ../bin/wg-manager ./cmd/server"
-
-[tasks."be:run"]
-description = "Run backend server"
-dir = "backend"
-run = "go run ./cmd/server/main.go"
-
-[tasks."be:test"]
-description = "Run backend tests"
-dir = "backend"
-run = "go test ./... -v"
-
-[tasks."be:test:coverage"]
-description = "Run backend tests with coverage"
-dir = "backend"
-run = "go test ./... -coverprofile=coverage.out && go tool cover -html=coverage.out"
-
-[tasks."be:lint"]
-description = "Lint backend code"
-dir = "backend"
-run = "go vet ./... && go fmt ./..."
-
-[tasks."be:deps"]
-description = "Download backend dependencies"
-dir = "backend"
-run = "go mod download"
-
-[tasks."be:tidy"]
-description = "Tidy backend dependencies"
-dir = "backend"
-run = "go mod tidy"
-
-# Combined tasks
-[tasks.dev]
-description = "Start both frontend and backend in development mode"
-depends = ["fe:dev", "be:run"]
-
-[tasks.build]
-description = "Build both frontend and backend"
-depends = ["fe:build", "be:build"]
-
-[tasks.test]
-description = "Run all tests (backend only, per constitution)"
-depends = ["be:test"]
-
-[tasks.lint]
-description = "Lint all code"
-depends = ["fe:lint", "be:lint"]
-
-[tasks.format]
-description = "Format all code"
-run = "npm run format"
-
-# Setup tasks
-[tasks.install]
-description = "Install all dependencies"
-run = """
-npm install
-cd backend && go mod download
-"""
-
-[tasks.clean]
-description = "Clean build artifacts"
-run = """
-rm -rf .svelte-kit
-rm -rf build
-rm -rf bin
-rm -rf backend/coverage.out
-"""
+[tasks]
+"fe:dev" = "npm run dev"
+"fe:build" = "npm run build"
+"fe:preview" = "npm run preview"
+"fe:check" = "npm run check"
+"fe:lint" = "npm run lint"
+"fe:format" = "npm run format"
+"be:build" = "cd backend && go build -o ../bin/wg-manager ./cmd/server"
+"be:run" = "cd backend && go run ./cmd/server/main.go"
+"be:test" = "cd backend && go test ./... -v"
+"be:test:coverage" = "cd backend && go test ./... -coverprofile=coverage.out && go tool cover -html=coverage.out"
+"be:lint" = "cd backend && go vet ./... && go fmt ./..."
+"be:deps" = "cd backend && go mod download"
+"be:tidy" = "cd backend && go mod tidy"
+"dev" = "echo 'Run fe:dev and be:run in separate terminals'"
+"build" = "mise run fe:build && mise run be:build"
+"test" = "mise run be:test"
+"lint" = "mise run fe:lint && mise run be:lint"
+"format" = "npm run format"
+"install" = "npm install && cd backend && go mod download"
+"clean" = "rm -rf .svelte-kit build bin backend/coverage.out"
