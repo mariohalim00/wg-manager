@@ -142,6 +142,15 @@ func (s *realService) AddPeer(opts AddPeerOptions) (PeerResponse, error) {
 		return PeerResponse{}, fmt.Errorf("invalid public key: %w", err)
 	}
 
+	// Auto IP Assignment
+	if len(opts.AllowedIPs) == 0 {
+		nextIP, err := s.allocateNextIP()
+		if err != nil {
+			return PeerResponse{}, fmt.Errorf("failed to auto-assign IP: %w", err)
+		}
+		opts.AllowedIPs = []string{nextIP}
+	}
+
 	// Parse allowed IPs
 	var allowedIPConfigs []net.IPNet
 	for _, ipStr := range opts.AllowedIPs {
@@ -188,51 +197,6 @@ func (s *realService) AddPeer(opts AddPeerOptions) (PeerResponse, error) {
 		InterfaceAddress:    opts.InterfaceAddress,
 	}
 
-	// Generate config if we have a private key
-	if privateKey != "" {
-		settings := s.storage.GetSettings()
-		dns := opts.DNS
-		if dns == "" {
-			dns = settings.DNS
-		}
-		mtu := opts.MTU
-		if mtu == 0 {
-			mtu = settings.MTU
-		}
-		keepalive := opts.PersistentKeepalive
-		if keepalive == 0 {
-			keepalive = settings.Keepalive
-		}
-		endpoint := settings.Endpoint
-		if endpoint == "" {
-			endpoint = s.serverEndpoint
-		}
-
-		dnsSplit := []string{}
-		if dns != "" {
-			for _, d := range strings.Split(dns, ",") {
-				dnsSplit = append(dnsSplit, strings.TrimSpace(d))
-			}
-		}
-
-		address := opts.AllowedIPs
-		if opts.InterfaceAddress != "" {
-			address = []string{opts.InterfaceAddress}
-		}
-
-		meta.Config = GenerateConfigString(PeerConfigInfo{
-			PrivateKey:          privateKey,
-			Address:             address,
-			DNS:                 dnsSplit,
-			MTU:                 mtu,
-			PersistentKeepalive: keepalive,
-			PublicKey:           s.serverPubKey,
-			PresharedKey:        psk,
-			Endpoint:            endpoint,
-			AllowedIPs:          []string{"0.0.0.0/0", "::/0"},
-		})
-	}
-
 	if err := s.storage.SetMetadata(opts.PublicKey, meta); err != nil {
 		return PeerResponse{}, fmt.Errorf("failed to save metadata: %w", err)
 	}
@@ -246,7 +210,7 @@ func (s *realService) AddPeer(opts AddPeerOptions) (PeerResponse, error) {
 		},
 		PrivateKey:   meta.PrivateKey,
 		PresharedKey: meta.PresharedKey,
-		Config:       meta.Config,
+		Config:       s.generateConfigForMetadata(meta),
 	}
 
 	return response, nil
@@ -480,16 +444,143 @@ func (s *realService) Sync() error {
 	return nil
 }
 
+// allocateNextIP finds the next available /32 IP address in the VPN subnet.
+func (s *realService) allocateNextIP() (string, error) {
+	_, vpnNet, err := net.ParseCIDR(s.vpnSubnet)
+	if err != nil {
+		return "", fmt.Errorf("invalid VPN subnet %s: %w", s.vpnSubnet, err)
+	}
+
+	// Build a fast lookup map of currently used IPs
+	usedIPs := make(map[string]bool)
+
+	// Add server's own IP (assuming it's the gateway e.g., xxx.xxx.xxx.1)
+	// Some setups might specify "ServerAddress" in settings. We can check that.
+	settings := s.storage.GetSettings()
+	if settings.ServerAddress != "" {
+		ip, _, err := net.ParseCIDR(settings.ServerAddress)
+		if err == nil {
+			usedIPs[ip.String()] = true
+		}
+	} else {
+		// Fallback: mark the first address (.1) as used since it's typically the gateway
+		gwIP := make(net.IP, len(vpnNet.IP))
+		copy(gwIP, vpnNet.IP)
+		gwIP[len(gwIP)-1]++
+		usedIPs[gwIP.String()] = true
+	}
+
+	// Get all existing peers
+	peers, err := s.ListPeers()
+	if err == nil {
+		for _, peer := range peers {
+			for _, allowedIP := range peer.AllowedIPs {
+				ip, _, err := net.ParseCIDR(allowedIP)
+				if err == nil {
+					usedIPs[ip.String()] = true
+				}
+			}
+		}
+	}
+
+	// Iterate over the subnet and find the first unused IP
+	ip := make(net.IP, len(vpnNet.IP))
+	copy(ip, vpnNet.IP)
+
+	for {
+		// Increment IP
+		for j := len(ip) - 1; j >= 0; j-- {
+			ip[j]++
+			if ip[j] > 0 {
+				break
+			}
+		}
+
+		// Check if we've gone outside the subnet
+		if !vpnNet.Contains(ip) {
+			break
+		}
+
+		// Skip broadcast address (.255 for /24)
+		isBroadcast := true
+		for j := len(ip) - 1; j >= len(ip)-len(vpnNet.Mask); j-- {
+			if ip[j] != ^vpnNet.Mask[j] {
+				isBroadcast = false
+				break
+			}
+		}
+		if isBroadcast {
+			continue
+		}
+
+		ipStr := ip.String()
+		if !usedIPs[ipStr] {
+			return fmt.Sprintf("%s/32", ipStr), nil
+		}
+	}
+
+	return "", fmt.Errorf("subnet %s is exhausted", s.vpnSubnet)
+}
+
 // GetPeerConfig returns the configuration string for a peer.
 func (s *realService) GetPeerConfig(id string) (string, error) {
 	meta, ok := s.storage.GetMetadata(id)
 	if !ok {
 		return "", fmt.Errorf("peer not found: %s", id)
 	}
-	if meta.Config == "" {
+	configStr := s.generateConfigForMetadata(meta)
+	if configStr == "" {
 		return "", fmt.Errorf("config not available for peer (might need key regeneration): %s", id)
 	}
-	return meta.Config, nil
+	return configStr, nil
+}
+
+func (s *realService) generateConfigForMetadata(meta PeerMetadata) string {
+	if meta.PrivateKey == "" {
+		return ""
+	}
+
+	settings := s.storage.GetSettings()
+	dns := meta.DNS
+	if dns == "" {
+		dns = settings.DNS
+	}
+	mtu := meta.MTU
+	if mtu == 0 {
+		mtu = settings.MTU
+	}
+	keepalive := meta.PersistentKeepalive
+	if keepalive == 0 {
+		keepalive = settings.Keepalive
+	}
+	endpoint := settings.Endpoint
+	if endpoint == "" {
+		endpoint = s.serverEndpoint
+	}
+
+	dnsSplit := []string{}
+	if dns != "" {
+		for _, d := range strings.Split(dns, ",") {
+			dnsSplit = append(dnsSplit, strings.TrimSpace(d))
+		}
+	}
+
+	address := meta.AllowedIPs
+	if meta.InterfaceAddress != "" {
+		address = []string{meta.InterfaceAddress}
+	}
+
+	return GenerateConfigString(PeerConfigInfo{
+		PrivateKey:          meta.PrivateKey,
+		Address:             address,
+		DNS:                 dnsSplit,
+		MTU:                 mtu,
+		PersistentKeepalive: keepalive,
+		PublicKey:           s.serverPubKey,
+		PresharedKey:        meta.PresharedKey,
+		Endpoint:            endpoint,
+		AllowedIPs:          []string{"0.0.0.0/0", "::/0"},
+	})
 }
 
 // GetPeerMetadata returns metadata for a peer.
