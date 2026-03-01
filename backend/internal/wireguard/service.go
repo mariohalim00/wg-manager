@@ -16,7 +16,7 @@ import (
 type realService struct {
 	client         *wgctrl.Client
 	interfaceName  string
-	storage        *Storage
+	storage        *SQLiteStorage
 	serverPubKey   string
 	serverEndpoint string
 	vpnSubnet      string
@@ -33,10 +33,10 @@ func NewRealService(interfaceName string, storagePath string, serverEndpoint str
 	}
 
 	// Initialize storage
-	storage, err := NewStorage(storagePath)
+	storage, err := NewSQLiteStorage(storagePath)
 	if err != nil {
 		client.Close()
-		return nil, fmt.Errorf("failed to initialize storage: %w", err)
+		return nil, fmt.Errorf("failed to initialize SQLite storage: %w", err)
 	}
 
 	// Verify we can access the device (checks permissions and existence)
@@ -400,11 +400,14 @@ func (s *realService) UpdatePeer(id string, updates PeerUpdate) (Peer, error) {
 // Sync restores all peers from storage to the WireGuard interface.
 func (s *realService) Sync() error {
 	slog.Info("Syncing peers from storage to interface", "interface", s.interfaceName)
-	s.storage.mu.RLock()
-	defer s.storage.mu.RUnlock()
+
+	peers, err := s.storage.GetAllPeers()
+	if err != nil {
+		return fmt.Errorf("failed to load peers from DB for sync: %w", err)
+	}
 
 	var peerConfigs []wgtypes.PeerConfig
-	for pubKeyStr, meta := range s.storage.data.Peers {
+	for pubKeyStr, meta := range peers {
 		pubKey, err := wgtypes.ParseKey(pubKeyStr)
 		if err != nil {
 			slog.Error("Invalid public key in storage", "key", pubKeyStr, "error", err)
