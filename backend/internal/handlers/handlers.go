@@ -60,10 +60,7 @@ func (h *PeerHandler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if len(req.AllowedIPs) == 0 {
-		http.Error(w, "At least one AllowedIP is required", http.StatusBadRequest)
-		return
-	}
+	// AllowedIPs is now optional. If blank, the service will auto-assign one.
 
 	for _, ip := range req.AllowedIPs {
 		if _, _, err := net.ParseCIDR(ip); err != nil {

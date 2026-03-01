@@ -45,11 +45,15 @@
 			nameError = '';
 		}
 
-		// Validate allowed IPs (CIDR notation)
-		const cidrsValidation = validateCIDRList(allowedIPsInput);
-		if (!cidrsValidation.valid) {
-			allowedIPsError = cidrsValidation.error || 'Invalid CIDR notation. Example: 10.0.0.2/32';
-			valid = false;
+		// Validate allowed IPs (CIDR notation) - ONLY if provided
+		if (allowedIPsInput.trim() !== '') {
+			const cidrsValidation = validateCIDRList(allowedIPsInput);
+			if (!cidrsValidation.valid) {
+				allowedIPsError = cidrsValidation.error || 'Invalid CIDR notation. Example: 10.0.0.2/32';
+				valid = false;
+			} else {
+				allowedIPsError = '';
+			}
 		} else {
 			allowedIPsError = '';
 		}
@@ -190,7 +194,7 @@
 			<!-- Allowed IPs field -->
 			<div class="mb-6">
 				<label for="allowed-ips" class="mb-2 block text-sm font-medium text-slate-300">
-					Allowed IPs (CIDR) <span class="text-red-400">*</span>
+					Allowed IPs (CIDR) <span class="text-slate-500 font-normal text-xs">(Leave blank to auto-assign)</span>
 				</label>
 				<div class="relative">
 					<Server class="absolute top-3 left-3 text-slate-400" size={18} />
@@ -201,7 +205,6 @@
 						rows="3"
 						class="glass-input w-full resize-none pl-10"
 						disabled={loading}
-						required
 					></textarea>
 				</div>
 				<p class="mt-2 text-xs text-slate-400">
